@@ -1,5 +1,7 @@
 # AnimWeb - Create Beautiful Math Animations, Anywhere
-AnimWeb is a mathematical animation library inspired by [3Blue1Brown's](https://www.youtube.com/@3blue1brown) [Manim Engine](https://github.com/3b1b/manim).
+AnimWeb is a mathematical animation library inspired by <a href="https://www.youtube.com/@3blue1brown" target="_blank">3Blue1Brown's</a> <a href="https://github.com/3b1b/manim" target="_blank">Manim Engine</a>.
+
+
 
 AnimWeb provides an elegant way to create mathematical animations through code. It is completely online - thus there is no hassle of installation (a caveat of Manim).
 AnimWeb features an object-oriented API written in TypeScript using [p5.js](https://p5js.org/) and a code-editor that lets you create animations using JavaScript.
