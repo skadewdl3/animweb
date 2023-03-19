@@ -60,6 +60,7 @@ Hit play - and __BOOM__! You just created your own math animation in under 3 lin
 
 [animweb-animation (6).webm](https://user-images.githubusercontent.com/43989259/226199712-597eba76-c465-4c8f-a630-3d18fb43972c.webm)
 
+For more examples, you can refer to the examples folder (if it's not there, I'll add it soon 😅)
 
 # Recording Animations
 
