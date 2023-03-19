@@ -93,10 +93,12 @@ https://user-images.githubusercontent.com/43989259/226200032-08f8781c-3e7d-4dfb-
 | width | number | 800 | The width of the scene. This   also is the width of the      exported animation. |
 | objects | Array<AnimObject> | [] | Contains all the AnimObjects added to the Scene. |
 | transitionQueue | Array<TransitionQueueItem> | [] | Holds all the Transitions that are playing right now. |
-| resetScene | Function |  | Rsets the scene (on click the play or clear buttons) |
-| queueTransition | Function |  | Used to add a   TransitionQueueItem to      the transitionQueue |
+| resetScene | Function | () => void | Rsets the scene (on click the play or clear buttons) |
+| queueTransition | Function | (transition: TransitionQueueItem) => void | Used to add a   TransitionQueueItem to      the transitionQueue |
 | unqueueTransition | Function | (transition: TransitionQueueItem) => void | Used to remove a   TransitionQueueItem from      the transitionQueue |
 | add | Function | (obj: AnimObject) => void | Used to add an AnimObject to the objects array |
 | wait | Function | (timeout?: number) => Promise<void> | Used to wait till the transition   queue bcomes      empty (all transitions finish) |
 | remove | Function | (obj: AnimObject) => void | Used to remove an AnimObject from the objects array |
 | draw | Function | () => void | Used to draw all AnimObjects to the p5 canvas |
+
+(Further docs coming soon)
