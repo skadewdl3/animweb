@@ -21,7 +21,13 @@ import { TransitionQueueItem } from './Transition'
 import { basicSetup, EditorView } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 
-console.log(window)
+const defaultDoc = `var w = window.WebAnim
+
+var plane = new w.NumberPlane()
+
+w.scene.add(plane)
+
+plane.plotImplicit({ definition: 'x^2 + y^2 - 25' })`
 
 export default class Scene {
   height: number
@@ -87,7 +93,7 @@ export default class Scene {
     let editor = new EditorView({
       //@ts-ignore
       parent: document.querySelector('.codemirror-editor-container'),
-      doc: 'var w = window.WebAnim\n',
+      doc: defaultDoc,
       extensions: [basicSetup, javascript(), EditorView.lineWrapping],
     })
 
@@ -101,7 +107,12 @@ export default class Scene {
       userScript.className = 'user-script'
       userScript.type = 'module'
       // @ts-ignore
-      let inlineCode = document.createTextNode(editor.state.doc.toString())
+      let inlineCode = document.createTextNode(`try {
+        ${editor.state.doc.toString()}
+      }
+      catch (err) {
+        console.log('caught error: ', err)
+      }`)
       userScript.appendChild(inlineCode)
       document.body.appendChild(userScript)
       this.startLoop()
@@ -143,9 +154,9 @@ export default class Scene {
         this.unqueueTransition.bind(this),
         this.wait.bind(this)
       )
-      obj.iterables.forEach(name => {
+      obj.iterables.forEach((name) => {
         // @ts-ignore
-        obj[name].forEach(o => this.updateSceneProps(o))
+        obj[name].forEach((o) => this.updateSceneProps(o))
       })
     } else {
       obj.updateSceneDimensions(this.width, this.height)
@@ -201,7 +212,7 @@ export default class Scene {
   */
   draw(p: any) {
     p.background(this.backgroundColor.rgba)
-    this.objects.forEach(obj => obj.draw(p))
+    this.objects.forEach((obj) => obj.draw(p))
   }
 
   async wait(timeout?: number): Promise<void> {
@@ -224,6 +235,6 @@ export default class Scene {
   this is done by remove the AnimObject from Scene.objects
   */
   remove(obj: AnimObject) {
-    this.objects = this.objects.filter(o => o.id != obj.id)
+    this.objects = this.objects.filter((o) => o.id != obj.id)
   }
 }
