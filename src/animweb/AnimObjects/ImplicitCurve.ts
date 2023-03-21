@@ -43,15 +43,13 @@ class Quadrant {
   }
 }
 
-type Quad = QuadTree | Quadrant
-
 class QuadTree {
   ne: QuadTree | Quadrant
   nw: QuadTree | Quadrant
   se: QuadTree | Quadrant
   sw: QuadTree | Quadrant
   depth: number
-  maxDepth: number = 8
+  maxDepth: number = 6
   x: number = 0
   y: number = 0
   width: number = 0
@@ -64,7 +62,6 @@ class QuadTree {
     tr,
     tl
   ) => {
-    console.log(bl, br, tr, tl)
     return bl + 2 * br + 4 * tr + 8 * tl
   }
   evalDefinition: (x: number, y: number) => number
@@ -150,16 +147,18 @@ class QuadTree {
           ]
           val = this.valueFunction(bl, br, tr, tl)
           if (val == 0 || val == 15) this.ne.setValue(val)
-          else if (this.depth <= this.maxDepth) {
-            this.ne = new QuadTree({
-              definition: this.definition,
-              x: this.x + this.width / 2,
-              y: this.y,
-              width: this.width / 2,
-              height: this.height / 2,
-              depth: this.depth + 1,
-              evalDefinition: this.evalDefinition,
-            })
+          else {
+            if (this.depth <= this.maxDepth)
+              this.ne = new QuadTree({
+                definition: this.definition,
+                x: this.x + this.width / 2,
+                y: this.y,
+                width: this.width / 2,
+                height: this.height / 2,
+                depth: this.depth + 1,
+                evalDefinition: this.evalDefinition,
+              })
+            else this.ne.setValue(val)
           }
           break
         case Quadrants.nw:
@@ -174,16 +173,18 @@ class QuadTree {
           ]
           val = this.valueFunction(bl, br, tr, tl)
           if (val == 0 || val == 15) this.nw.setValue(val)
-          else if (this.depth <= this.maxDepth) {
-            this.nw = new QuadTree({
-              definition: this.definition,
-              x: this.x,
-              y: this.y,
-              width: this.width / 2,
-              height: this.height / 2,
-              depth: this.depth + 1,
-              evalDefinition: this.evalDefinition,
-            })
+          else {
+            if (this.depth <= this.maxDepth)
+              this.nw = new QuadTree({
+                definition: this.definition,
+                x: this.x,
+                y: this.y,
+                width: this.width / 2,
+                height: this.height / 2,
+                depth: this.depth + 1,
+                evalDefinition: this.evalDefinition,
+              })
+            else this.nw.setValue(val)
           }
           break
         case Quadrants.se:
@@ -198,16 +199,18 @@ class QuadTree {
           ]
           val = this.valueFunction(bl, br, tr, tl)
           if (val == 0 || val == 15) this.se.setValue(val)
-          else if (this.depth <= this.maxDepth) {
-            this.se = new QuadTree({
-              definition: this.definition,
-              x: this.x + this.width / 2,
-              y: this.y + this.height / 2,
-              width: this.width / 2,
-              height: this.height / 2,
-              depth: this.depth + 1,
-              evalDefinition: this.evalDefinition,
-            })
+          else {
+            if (this.depth <= this.maxDepth)
+              this.se = new QuadTree({
+                definition: this.definition,
+                x: this.x + this.width / 2,
+                y: this.y + this.height / 2,
+                width: this.width / 2,
+                height: this.height / 2,
+                depth: this.depth + 1,
+                evalDefinition: this.evalDefinition,
+              })
+            this.se.setValue(val)
           }
           break
         case Quadrants.sw:
@@ -222,16 +225,18 @@ class QuadTree {
           ]
           val = this.valueFunction(bl, br, tr, tl)
           if (val == 0 || val == 15) this.sw.setValue(val)
-          else if (this.depth <= this.maxDepth) {
-            this.sw = new QuadTree({
-              definition: this.definition,
-              x: this.x,
-              y: this.y + this.height / 2,
-              width: this.width / 2,
-              height: this.height / 2,
-              depth: this.depth + 1,
-              evalDefinition: this.evalDefinition,
-            })
+          else {
+            if (this.depth <= this.maxDepth)
+              this.sw = new QuadTree({
+                definition: this.definition,
+                x: this.x,
+                y: this.y + this.height / 2,
+                width: this.width / 2,
+                height: this.height / 2,
+                depth: this.depth + 1,
+                evalDefinition: this.evalDefinition,
+              })
+            else this.sw.setValue(val)
           }
           break
       }
@@ -274,29 +279,77 @@ export class ImplicitCurve extends AnimObject {
         let val = evaluate(this.definition, {
           x: (x - this.origin.x) / this.stepX,
           y: (this.origin.y - y) / this.stepY,
-          // x,
-          // y,
         })
         return val >= 0 ? 0 : 1
       },
     })
     console.log(this.quadTree)
+
+    // this.getContours(this.quadTree)
+  }
+
+  getContours(q: QuadTree | Quadrant) {
+    if (q instanceof QuadTree) {
+      this.getContours(q.ne)
+      this.getContours(q.nw)
+      this.getContours(q.se)
+      this.getContours(q.sw)
+    } else {
+      // get contours here
+    }
   }
 
   drawQuadtree(p: p5, q: QuadTree | Quadrant) {
     if (q instanceof QuadTree) {
-      p.fill('#ff0000')
+      // p.fill('#ff0000')
       this.drawQuadtree(p, q.ne)
-      p.fill('#00ff00')
+      // p.fill('#00ff00')
       this.drawQuadtree(p, q.nw)
-      p.fill('#0000ff')
+      // p.fill('#0000ff')
       this.drawQuadtree(p, q.se)
-      p.fill('#f0ff0f')
+      // p.fill('#f0ff0f')
       this.drawQuadtree(p, q.sw)
-      p.noFill()
+      // p.noFill()
     } else {
-      p.rect(q.x, q.y, q.width, q.height)
-      // return
+      // p.rect(q.x, q.y, q.width, q.height)
+      switch (q.value) {
+        case 1:
+        case 14:
+          p.line(q.x, q.y + q.height / 2, q.x + q.width / 2, q.y + q.height)
+          break
+        case 2:
+        case 13:
+          p.line(
+            q.x + q.width / 2,
+            q.y + q.height,
+            q.x + q.width,
+            q.y + q.height / 2
+          )
+          break
+        case 3:
+        case 12:
+          p.line(q.x, q.y + q.height / 2, q.x + q.width, q.y + q.height / 2)
+          break
+        case 4:
+        case 11:
+          p.line(q.x + q.width / 2, q.y, q.x + q.width, q.y + q.height / 2)
+          break
+        case 5:
+        case 10:
+          p.line(q.x, q.y + q.height / 2, q.x + q.width / 2, q.y + q.height)
+          p.line(q.x + q.width / 2, q.y, q.x + q.width, q.y + q.height / 2)
+          break
+        case 6:
+        case 9:
+          p.line(q.x + q.width / 2, q.y + q.height, q.x + q.width / 2, q.y)
+          break
+        case 7:
+        case 8:
+          p.line(q.x, q.y + q.height / 2, q.x + q.width / 2, q.y)
+          break
+        default:
+          return
+      }
     }
   }
 
