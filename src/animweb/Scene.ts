@@ -91,8 +91,6 @@ export default class Scene {
       extensions: [basicSetup, javascript(), EditorView.lineWrapping],
     })
 
-    let prevWindow = window
-
     document.querySelector('.btn-play')?.addEventListener('click', () => {
       this.resetScene()
 

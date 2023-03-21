@@ -1,9 +1,7 @@
-import { evaluate } from 'mathjs'
 import p5 from 'p5'
 import Color from '../helpers/Color'
 import StandardColors from '../helpers/StandardColors'
 import AnimObject, { AnimObjectProps } from './../AnimObject'
-import Line, { Lines } from './Line'
 
 interface ImplicitCurveProps extends AnimObjectProps {
   definition: string
@@ -20,7 +18,6 @@ export class ImplicitCurve extends AnimObject {
   stepX: number
   stepY: number
   origin: { x: number; y: number }
-  lines: Array<Line> = []
   quadTree?: any
   thickness: number = 1
   color: Color = StandardColors.Black()
@@ -67,17 +64,11 @@ export class ImplicitCurve extends AnimObject {
   drawQuadtree(p: p5, q: any) {
     let xMid, xMid1, xMid2
     if (q.ne) {
-      // p.fill('#ff0000')
       this.drawQuadtree(p, q.ne)
-      // p.fill('#00ff00')
       this.drawQuadtree(p, q.nw)
-      // p.fill('#0000ff')
       this.drawQuadtree(p, q.se)
-      // p.fill('#f0ff0f')
       this.drawQuadtree(p, q.sw)
-      // p.noFill()
     } else {
-      // p.rect(q.x, q.y, q.width, q.height)
       switch (q.value) {
         case 1:
         case 14:

@@ -15,6 +15,7 @@ import Text, { TextStyle } from './animweb/AnimObjects/Text'
 import { Observables, AnimObjects } from './animweb/AnimObject'
 import Constants from './animweb/helpers/Constants'
 import { wait } from './animweb/helpers/miscellaneous'
+import { ImplicitCurve } from './animweb/AnimObjects/ImplicitCurve'
 
 declare global {
   interface Window {
@@ -26,48 +27,6 @@ declare global {
 }
 
 let scene = new Scene(Width.full, Height.full, Colors.Gray(0))
-// let line = new Line({ form: Lines.SlopePoint, slope: 1, point: { x: 1, y: 1 } })
-// let plane = new NumberPlane({ showGridLines: true })
-
-// scene.add(await FadeIn(plane, { duration: 5 }))
-// await scene.wait()
-// let sinx = await plane.plot({
-//   definition: 'y = sin(x)',
-//   color: StandardColors.Green(),
-//   thickness: 3,
-//   transition: Transitions.Create,
-// })
-// await scene.wait()
-// let anchor = await sinx.addAnchorLine({
-//   x: 0,
-//   length: 3,
-//   color: StandardColors.Orange(),
-//   thickness: 3,
-//   transition: Transitions.Create,
-// })
-// await scene.wait(3000)
-
-// let text = new Text({
-//   text: 'Hi mom',
-//   position: { x: 10, y: 2 },
-//   size: 26,
-//   color: StandardColors.Blue(4),
-//   style: TextStyle.bold,
-//   parentData: {
-//     stepX: 50,
-//     stepY: 50,
-//   },
-// })
-// scene.add(text)
-// text.link(anchor, Observables.slope)
-// await scene.wait(2000)
-
-// let x = Math.PI
-// while (true) {
-//   await anchor.moveTo({ x, duration: 2 })
-//   await scene.wait()
-//   x *= -1
-// }
 
 window.WebAnim = {
   // Basic classes/functions
@@ -83,6 +42,7 @@ window.WebAnim = {
   Point,
   Curve,
   Text,
+  ImplicitCurve,
   // transitions
   Create,
   FadeIn,

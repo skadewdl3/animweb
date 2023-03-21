@@ -202,13 +202,10 @@ self.onmessage = ({ data }) => {
       x: (x - origin.x) / stepX,
       y: (origin.y - y) / stepY,
     })
-    return val >= 0 ? 0 : 1
+    return val > 0 ? 0 : 1
   }
 
   console.log(maxDepth)
   let quadTree = new QuadTree({ x, y, width, height, definition, depth, evalDefinition, maxDepth })
-  // console.log(JSON.stringify(quadTree))
   self.postMessage(JSON.stringify(quadTree))
-  // console.log(data)
-  // console.log(evaluate)
 }
