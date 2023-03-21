@@ -21,13 +21,7 @@ import { TransitionQueueItem } from './Transition'
 import { basicSetup, EditorView } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 
-const defaultDoc = `var w = window.WebAnim
-
-var plane = new w.NumberPlane()
-
-w.scene.add(plane)
-
-plane.plotImplicit({ definition: 'x^2 + y^2 - 25' })`
+const defaultDoc = `var w = window.WebAnim`
 
 export default class Scene {
   height: number
