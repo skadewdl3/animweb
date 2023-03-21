@@ -380,12 +380,26 @@ export default class NumberPlane extends AnimObject {
       let x = (tick.x - this.origin.x) / this.stepX
       let y = (this.origin.y - tick.y) / this.stepY
 
-      let pInitial = matrix([x, y])
+      let pInitial = matrix([[x], [y]])
       let pFinal = multiply(ltMatrix, pInitial).toArray()
       // @ts-ignore
       tick.x = this.origin.x + pFinal[0] * this.stepX
       // @ts-ignore
       tick.y = this.origin.y - pFinal[1] * this.stepY
+    }
+    for (let tick of this.yTicks) {
+      let x = (tick.x - this.origin.x) / this.stepX
+      let y = (this.origin.y - tick.y) / this.stepY
+      console.log(x, y)
+
+      let pInitial = matrix([[x], [y]])
+      console.log(pInitial)
+      let pFinal = multiply(ltMatrix, pInitial).toArray()
+      console.log(pFinal)
+      // @ts-ignore
+      tick.x = this.origin.x - pFinal[0] * this.stepX
+      // @ts-ignore
+      tick.y = this.origin.y + pFinal[1] * this.stepY
     }
   }
 }
