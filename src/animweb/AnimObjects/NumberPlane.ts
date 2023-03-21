@@ -7,6 +7,7 @@ import StandardColors from '../helpers/StandardColors'
 import Color from '../helpers/Color'
 import TransitionProps, { Transition, Transitions } from '../Transition'
 import Constants from '../helpers/Constants'
+import { ImplicitCurve } from './ImplicitCurve'
 
 interface NumberPlaneProps extends AnimObjectProps {
   stepX?: number
@@ -19,6 +20,14 @@ interface NumberPlaneProps extends AnimObjectProps {
   origin?: { x: number; y: number }
   showTicks?: boolean
   showGridLines?: boolean
+}
+
+interface ImplicitCurvePlotProps extends AnimObjectProps {
+  definition: string
+  sampleRate?: number
+  thickness?: number
+  transition?: Transitions
+  transitionOptions?: TransitionProps
 }
 
 interface CurvePlotProps extends AnimObjectProps {
@@ -53,6 +62,7 @@ export default class NumberPlane extends AnimObject {
   points: Array<Point> = []
   ticks: Array<Point> = []
   curves: Array<Curve> = []
+  implicitCurves: Array<ImplicitCurve> = []
   axes: Array<Line> = []
   xTicks: Array<Point> = []
   yTicks: Array<Point> = []
@@ -60,6 +70,7 @@ export default class NumberPlane extends AnimObject {
   yGrid: Array<Line> = []
   showTicks: boolean = true
   showGridLines: boolean = false
+
   iterables = [
     'points',
     'ticks',
@@ -69,6 +80,7 @@ export default class NumberPlane extends AnimObject {
     'yTicks',
     'xGrid',
     'yGrid',
+    'implicitCurves',
   ]
 
   constructor({
@@ -216,31 +228,35 @@ export default class NumberPlane extends AnimObject {
   }
 
   draw(p: p5) {
-    this.axes.forEach(axes => {
+    this.axes.forEach((axes) => {
       axes.draw(p)
     })
 
-    this.xTicks.forEach(tick => {
+    this.xTicks.forEach((tick) => {
       tick.draw(p)
     })
-    this.yTicks.forEach(tick => {
+    this.yTicks.forEach((tick) => {
       tick.draw(p)
     })
 
     p.translate(-this.width / 2, 0)
-    this.xGrid.forEach(line => line.draw(p))
+    this.xGrid.forEach((line) => line.draw(p))
     p.translate(this.width / 2, 0)
 
     p.translate(0, +this.height / 2)
-    this.yGrid.forEach(line => line.draw(p))
+    this.yGrid.forEach((line) => line.draw(p))
     p.translate(0, -this.height / 2)
 
-    this.points.forEach(point => {
+    this.points.forEach((point) => {
       point.draw(p)
     })
 
-    this.curves.forEach(curve => {
+    this.curves.forEach((curve) => {
       curve.draw(p)
+    })
+
+    this.implicitCurves.forEach((implicitCurve) => {
+      implicitCurve.draw(p)
     })
   }
 
@@ -340,6 +356,19 @@ export default class NumberPlane extends AnimObject {
         this.curves.push(curve)
       }
       resolve(this.curves[this.curves.length - 1])
+    })
+  }
+
+  async plotImplicit(config: ImplicitCurvePlotProps): Promise<ImplicitCurve> {
+    return new Promise((resolve, reject) => {
+      this.implicitCurves.push(
+        new ImplicitCurve({
+          ...config,
+          stepX: this.stepX,
+          stepY: this.stepY,
+          origin: this.origin,
+        })
+      )
     })
   }
 }
