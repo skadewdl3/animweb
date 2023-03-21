@@ -21,6 +21,7 @@ declare global {
     p5: any
     P5Capture: any
     WebAnim: any
+    BuildBridgedWorker: any
   }
 }
 
