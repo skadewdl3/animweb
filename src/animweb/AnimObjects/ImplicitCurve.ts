@@ -1,7 +1,19 @@
 import { evaluate } from 'mathjs'
 import p5 from 'p5'
-import AnimObject from './../AnimObject'
+import Color from '../helpers/Color'
+import StandardColors from '../helpers/StandardColors'
+import AnimObject, { AnimObjectProps } from './../AnimObject'
 import Line, { Lines } from './Line'
+
+interface ImplicitCurveProps extends AnimObjectProps {
+  definition: string
+  sampleRate?: number
+  stepX: number
+  stepY: number
+  origin: { x: number; y: number }
+  thickness?: number
+  color?: Color
+}
 
 export class ImplicitCurve extends AnimObject {
   definition: string = ''
@@ -10,23 +22,17 @@ export class ImplicitCurve extends AnimObject {
   origin: { x: number; y: number }
   lines: Array<Line> = []
   quadTree?: any
+  thickness: number = 1
+  color: Color = StandardColors.Black()
 
-  constructor({
-    definition,
-    stepX,
-    stepY,
-    origin,
-  }: {
-    definition: string
-    stepX: number
-    stepY: number
-    origin: { x: number; y: number }
-  }) {
+  constructor(config: ImplicitCurveProps) {
     super()
-    this.definition = definition
-    this.stepX = stepX
-    this.stepY = stepY
-    this.origin = origin
+    this.definition = config.definition
+    this.stepX = config.stepX
+    this.stepY = config.stepY
+    this.origin = config.origin
+    if (config.thickness) this.thickness = config.thickness
+    if (config.color) this.color = config.color
 
     let worker = new Worker(
       new URL('./../helpers/QuadTree.worker.js', import.meta.url),
@@ -43,7 +49,7 @@ export class ImplicitCurve extends AnimObject {
       origin: this.origin,
       stepX: this.stepX,
       stepY: this.stepY,
-      maxDepth: 9,
+      maxDepth: config.sampleRate ? config.sampleRate / 100 : 9,
     })
 
     worker.onmessage = ({ data }) => {
@@ -184,8 +190,8 @@ export class ImplicitCurve extends AnimObject {
   }
 
   draw(p: p5) {
-    p.stroke('#000')
-    p.strokeWeight(3)
+    p.stroke(this.color.rgba)
+    p.strokeWeight(this.thickness)
     if (this.quadTree) {
       this.drawQuadtree(p, this.quadTree.ne)
       this.drawQuadtree(p, this.quadTree.nw)

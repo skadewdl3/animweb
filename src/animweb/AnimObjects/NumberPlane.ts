@@ -24,6 +24,10 @@ interface NumberPlaneProps extends AnimObjectProps {
 
 interface ImplicitCurvePlotProps extends AnimObjectProps {
   definition: string
+  sampleRate?: number
+  thickness?: number
+  transition?: Transitions
+  transitionOptions?: TransitionProps
 }
 
 interface CurvePlotProps extends AnimObjectProps {
