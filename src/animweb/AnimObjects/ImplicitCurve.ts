@@ -1,6 +1,7 @@
 import { evaluate } from 'mathjs'
 import p5 from 'p5'
 import AnimObject from './../AnimObject'
+import Line, { Lines } from './Line'
 
 enum Quadrants {
   ne = 'ne',
@@ -49,7 +50,7 @@ class QuadTree {
   se: QuadTree | Quadrant
   sw: QuadTree | Quadrant
   depth: number
-  maxDepth: number = 6
+  maxDepth: number = 9
   x: number = 0
   y: number = 0
   width: number = 0
@@ -83,6 +84,7 @@ class QuadTree {
     depth: number
     evalDefinition: (x: number, y: number) => number
   }) {
+    console.log('calculating quadtree')
     this.x = x
     this.y = y
     this.depth = depth
@@ -249,7 +251,7 @@ export class ImplicitCurve extends AnimObject {
   stepX: number
   stepY: number
   origin: { x: number; y: number }
-
+  lines: Array<Line> = []
   quadTree: QuadTree
 
   constructor({
@@ -284,22 +286,17 @@ export class ImplicitCurve extends AnimObject {
       },
     })
     console.log(this.quadTree)
-
-    // this.getContours(this.quadTree)
   }
 
-  getContours(q: QuadTree | Quadrant) {
-    if (q instanceof QuadTree) {
-      this.getContours(q.ne)
-      this.getContours(q.nw)
-      this.getContours(q.se)
-      this.getContours(q.sw)
-    } else {
-      // get contours here
-    }
+  interpolate(x1: number, y1: number, x2: number, y2: number) {
+    let r = -y2 / (y1 - y2)
+
+    if (r >= 0 && r <= 1) return r * (x1 - x2) + x2
+    return (x1 + x2) * 0.5
   }
 
   drawQuadtree(p: p5, q: QuadTree | Quadrant) {
+    let xMid, xMid1, xMid2
     if (q instanceof QuadTree) {
       // p.fill('#ff0000')
       this.drawQuadtree(p, q.ne)
@@ -315,37 +312,108 @@ export class ImplicitCurve extends AnimObject {
       switch (q.value) {
         case 1:
         case 14:
-          p.line(q.x, q.y + q.height / 2, q.x + q.width / 2, q.y + q.height)
+          xMid = this.interpolate(
+            q.x,
+            q.x + q.width / 2,
+            q.x + q.width / 2,
+            q.y + q.height
+          )
+          p.line(q.x, q.y + q.height / 2, xMid, q.y + q.height / 2)
+          p.line(xMid, q.y + q.height / 2, q.x + q.width / 2, q.y + q.height)
+
           break
         case 2:
         case 13:
-          p.line(
+          xMid = this.interpolate(
             q.x + q.width / 2,
             q.y + q.height,
             q.x + q.width,
             q.y + q.height / 2
           )
+          p.line(q.x + q.width / 2, q.y + q.height, xMid, q.y + q.height / 2)
+
+          p.line(xMid, q.y + q.height / 2, q.x + q.width, q.y + q.height / 2)
           break
         case 3:
         case 12:
-          p.line(q.x, q.y + q.height / 2, q.x + q.width, q.y + q.height / 2)
+          xMid = this.interpolate(
+            q.x,
+            q.y + q.height / 2,
+            q.x + q.width,
+            q.y + q.height / 2
+          )
+          p.line(q.x, q.y + q.height / 2, xMid, q.y + q.height / 2)
+          p.line(xMid, q.y + q.height / 2, q.x + q.width, q.y + q.height / 2)
           break
         case 4:
         case 11:
-          p.line(q.x + q.width / 2, q.y, q.x + q.width, q.y + q.height / 2)
+          xMid = this.interpolate(
+            q.x + q.width / 2,
+            q.y,
+            q.x + q.width,
+            q.y + q.height / 2
+          )
+          p.line(q.x + q.width / 2, q.y, xMid, q.y + q.height / 2)
+          p.line(xMid, q.y + q.height / 2, q.x + q.width, q.y + q.height / 2)
           break
         case 5:
+          xMid1 = this.interpolate(
+            q.x,
+            q.y + q.height / 2,
+            q.x + q.width / 2,
+            q.y + q.height
+          )
+          xMid2 = this.interpolate(
+            q.x + q.width / 2,
+            q.y,
+            q.x + q.width,
+            q.y + q.height / 2
+          )
+          p.line(q.x, q.y + q.height / 2, xMid1, q.y + q.height)
+          p.line(xMid1, q.y + q.height, q.x + q.width / 2, q.y + q.height)
+          p.line(q.x + q.width / 2, q.y, xMid2, q.y + q.height / 2)
+          p.line(xMid2, q.y + q.height / 2, q.x + q.width, q.y + q.height / 2)
+          break
         case 10:
-          p.line(q.x, q.y + q.height / 2, q.x + q.width / 2, q.y + q.height)
-          p.line(q.x + q.width / 2, q.y, q.x + q.width, q.y + q.height / 2)
+          xMid1 = this.interpolate(
+            q.x,
+            q.y + q.height / 2,
+            q.x + q.width / 2,
+            q.y
+          )
+          xMid2 = this.interpolate(
+            q.x + q.width / 2,
+            q.y + q.height,
+            q.x + q.width,
+            q.y + q.height / 2
+          )
+          p.line(q.x, q.y + q.height / 2, xMid1, q.y)
+          p.line(xMid1, q.y, q.x + q.width / 2, q.y)
+          p.line(q.x + q.width / 2, q.y + q.height, xMid2, q.y + q.height / 2)
+          p.line(xMid2, q.y + q.height / 2, q.x + q.width, q.y + q.height / 2)
           break
         case 6:
         case 9:
-          p.line(q.x + q.width / 2, q.y + q.height, q.x + q.width / 2, q.y)
+          xMid = this.interpolate(
+            q.x + q.width / 2,
+            q.y + q.height,
+            q.x + q.width / 2,
+            q.y
+          )
+          p.line(q.x + q.width / 2, q.y + q.height, xMid, q.y)
+          p.line(xMid, q.y, q.x + q.width / 2, q.y)
           break
         case 7:
         case 8:
-          p.line(q.x, q.y + q.height / 2, q.x + q.width / 2, q.y)
+          // xMid = this.interpolate(
+          //   q.x,
+          //   q.y + q.height / 2,
+          //   q.x + q.width / 2,
+          //   q.y
+          // )
+          // p.line(q.x, q.y + q.height / 2, xMid, q.y)
+          // p.line(xMid, q.y, q.x + q.width / 2, q.y)
+          // p.line(q.x, q.y + q.height / 2, q.x + q.width / 2, q.y)
           break
         default:
           return
