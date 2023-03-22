@@ -87,7 +87,7 @@ export class ImplicitCurve extends AnimObject {
         case 14:
           xMid = this.interpolate(
             q.x,
-            q.x + q.width / 2,
+            q.y + q.height / 2,
             q.x + q.width / 2,
             q.y + q.height
           )
