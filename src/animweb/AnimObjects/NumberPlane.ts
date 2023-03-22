@@ -8,6 +8,7 @@ import Color from '../helpers/Color'
 import TransitionProps, { Transition, Transitions } from '../Transition'
 import Constants from '../helpers/Constants'
 import { ImplicitCurve } from './ImplicitCurve'
+import { matrix, multiply } from 'mathjs'
 
 interface NumberPlaneProps extends AnimObjectProps {
   stepX?: number
@@ -370,5 +371,35 @@ export default class NumberPlane extends AnimObject {
         })
       )
     })
+  }
+
+  async transform(lt: [[number, number], [number, number]]) {
+    console.log(lt)
+    let ltMatrix = matrix(lt)
+    for (let tick of this.xTicks) {
+      let x = (tick.x - this.origin.x) / this.stepX
+      let y = (this.origin.y - tick.y) / this.stepY
+
+      let pInitial = matrix([[x], [y]])
+      let pFinal = multiply(ltMatrix, pInitial).toArray()
+      // @ts-ignore
+      tick.x = this.origin.x + pFinal[0] * this.stepX
+      // @ts-ignore
+      tick.y = this.origin.y - pFinal[1] * this.stepY
+    }
+    for (let tick of this.yTicks) {
+      let x = (tick.x - this.origin.x) / this.stepX
+      let y = (this.origin.y - tick.y) / this.stepY
+      console.log(x, y)
+
+      let pInitial = matrix([[x], [y]])
+      console.log(pInitial)
+      let pFinal = multiply(ltMatrix, pInitial).toArray()
+      console.log(pFinal)
+      // @ts-ignore
+      tick.x = this.origin.x - pFinal[0] * this.stepX
+      // @ts-ignore
+      tick.y = this.origin.y + pFinal[1] * this.stepY
+    }
   }
 }

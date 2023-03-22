@@ -28,7 +28,7 @@ declare global {
 
 let scene = new Scene(Width.full, Height.full, Colors.Gray(0))
 
-window.WebAnim = {
+let WebAnim = {
   // Basic classes/functions
   scene,
   Color,
@@ -37,12 +37,12 @@ window.WebAnim = {
   Height,
   wait,
   // AnimObjects
-  NumberPlane,
-  Line,
-  Point,
-  Curve,
-  Text,
-  ImplicitCurve,
+  NumberPlane: (config: any) => new NumberPlane(config),
+  Line: (config: any) => new Line(config),
+  Point: (config: any) => new Point(config),
+  Curve: (config: any) => new Curve(config),
+  Text: (config: any) => new Text(config),
+  ImplicitCurve: (config: any) => new ImplicitCurve(config),
   // transitions
   Create,
   FadeIn,
@@ -55,3 +55,6 @@ window.WebAnim = {
   AnimObjects,
   Constants,
 }
+
+window.WebAnim = WebAnim
+export default WebAnim

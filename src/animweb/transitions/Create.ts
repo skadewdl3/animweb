@@ -16,7 +16,7 @@ const hideObject = (object: AnimObject, shouldHide: boolean) => {
 }
 
 const hideObjects = (arr: Array<AnimObject>, shouldHide: boolean) => {
-  arr.forEach(obj => hideObject(obj, shouldHide))
+  arr.forEach((obj) => hideObject(obj, shouldHide))
 }
 
 const createLineTransition = (
@@ -65,7 +65,6 @@ const createLineTransition = (
 
   return () => {
     if (!queued && transitionData.type == TransitionTypes.single) {
-      console.log(object)
       object.queueTransition(transitionQueueItem)
       queued = true
     }
@@ -74,7 +73,6 @@ const createLineTransition = (
       transitionData.type == TransitionTypes.group &&
       transitionData.isFirst
     ) {
-      console.log(transitionQueueItem)
       object.queueTransition(transitionQueueItem)
       queued = true
     }
@@ -83,7 +81,6 @@ const createLineTransition = (
         object.transition = null
         object.range = [lowerBound, upperBound]
         if (queued && transitionData.type == TransitionTypes.single) {
-          console.log(transitionQueueItem)
           object.unqueueTransition(transitionQueueItem)
         }
         if (
@@ -150,7 +147,6 @@ const createStaggeredLineTransitions = async (
   totalDuration: number
 ) => {
   let id = uuid()
-  console.log('id', id)
   let durationPerLine = totalDuration / arr.length
   for (let i = 0; i < arr.length; i++) {
     let line = arr[i]
@@ -207,7 +203,6 @@ const createPointTransition = (
     transitionData.isFirst &&
     !queued
   ) {
-    console.log('queued')
     object.unqueueTransition(transitionQueueItem)
   }
   return () => {
@@ -276,7 +271,7 @@ const Create = async (
       hideObjects(object.points, true)
       hideObjects(object.curves, true)
 
-      object.curves.forEach(curve => {
+      object.curves.forEach((curve) => {
         if (curve instanceof Curve) hideObjects(curve.lines, true)
       })
 
@@ -289,7 +284,7 @@ const Create = async (
         createLineTransitions(object.yGrid, config, totalDuration / 4)
         wait((totalDuration / 6) * 1000).then(() => {
           createPointTransitions(object.points, config, totalDuration / 4)
-          object.curves.forEach(curve => {
+          object.curves.forEach((curve) => {
             if (curve instanceof Curve)
               createStaggeredLineTransitions(
                 curve.lines,
