@@ -1,11 +1,10 @@
 # Final Code
 
 ```
-var w = window.WebAnim
-var plane = new w.NumberPlane({ showGridLines: true })
+var plane = new NumberPlane({ showGridLines: true })
 
-w.scene.add(await w.FadeIn(plane))
-await w.scene.wait(1000)
+scene.add(await FadeIn(plane))
+await scene.wait(1000)
 
-plane.point({ x: -1, y: 1, transition: w.Transitions.Create, color: w.Colors.Orange(), size: 10 })
+plane.point({ x: -1, y: 1, transition: Transitions.Create, color: Colors.Orange(), size: 10 })
 ```
