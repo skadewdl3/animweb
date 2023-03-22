@@ -83,14 +83,14 @@ class QuadTree {
       let bl, br, tr, tl, val
       switch (q.direction) {
         case 'ne':
-          ;[bl, br, tr, tl] = [
+          [bl, br, tr, tl] = [
             this.evalDefinition(
               this.x + this.width / 2,
               this.y + this.height / 2
             ),
             this.evalDefinition(this.x + this.width, this.y + this.height / 2),
             this.evalDefinition(this.x + this.width, this.y),
-            this.evalDefinition(this.x, this.y),
+            this.evalDefinition(this.x + this.width / 2, this.y),
           ]
           val = this.valueFunction(bl, br, tr, tl)
           if (val == 0 || val == 15) this.ne.setValue(val)
@@ -110,7 +110,7 @@ class QuadTree {
           }
           break
         case 'nw':
-          ;[bl, br, tr, tl] = [
+          [bl, br, tr, tl] = [
             this.evalDefinition(this.x, this.y + this.height / 2),
             this.evalDefinition(
               this.x + this.width / 2,
@@ -137,7 +137,7 @@ class QuadTree {
           }
           break
         case 'se':
-          ;[bl, br, tr, tl] = [
+          [bl, br, tr, tl] = [
             this.evalDefinition(this.x + this.width / 2, this.y + this.height),
             this.evalDefinition(this.x + this.width, this.y + this.height),
             this.evalDefinition(this.x + this.width, this.y + this.height / 2),
@@ -206,6 +206,21 @@ self.onmessage = ({ data }) => {
   }
 
   console.log(maxDepth)
-  let quadTree = new QuadTree({ x, y, width, height, definition, depth, evalDefinition, maxDepth })
+  let biggerDimension = width > height ? width : height
+  console.log(biggerDimension)
+  let quadTree = new QuadTree({ x, y, width: biggerDimension, height: biggerDimension, definition, depth, evalDefinition, maxDepth })
   self.postMessage(JSON.stringify(quadTree))
+  quadTree = undefined
+  definition = undefined
+  depth = undefined
+  height = undefined
+  width = undefined
+  x = undefined
+  y = undefined
+  origin = undefined
+  stepX = undefined
+  stepY = undefined
+  maxDepth = undefined
+  biggerDimension = undefined
+  evalDefinition = undefined
 }
