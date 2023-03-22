@@ -28,7 +28,7 @@ declare global {
 
 let scene = new Scene(Width.full, Height.full, Colors.Gray(0))
 
-window.WebAnim = {
+let WebAnim = {
   // Basic classes/functions
   scene,
   Color,
@@ -55,3 +55,6 @@ window.WebAnim = {
   AnimObjects,
   Constants,
 }
+
+window.WebAnim = WebAnim
+export default WebAnim
