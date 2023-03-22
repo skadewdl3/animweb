@@ -1,17 +1,16 @@
 # Final Code
 
 ```
-var w = window.WebAnim
-var plane = new w.NumberPlane({ showGridLines: true })
+var plane = new NumberPlane({ showGridLines: true })
 
-w.scene.add(await w.FadeIn(plane))
-await w.scene.wait(1000)
+scene.add(await FadeIn(plane))
+await scene.wait(1000)
 
-var cosx = await plane.plot({ definition: 'y = cos(x)', color: w.Colors.Green(), thickness: 5, transition: w.Transitions.FadeIn })
-await w.scene.wait()
+var cosx = await plane.plot({ definition: 'y = cos(x)', color: Colors.Green(), thickness: 5, transition: Transitions.FadeIn })
+await scene.wait()
 
-var tangent = await cosx.addAnchorLine({ x: 0, color: w.Colors.Orange(), thickness: 3, transition: w.Transitions.Create })
-await w.scene.wait(1000)
+var tangent = await cosx.addAnchorLine({ x: 0, color: Colors.Orange(), thickness: 3, transition: Transitions.Create })
+await scene.wait(1000)
 
 tangent.moveTo({ x: Math.PI })
 ```
