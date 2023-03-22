@@ -66,7 +66,7 @@ export class ImplicitCurve extends AnimObject {
       })
 
       this.webWorker.onmessage = ({ data }) => {
-        console.log(data)
+        console.log(JSON.parse(data))
         this.quadTree = JSON.parse(data)
         this.calculatingQuadtree = false
         this.webWorker.terminate()
