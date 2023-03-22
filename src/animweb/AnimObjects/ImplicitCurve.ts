@@ -1,4 +1,5 @@
 import p5 from 'p5'
+import { v4 as uuid } from 'uuid'
 import Color from '../helpers/Color'
 import StandardColors from '../helpers/StandardColors'
 import AnimObject, { AnimObjectProps } from './../AnimObject'
@@ -21,6 +22,13 @@ export class ImplicitCurve extends AnimObject {
   quadTree?: any
   thickness: number = 1
   color: Color = StandardColors.Black()
+  sampleRate: number = 9
+  calculatingQuadtree: boolean = false
+  id: string = uuid()
+  webWorker: Worker = new Worker(
+    new URL('./../helpers/QuadTree.worker.js', import.meta.url),
+    { type: 'module' }
+  )
 
   constructor(config: ImplicitCurveProps) {
     super()
@@ -30,28 +38,7 @@ export class ImplicitCurve extends AnimObject {
     this.origin = config.origin
     if (config.thickness) this.thickness = config.thickness
     if (config.color) this.color = config.color
-
-    let worker = new Worker(
-      new URL('./../helpers/QuadTree.worker.js', import.meta.url),
-      { type: 'module' }
-    )
-
-    worker.postMessage({
-      x: 0,
-      y: 0,
-      width: this.sceneWidth,
-      height: this.sceneHeight,
-      definition: this.definition,
-      depth: 0,
-      origin: this.origin,
-      stepX: this.stepX,
-      stepY: this.stepY,
-      maxDepth: config.sampleRate ? config.sampleRate / 100 : 9,
-    })
-
-    worker.onmessage = ({ data }) => {
-      this.quadTree = JSON.parse(data)
-    }
+    if (config.sampleRate) this.sampleRate = config.sampleRate / 100
   }
 
   interpolate(x1: number, y1: number, x2: number, y2: number) {
@@ -59,6 +46,32 @@ export class ImplicitCurve extends AnimObject {
 
     if (r >= 0 && r <= 1) return r * (x1 - x2) + x2
     return (x1 + x2) * 0.5
+  }
+
+  calculateQuadtree() {
+    this.calculatingQuadtree = true
+    if (this.webWorker) {
+      this.webWorker.postMessage({
+        x: 0,
+        y: 0,
+        width: this.sceneWidth,
+        height: this.sceneHeight,
+        definition: this.definition,
+        depth: 0,
+        origin: this.origin,
+        stepX: this.stepX,
+        stepY: this.stepY,
+        maxDepth: this.sampleRate,
+        id: this.id,
+      })
+
+      this.webWorker.onmessage = ({ data }) => {
+        console.log(data)
+        this.quadTree = JSON.parse(data)
+        this.calculatingQuadtree = false
+        this.webWorker.terminate()
+      }
+    }
   }
 
   drawQuadtree(p: p5, q: any) {
@@ -188,6 +201,8 @@ export class ImplicitCurve extends AnimObject {
       this.drawQuadtree(p, this.quadTree.nw)
       this.drawQuadtree(p, this.quadTree.se)
       this.drawQuadtree(p, this.quadTree.sw)
+    } else {
+      if (!this.calculatingQuadtree) this.calculateQuadtree()
     }
     p.noStroke()
   }

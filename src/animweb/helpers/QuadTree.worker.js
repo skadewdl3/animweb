@@ -208,4 +208,16 @@ self.onmessage = ({ data }) => {
   console.log(maxDepth)
   let quadTree = new QuadTree({ x, y, width, height, definition, depth, evalDefinition, maxDepth })
   self.postMessage(JSON.stringify(quadTree))
+  quadTree = undefined
+  definition = undefined
+  depth = undefined
+  height = undefined
+  width = undefined
+  x = undefined
+  y = undefined
+  origin = undefined
+  stepX = undefined
+  stepY = undefined
+  maxDepth = undefined
+  evalDefinition = undefined
 }

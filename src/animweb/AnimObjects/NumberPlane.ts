@@ -353,7 +353,6 @@ export default class NumberPlane extends AnimObject {
           this.unqueueTransition,
           this.waitBeforeTransition
         )
-        console.log(curve)
         this.curves.push(curve)
       }
       resolve(this.curves[this.curves.length - 1])
@@ -362,14 +361,19 @@ export default class NumberPlane extends AnimObject {
 
   async plotImplicit(config: ImplicitCurvePlotProps): Promise<ImplicitCurve> {
     return new Promise((resolve, reject) => {
-      this.implicitCurves.push(
-        new ImplicitCurve({
-          ...config,
-          stepX: this.stepX,
-          stepY: this.stepY,
-          origin: this.origin,
-        })
+      let curve = new ImplicitCurve({
+        ...config,
+        stepX: this.stepX,
+        stepY: this.stepY,
+        origin: this.origin,
+      })
+      curve.updateTransitionQueueFunctions(
+        this.queueTransition,
+        this.unqueueTransition,
+        this.waitBeforeTransition
       )
+      this.implicitCurves.push(curve)
+      console.log(this.implicitCurves)
     })
   }
 
