@@ -37,12 +37,12 @@ let WebAnim = {
   Height,
   wait,
   // AnimObjects
-  NumberPlane,
-  Line,
-  Point,
-  Curve,
-  Text,
-  ImplicitCurve,
+  NumberPlane: (config: any) => new NumberPlane(config),
+  Line: (config: any) => new Line(config),
+  Point: (config: any) => new Point(config),
+  Curve: (config: any) => new Curve(config),
+  Text: (config: any) => new Text(config),
+  ImplicitCurve: (config: any) => new ImplicitCurve(config),
   // transitions
   Create,
   FadeIn,

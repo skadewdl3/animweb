@@ -100,12 +100,9 @@ export default class Scene {
       userScript.className = 'user-script'
       userScript.type = 'module'
       // @ts-ignore
-      console.log(WebAnim)
-
       let defaultExports = ``
 
       for (let property in WebAnim) {
-        console.log(property)
         defaultExports = defaultExports.concat(`
         var ${property} = window.WebAnim.${property}
         `)
