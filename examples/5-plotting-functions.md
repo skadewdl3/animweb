@@ -1,10 +1,10 @@
 # Final Code
 
 ```
-var plane = new NumberPlane({ showGridLines: true })
+var plane = NumberPlane({ showGridLines: true })
 
-scene.add(await FadeIn(plane))
-await scene.wait(1000)
+FadeIn(plane)
+await wait(1000)
 
 plane.plot({ definition: 'y = sin(x)', color: Colors.Green(), thickness: 5, transition: Transitions.Create })
 ```

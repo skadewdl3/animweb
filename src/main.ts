@@ -35,8 +35,8 @@ let WebAnim = {
   Colors: StandardColors,
   Width,
   Height,
-  wait,
-  show: (config: any) => scene.add(config),
+  wait: async (config: any) => scene.wait(config),
+  show: async (config: any) => scene.add(config),
   // AnimObjects
   NumberPlane: (config: any) => new NumberPlane(config),
   Line: (config: any) => new Line(config),
@@ -45,8 +45,8 @@ let WebAnim = {
   Text: (config: any) => new Text(config),
   ImplicitCurve: (config: any) => new ImplicitCurve(config),
   // transitions
-  Create,
-  FadeIn,
+  Create: async (config: any) => scene.add(await Create(config)),
+  FadeIn: async (config: any) => scene.add(await FadeIn(config)),
   FadeOut,
   // enums
   Transitions,
