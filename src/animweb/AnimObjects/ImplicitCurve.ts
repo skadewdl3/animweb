@@ -29,6 +29,8 @@ export class ImplicitCurve extends AnimObject {
     new URL('./../helpers/QuadTree.worker.js', import.meta.url),
     { type: 'module' }
   )
+  graphicsBuffer: any
+  shouldRedraw: boolean = true
 
   constructor(config: ImplicitCurveProps) {
     super()
@@ -91,8 +93,18 @@ export class ImplicitCurve extends AnimObject {
             q.x + q.width / 2,
             q.y + q.height
           )
-          p.line(q.x, q.y + q.height / 2, xMid, q.y + q.height / 2)
-          p.line(xMid, q.y + q.height / 2, q.x + q.width / 2, q.y + q.height)
+          this.graphicsBuffer.line(
+            q.x,
+            q.y + q.height / 2,
+            xMid,
+            q.y + q.height / 2
+          )
+          this.graphicsBuffer.line(
+            xMid,
+            q.y + q.height / 2,
+            q.x + q.width / 2,
+            q.y + q.height
+          )
 
           break
         case 2:
@@ -103,9 +115,19 @@ export class ImplicitCurve extends AnimObject {
             q.x + q.width,
             q.y + q.height / 2
           )
-          p.line(q.x + q.width / 2, q.y + q.height, xMid, q.y + q.height / 2)
+          this.graphicsBuffer.line(
+            q.x + q.width / 2,
+            q.y + q.height,
+            xMid,
+            q.y + q.height / 2
+          )
 
-          p.line(xMid, q.y + q.height / 2, q.x + q.width, q.y + q.height / 2)
+          this.graphicsBuffer.line(
+            xMid,
+            q.y + q.height / 2,
+            q.x + q.width,
+            q.y + q.height / 2
+          )
           break
         case 3:
         case 12:
@@ -115,8 +137,18 @@ export class ImplicitCurve extends AnimObject {
             q.x + q.width,
             q.y + q.height / 2
           )
-          p.line(q.x, q.y + q.height / 2, xMid, q.y + q.height / 2)
-          p.line(xMid, q.y + q.height / 2, q.x + q.width, q.y + q.height / 2)
+          this.graphicsBuffer.line(
+            q.x,
+            q.y + q.height / 2,
+            xMid,
+            q.y + q.height / 2
+          )
+          this.graphicsBuffer.line(
+            xMid,
+            q.y + q.height / 2,
+            q.x + q.width,
+            q.y + q.height / 2
+          )
           break
         case 4:
         case 11:
@@ -126,8 +158,18 @@ export class ImplicitCurve extends AnimObject {
             q.x + q.width,
             q.y + q.height / 2
           )
-          p.line(q.x + q.width / 2, q.y, xMid, q.y + q.height / 2)
-          p.line(xMid, q.y + q.height / 2, q.x + q.width, q.y + q.height / 2)
+          this.graphicsBuffer.line(
+            q.x + q.width / 2,
+            q.y,
+            xMid,
+            q.y + q.height / 2
+          )
+          this.graphicsBuffer.line(
+            xMid,
+            q.y + q.height / 2,
+            q.x + q.width,
+            q.y + q.height / 2
+          )
           break
         case 5:
           xMid1 = this.interpolate(
@@ -142,10 +184,30 @@ export class ImplicitCurve extends AnimObject {
             q.x + q.width,
             q.y + q.height / 2
           )
-          p.line(q.x, q.y + q.height / 2, xMid1, q.y + q.height)
-          p.line(xMid1, q.y + q.height, q.x + q.width / 2, q.y + q.height)
-          p.line(q.x + q.width / 2, q.y, xMid2, q.y + q.height / 2)
-          p.line(xMid2, q.y + q.height / 2, q.x + q.width, q.y + q.height / 2)
+          this.graphicsBuffer.line(
+            q.x,
+            q.y + q.height / 2,
+            xMid1,
+            q.y + q.height
+          )
+          this.graphicsBuffer.line(
+            xMid1,
+            q.y + q.height,
+            q.x + q.width / 2,
+            q.y + q.height
+          )
+          this.graphicsBuffer.line(
+            q.x + q.width / 2,
+            q.y,
+            xMid2,
+            q.y + q.height / 2
+          )
+          this.graphicsBuffer.line(
+            xMid2,
+            q.y + q.height / 2,
+            q.x + q.width,
+            q.y + q.height / 2
+          )
           break
         case 10:
           xMid1 = this.interpolate(
@@ -160,10 +222,20 @@ export class ImplicitCurve extends AnimObject {
             q.x + q.width,
             q.y + q.height / 2
           )
-          p.line(q.x, q.y + q.height / 2, xMid1, q.y)
-          p.line(xMid1, q.y, q.x + q.width / 2, q.y)
-          p.line(q.x + q.width / 2, q.y + q.height, xMid2, q.y + q.height / 2)
-          p.line(xMid2, q.y + q.height / 2, q.x + q.width, q.y + q.height / 2)
+          this.graphicsBuffer.line(q.x, q.y + q.height / 2, xMid1, q.y)
+          this.graphicsBuffer.line(xMid1, q.y, q.x + q.width / 2, q.y)
+          this.graphicsBuffer.line(
+            q.x + q.width / 2,
+            q.y + q.height,
+            xMid2,
+            q.y + q.height / 2
+          )
+          this.graphicsBuffer.line(
+            xMid2,
+            q.y + q.height / 2,
+            q.x + q.width,
+            q.y + q.height / 2
+          )
           break
         case 6:
         case 9:
@@ -173,8 +245,8 @@ export class ImplicitCurve extends AnimObject {
             q.x + q.width / 2,
             q.y
           )
-          p.line(q.x + q.width / 2, q.y + q.height, xMid, q.y)
-          p.line(xMid, q.y, q.x + q.width / 2, q.y)
+          this.graphicsBuffer.line(q.x + q.width / 2, q.y + q.height, xMid, q.y)
+          this.graphicsBuffer.line(xMid, q.y, q.x + q.width / 2, q.y)
           break
         case 7:
         case 8:
@@ -184,8 +256,8 @@ export class ImplicitCurve extends AnimObject {
             q.x + q.width / 2,
             q.y
           )
-          p.line(q.x, q.y + q.height / 2, xMid, q.y)
-          p.line(xMid, q.y, q.x + q.width / 2, q.y)
+          this.graphicsBuffer.line(q.x, q.y + q.height / 2, xMid, q.y)
+          this.graphicsBuffer.line(xMid, q.y, q.x + q.width / 2, q.y)
           break
         default:
           return
@@ -194,16 +266,21 @@ export class ImplicitCurve extends AnimObject {
   }
 
   draw(p: p5) {
-    p.stroke(this.color.rgba)
-    p.strokeWeight(this.thickness)
-    if (this.quadTree) {
+    if (!this.graphicsBuffer) {
+      this.graphicsBuffer = p.createGraphics(this.sceneWidth, this.sceneHeight)
+    }
+    this.graphicsBuffer.stroke(this.color.rgba)
+    this.graphicsBuffer.strokeWeight(this.thickness)
+    if (this.quadTree && this.shouldRedraw) {
       this.drawQuadtree(p, this.quadTree.ne)
       this.drawQuadtree(p, this.quadTree.nw)
       this.drawQuadtree(p, this.quadTree.se)
       this.drawQuadtree(p, this.quadTree.sw)
+      this.shouldRedraw = false
     } else {
       if (!this.calculatingQuadtree) this.calculateQuadtree()
     }
-    p.noStroke()
+    p.image(this.graphicsBuffer, 0, 0)
+    this.graphicsBuffer.noStroke()
   }
 }

@@ -1,5 +1,5 @@
 const Constants = {
-  FrameRate: 60,
+  FrameRate: 120,
   fadeInLineDuration: 1,
   fadeInPointDuration: 0.5,
   createLineDuration: 1,
