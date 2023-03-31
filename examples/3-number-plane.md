@@ -1,7 +1,7 @@
 # Final Code
 
 ```
-var plane = new NumberPlane({ showGridLines: true })
+var plane = NumberPlane({ showGridLines: true })
 
-scene.add(await Create(plane))
+Create(plane)
 ```
