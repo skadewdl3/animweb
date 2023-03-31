@@ -30,7 +30,7 @@ With that out of the way, let's get animating!
 
 2. To start, let us create a line. Type the following code (keep the first line as is) into the code editor:
 
-`var line = new Line({ form: Lines.SlopePoint, slope: 1, point: {x: 0, y: 0} })`
+`var line = Line({ form: Lines.SlopePoint, slope: 1, point: {x: 0, y: 0} })`
 
 Though you typed it, you might not see anything. To see the animations, you have to hit the **Play** button (above the code editor).
 
@@ -38,7 +38,7 @@ Did you click the play button ? Still no dice right ? That's because we haven't 
 
 3. Add the line to the scene by typing the following:
 
-`scene.add(line)`
+`show(line)`
 
 Now, click the play button - and Voila! We have a lin on the screen.
 
@@ -46,12 +46,12 @@ Now, click the play button - and Voila! We have a lin on the screen.
 
 4. But our lines looks very boring right now, and it's not animated either. So let's snazz it up a bit. Modify the line code to the following:
 
-`var line = new Line({ form: Lines.SlopePoint, slope: 1, point: {x: 0, y: 0}, color: Colors.Green(), thickness: 5 })`
+`var line = Line({ form: Lines.SlopePoint, slope: 1, point: {x: 0, y: 0}, color: Colors.Green(), thickness: 5 })`
 
 5. Now to actually animate a line, we can use a **Transition**. AnimWeb uses Transitions to do all kinds of animations. Here, let's use the Create transition to animate our line.
    Modify the scene.add line to the following:
 
-`scene.add(await Create(line, { duration: 10 }))`
+`Create(line, { duration: 10 })`
 
 Hit play - and **BOOM**! You just created your own math animation in under 3 lines of code!
 
