@@ -56,23 +56,23 @@ export default class Scene {
 
     document.body.insertAdjacentHTML(
       'beforeend',
-      `
-    <div class="user-controls" style="position: absolute; top: 2rem; right: 1rem; min-width: 40%; max-width: 40%; min-height: 95vh">
+      `<div class="user-controls" style="position: absolute; top: 2rem; right: 1rem; min-width: 40%; max-width: 40%; min-height: 95vh">
         <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 1rem">
           <p style="font-family: sans-serif; font-size:3rem" class="code-title">Code</p>
           <div style="display: flex; align-items: center; justify-content: center">
-          
           <button class="btn btn-play">Play</button>
           <button class="btn btn-clear">Clear</button>
            <button class="btn btn-hide-code">Hide Code</button>
            <button  class="btn btn-show-code hidden">Show Code</button>
           </div>
         </div>
+        <div class="code-error hidden">
+        <div class="code-error-message"></div>
+        <div class="code-error-line"></div>
+        </div>
         <div class="codemirror-editor-container">
-        
         </div>
     </div>
-    
     <style>
     .btn-play {
       display: block;
@@ -80,7 +80,18 @@ export default class Scene {
     .btn-hidden {
       display: none;
     }
-    
+    .code-error {
+      font-size: 1.6rem;
+      color: #ff0000;
+      padding: 1rem 1rem;
+      background: #fff;
+      border-top-right-radius: 1rem;
+      border-top-left-radius: 1rem;
+      border-bottom: solid 0.2rem rgba(183, 21, 64,0.5);
+    }
+    .code-error-message {
+      font-weight: bold;  
+    }
     </style>
     `
     )
@@ -93,38 +104,46 @@ export default class Scene {
     })
 
     document.querySelector('.btn-play')?.addEventListener('click', () => {
+      document.querySelector('.code-error')?.classList.add('hidden')
       this.resetScene()
 
       document.querySelector('.user-script')?.remove()
       let userScript = document.createElement('script')
       userScript.className = 'user-script'
       userScript.type = 'module'
-      // @ts-ignore
+
       let defaultExports = ``
-
       for (let property in WebAnim) {
-        defaultExports = defaultExports.concat(`
-        var ${property} = window.WebAnim.${property}
-        `)
+        defaultExports = defaultExports.concat(
+          `var ${property} = window.WebAnim.${property}\n`
+        )
       }
+      // @ts-ignore
 
-      let inlineCode = document.createTextNode(`try {
-        ${defaultExports}
-        ${editor.state.doc.toString()}
-      }
-      catch (err) {
-        console.log('caught error: ', err)
-      }`)
+      let inlineCode = document.createTextNode(
+        `try {\n${defaultExports}${editor.state.doc.toString()}\n}\ncatch (err) {
+          let [errLineNumber, errLineColumn] = err.stack.split(':').slice(-2).map((i) => parseInt(i))
+          let errType = err.stack.split(':')[0]
+          let codeError = document.querySelector('.code-error') 
+          document.querySelector('.code-error-message').textContent = errType + ': ' + err.message
+          document.querySelector('.code-error-line').textContent = 'at line ' + parseInt(errLineNumber - ${
+            defaultExports.split('\n').length
+          })
+          codeError.classList.remove('hidden')
+      }`
+      )
       userScript.appendChild(inlineCode)
       document.body.appendChild(userScript)
       this.startLoop()
     })
 
     document.querySelector('.btn-clear')?.addEventListener('click', () => {
+      document.querySelector('.code-error')?.classList.add('hidden')
       this.objects = []
       this.resetScene()
     })
     document.querySelector('.btn-hide-code')?.addEventListener('click', () => {
+      document.querySelector('.code-error')?.classList.add('hidden')
       document.querySelector('.btn-hide-code')?.classList.add('hidden')
       document.querySelector('.btn-show-code')?.classList.remove('hidden')
       document
@@ -133,6 +152,7 @@ export default class Scene {
       document.querySelector('.code-title')?.classList.add('hidden-text')
     })
     document.querySelector('.btn-show-code')?.addEventListener('click', () => {
+      document.querySelector('.code-error')?.classList.remove('hidden')
       document.querySelector('.btn-hide-code')?.classList.remove('hidden')
       document.querySelector('.btn-show-code')?.classList.add('hidden')
       document
@@ -140,6 +160,23 @@ export default class Scene {
         ?.classList.remove('hidden')
       document.querySelector('.code-title')?.classList.remove('hidden-text')
     })
+    // @ts-ignore
+    window.onerror = (message: string, _, line: number) => {
+      let defaultExports = ``
+      for (let property in WebAnim) {
+        defaultExports = defaultExports.concat(
+          `var ${property} = window.WebAnim.${property}\n`
+        )
+      }
+      let codeError = document.querySelector('.code-error')
+      // @ts-ignore
+      document.querySelector('.code-error-message').textContent = message
+      // @ts-ignore
+      document.querySelector('.code-error-line').textContent = `at line ${
+        line - defaultExports.split('\n').length
+      }`
+      codeError?.classList.remove('hidden')
+    }
     new p5(this.sketch)
   }
 
