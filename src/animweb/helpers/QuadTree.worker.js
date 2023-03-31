@@ -1,4 +1,4 @@
-import { evaluate } from 'mathjs'
+import { evaluate, parse } from 'mathjs'
 
 class Quadrant {
   value = 0
@@ -197,8 +197,13 @@ class QuadTree {
 self.onmessage = ({ data }) => {
   let { definition, depth, height, width, x, y, origin, stepX, stepY, maxDepth } = data
 
+  console.log(definition)
+
+  const node = parse(definition)
+  const code = node.compile()
+
   let evalDefinition = (x, y) => {
-    let val = evaluate(definition, {
+    let val = code.evaluate({
       x: (x - origin.x) / stepX,
       y: (origin.y - y) / stepY,
     })
