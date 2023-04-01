@@ -214,6 +214,7 @@ export default class Scene {
   }
 
   unqueueTransition(transition: TransitionQueueItem) {
+    console.log(this.transitionQueue)
     this.transitionQueue = this.transitionQueue.filter(({ id }) => {
       return id != transition.id
     })

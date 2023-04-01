@@ -366,6 +366,7 @@ export default class NumberPlane extends AnimObject {
         let transitionOptions = config.transitionOptions
           ? config.transitionOptions
           : {}
+
         let implicitCurve = await transition(
           new ImplicitCurve({
             ...config,
@@ -375,8 +376,14 @@ export default class NumberPlane extends AnimObject {
           }),
           transitionOptions
         )
+        implicitCurve.updateTransitionQueueFunctions(
+          this.queueTransition,
+          this.unqueueTransition,
+          this.waitBeforeTransition
+        )
         if (implicitCurve instanceof ImplicitCurve) {
           this.implicitCurves.push(implicitCurve)
+          resolve(implicitCurve)
           // console.log(implicitCurve)
         }
       } else {
@@ -392,6 +399,7 @@ export default class NumberPlane extends AnimObject {
           this.waitBeforeTransition
         )
         this.implicitCurves.push(implicitCurve)
+        resolve(implicitCurve)
       }
     })
   }

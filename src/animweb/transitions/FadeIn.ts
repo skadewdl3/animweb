@@ -154,7 +154,12 @@ const FadeIn = async (
           })
           object.implicitCurves.forEach((implicitCurve) => {
             if (implicitCurve instanceof ImplicitCurve) {
-              fadeInTransition(implicitCurve, config, {}, totalDuration / 3)
+              implicitCurve.transition = fadeInTransition(
+                implicitCurve,
+                config,
+                {},
+                totalDuration / 3
+              )
             }
           })
         })
