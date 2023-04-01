@@ -15,7 +15,7 @@ import Text, { TextStyle } from './animweb/AnimObjects/Text'
 import { Observables, AnimObjects } from './animweb/AnimObject'
 import Constants from './animweb/helpers/Constants'
 import { wait } from './animweb/helpers/miscellaneous'
-import { ImplicitCurve } from './animweb/AnimObjects/ImplicitCurve'
+import ImplicitCurve from './animweb/AnimObjects/ImplicitCurve'
 
 declare global {
   interface Window {

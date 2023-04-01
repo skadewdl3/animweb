@@ -1,15 +1,14 @@
 import AnimObject, { AnimObjects } from '../AnimObject'
 import Curve from '../AnimObjects/Curve'
-import { ImplicitCurve } from '../AnimObjects/ImplicitCurve'
+import Point from '../AnimObjects/Point'
 import Line from '../AnimObjects/Line'
 import NumberPlane from '../AnimObjects/NumberPlane'
-import Point from '../AnimObjects/Point'
-import Color from '../helpers/Color'
+import ImplicitCurve from '../AnimObjects/ImplicitCurve'
+import Text from '../AnimObjects/Text'
 import Constants from '../helpers/Constants'
-import { wait, roundOff, rangePerFrame } from '../helpers/miscellaneous'
+import { wait, rangePerFrame } from '../helpers/miscellaneous'
 import TransitionProps, { TransitionTypes } from '../Transition'
 import { v4 as uuid } from 'uuid'
-import Text from '../AnimObjects/Text'
 
 interface FadeOutTransitionProps extends TransitionProps {}
 
