@@ -8,6 +8,7 @@ import Constants from '../helpers/Constants'
 import { wait, roundOff, rangePerFrame } from '../helpers/miscellaneous'
 import TransitionProps, { TransitionTypes } from '../Transition'
 import { ImplicitCurve } from '../AnimObjects/ImplicitCurve'
+import Text from '../AnimObjects/Text'
 
 interface FadeInTransitionProps extends TransitionProps {}
 
@@ -77,7 +78,6 @@ const fadeInTransition = (
     } else {
       object.color.setAlpha(object.color.rgbaVals[3] + speed)
     }
-    // console.log(duration)
   }
 }
 
@@ -170,7 +170,11 @@ const FadeIn = async (
     } else if (object instanceof ImplicitCurve) {
       resetColor(object)
       object.transition = fadeInTransition(object, config)
+    } else if (object instanceof Text) {
+      resetColor(object)
+      object.transition = fadeInTransition(object, config)
     }
+    console.log(object instanceof Text)
 
     resolve(object)
   })

@@ -9,6 +9,7 @@ import Constants from '../helpers/Constants'
 import { wait, roundOff, rangePerFrame } from '../helpers/miscellaneous'
 import TransitionProps, { TransitionTypes } from '../Transition'
 import { v4 as uuid } from 'uuid'
+import Text from '../AnimObjects/Text'
 
 interface FadeOutTransitionProps extends TransitionProps {}
 
@@ -168,6 +169,9 @@ const FadeOut = async (
       object.lines.forEach((line) => resetColor(line))
       fadeOutTransitions(object.lines, config)
     } else if (object instanceof ImplicitCurve) {
+      resetColor(object)
+      object.transition = fadeOutTransition(object, config)
+    } else if (object instanceof Text) {
       resetColor(object)
       object.transition = fadeOutTransition(object, config)
     }
