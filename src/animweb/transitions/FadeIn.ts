@@ -7,7 +7,7 @@ import Point from '../AnimObjects/Point'
 import Constants from '../helpers/Constants'
 import { wait, roundOff, rangePerFrame } from '../helpers/miscellaneous'
 import TransitionProps, { TransitionTypes } from '../Transition'
-import { ImplicitCurve } from '../AnimObjects/ImplicitCurve'
+import ImplicitCurve from '../AnimObjects/ImplicitCurve'
 import Text from '../AnimObjects/Text'
 
 interface FadeInTransitionProps extends TransitionProps {}

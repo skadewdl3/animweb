@@ -3,6 +3,7 @@ import { v4 as uuid } from 'uuid'
 import Color from '../helpers/Color'
 import StandardColors from '../helpers/StandardColors'
 import AnimObject, { AnimObjectProps } from './../AnimObject'
+import { roundOff } from '../helpers/miscellaneous'
 
 interface ImplicitCurveProps extends AnimObjectProps {
   definition: string
@@ -14,7 +15,7 @@ interface ImplicitCurveProps extends AnimObjectProps {
   color?: Color
 }
 
-export class ImplicitCurve extends AnimObject {
+export default class ImplicitCurve extends AnimObject {
   definition: string = ''
   stepX: number
   stepY: number
@@ -280,7 +281,8 @@ export class ImplicitCurve extends AnimObject {
     } else {
       if (!this.calculatingQuadtree) this.calculateQuadtree()
     }
-    p.tint(255, this.color.rgbaVals[3] * 255)
+    if (this.transition) console.log(this.color)
+    p.tint(255, roundOff(this.color.rgbaVals[3] * 255, 2))
     p.image(this.graphicsBuffer, 0, 0)
     this.graphicsBuffer.noStroke()
   }

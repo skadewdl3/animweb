@@ -7,7 +7,7 @@ import StandardColors from '../helpers/StandardColors'
 import Color from '../helpers/Color'
 import TransitionProps, { Transition, Transitions } from '../Transition'
 import Constants from '../helpers/Constants'
-import { ImplicitCurve } from './ImplicitCurve'
+import ImplicitCurve from './ImplicitCurve'
 import { matrix, multiply } from 'mathjs'
 
 interface NumberPlaneProps extends AnimObjectProps {
