@@ -1,7 +1,7 @@
 # Final Code
 
 ```
-var plane = NumberPlane({ showGridLines: true })
+var plane = NumberPlane({ grid: true })
 
 Create(plane)
 ```

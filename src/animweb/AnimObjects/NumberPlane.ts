@@ -20,7 +20,7 @@ interface NumberPlaneProps extends AnimObjectProps {
   y?: number
   origin?: { x: number; y: number }
   showTicks?: boolean
-  showGridLines?: boolean
+  grid?: boolean
 }
 
 interface ImplicitCurvePlotProps extends AnimObjectProps {
@@ -70,7 +70,7 @@ export default class NumberPlane extends AnimObject {
   xGrid: Array<Line> = []
   yGrid: Array<Line> = []
   showTicks: boolean = true
-  showGridLines: boolean = false
+  grid: boolean = false
 
   iterables = [
     'points',
@@ -95,7 +95,7 @@ export default class NumberPlane extends AnimObject {
     origin,
     color,
     showTicks = true,
-    showGridLines = false,
+    grid = false,
   }: NumberPlaneProps = {}) {
     super()
     this.stepX = stepX ? stepX : step
@@ -109,7 +109,7 @@ export default class NumberPlane extends AnimObject {
       : { x: (this.x + this.width) / 2, y: (this.y + this.height) / 2 }
 
     this.showTicks = showTicks
-    this.showGridLines = showGridLines
+    this.grid = grid
 
     // +ve x-axis
     if (this.showTicks) {
@@ -157,7 +157,7 @@ export default class NumberPlane extends AnimObject {
       }
     }
 
-    if (this.showGridLines) {
+    if (this.grid) {
       for (let i = 0; i < Math.floor(this.width / (2 * this.stepX)); i++) {
         this.xGrid.push(
           new Line({
