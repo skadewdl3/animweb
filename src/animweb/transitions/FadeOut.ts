@@ -1,5 +1,6 @@
 import AnimObject, { AnimObjects } from '../AnimObject'
 import Curve from '../AnimObjects/Curve'
+import { ImplicitCurve } from '../AnimObjects/ImplicitCurve'
 import Line from '../AnimObjects/Line'
 import NumberPlane from '../AnimObjects/NumberPlane'
 import Point from '../AnimObjects/Point'
@@ -8,6 +9,7 @@ import Constants from '../helpers/Constants'
 import { wait, roundOff, rangePerFrame } from '../helpers/miscellaneous'
 import TransitionProps, { TransitionTypes } from '../Transition'
 import { v4 as uuid } from 'uuid'
+import Text from '../AnimObjects/Text'
 
 interface FadeOutTransitionProps extends TransitionProps {}
 
@@ -17,14 +19,14 @@ const resetColor = (object: AnimObject) => {
 }
 
 const resetColors = (arr: Array<AnimObject>) => {
-  arr.forEach(object => resetColor(object))
+  arr.forEach((object) => resetColor(object))
 }
 
 const fadeOutTransition = (
   object: AnimObject,
   config: FadeOutTransitionProps,
   transitionData: {
-    type: TransitionTypes
+    type?: TransitionTypes
     isFirst?: boolean
     isLast?: boolean
     id?: string
@@ -133,13 +135,26 @@ const FadeOut = async (
       resetColors(object.yGrid)
       resetColors(object.xGrid)
       resetColors(object.points)
-      object.curves.forEach(curve => {
+      object.curves.forEach((curve) => {
         resetColors(curve.lines)
+      })
+      object.implicitCurves.forEach((implicitCurve) => {
+        resetColor(implicitCurve)
       })
 
       fadeOutTransitions(object.points, config, totalDuration / 3)
-      object.curves.forEach(curve => {
+      object.curves.forEach((curve) => {
         fadeOutTransitions(curve.lines, config, totalDuration / 3)
+      })
+      object.implicitCurves.forEach((implicitCurve) => {
+        if (implicitCurve instanceof ImplicitCurve) {
+          implicitCurve.transition = fadeOutTransition(
+            implicitCurve,
+            config,
+            {},
+            totalDuration / 3
+          )
+        }
       })
       wait((totalDuration / 3) * 1000).then(() => {
         fadeOutTransitions(object.xTicks, config, totalDuration / 3)
@@ -151,8 +166,14 @@ const FadeOut = async (
         })
       })
     } else if (object instanceof Curve) {
-      object.lines.forEach(line => resetColor(line))
+      object.lines.forEach((line) => resetColor(line))
       fadeOutTransitions(object.lines, config)
+    } else if (object instanceof ImplicitCurve) {
+      resetColor(object)
+      object.transition = fadeOutTransition(object, config)
+    } else if (object instanceof Text) {
+      resetColor(object)
+      object.transition = fadeOutTransition(object, config)
     }
     resolve(object)
   })

@@ -91,6 +91,7 @@ export default class Text extends AnimObject {
   }
 
   draw(p: p5) {
+    if (this.transition) this.transition()
     p.fill(this.color.rgba)
     p.textSize(this.size)
     switch (this.style) {

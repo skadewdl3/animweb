@@ -223,6 +223,5 @@ self.onmessage = ({ data }) => {
   stepX = undefined
   stepY = undefined
   maxDepth = undefined
-  biggerDimension = undefined
   evalDefinition = undefined
 }
