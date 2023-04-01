@@ -63,7 +63,7 @@ export default class AnimObject {
   id: string // A unique identifier created for every AnimObject. Used to identify which AnimObject to remove when Scene.remove is called
   color: Color = StandardColors.Black() // The fill color of the AnimObject. subclasses may or may not use this prop
   backgroundColor: Color = StandardColors.Transparent() // The fill bg color of the AnimObject. subclasses may or may not use this prop
-  transition: any = () => {} // A placeholder method that is used to smoothly animate the AnimObject
+  transition: any = null // A placeholder method that is used to smoothly animate the AnimObject
   maxAlpha: number = 1
   observers: Array<Observer> = [] // An array containing the AnimObjects that are observing come property of this AnimObject
   iterables: Array<string> = []

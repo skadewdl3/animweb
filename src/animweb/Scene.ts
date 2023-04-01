@@ -87,10 +87,11 @@ export default class Scene {
       background: #fff;
       border-top-right-radius: 1rem;
       border-top-left-radius: 1rem;
-      border-bottom: solid 0.2rem rgba(183, 21, 64,0.5);
+      border: solid 0.2rem rgba(183, 21, 64,0.5);
     }
     .code-error-message {
       font-weight: bold;  
+      margin-bottom: 0.5rem;
     }
     </style>
     `

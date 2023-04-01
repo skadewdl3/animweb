@@ -24,7 +24,6 @@ export class ImplicitCurve extends AnimObject {
   color: Color = StandardColors.Black()
   sampleRate: number = 9
   calculatingQuadtree: boolean = false
-  id: string = uuid()
   webWorker: Worker = new Worker(
     new URL('./../helpers/QuadTree.worker.js', import.meta.url),
     { type: 'module' }
@@ -266,6 +265,7 @@ export class ImplicitCurve extends AnimObject {
   }
 
   draw(p: p5) {
+    if (this.transition) this.transition()
     if (!this.graphicsBuffer) {
       this.graphicsBuffer = p.createGraphics(this.sceneWidth, this.sceneHeight)
     }
@@ -280,6 +280,7 @@ export class ImplicitCurve extends AnimObject {
     } else {
       if (!this.calculatingQuadtree) this.calculateQuadtree()
     }
+    p.tint(255, this.color.rgbaVals[3] * 255)
     p.image(this.graphicsBuffer, 0, 0)
     this.graphicsBuffer.noStroke()
   }
