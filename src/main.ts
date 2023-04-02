@@ -16,6 +16,7 @@ import { Observables, AnimObjects } from './animweb/AnimObject'
 import Constants from './animweb/helpers/Constants'
 import { wait } from './animweb/helpers/miscellaneous'
 import ImplicitCurve from './animweb/AnimObjects/ImplicitCurve'
+import LaTeX from './animweb/AnimObjects/LaTeX'
 
 declare global {
   interface Window {
@@ -44,6 +45,7 @@ let WebAnim = {
   Curve: (config: any) => new Curve(config),
   Text: (config: any) => new Text(config),
   ImplicitCurve: (config: any) => new ImplicitCurve(config),
+  LaTeX: (config: any) => new LaTeX(config),
   // transitions
   Create: async (config: any) => scene.add(await Create(config)),
   FadeIn: async (config: any) => scene.add(await FadeIn(config)),

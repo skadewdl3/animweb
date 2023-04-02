@@ -30,10 +30,7 @@ export default class Scene {
   sketch: any
   objects: Array<AnimObject>
   backgroundColor: Color
-  shouldRecord: boolean = false
   canvasElement: HTMLElement | null = null
-  recorder: any = null
-  loopStopped: boolean = false
   stopLoop: any = null
   startLoop: any = null
   transitionQueue: Array<TransitionQueueItem> = []
