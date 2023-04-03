@@ -42,7 +42,10 @@ export default class LaTeX extends AnimObject {
   constructor(config: LaTeXProps) {
     super()
     this.latex = config.latex
-    this.latexSVG = TeXToSVG(String.raw`${this.latex}`)
+    let temp = JSON.stringify(this.latex).split('')
+    temp.splice(0, 1)
+    temp.splice(-1, 1)
+    this.latexSVG = TeXToSVG(temp.join(''))
     this.base64 = svg64(this.latexSVG)
     // console.log(this.base64)
     if (config.color) this.color = config.color
