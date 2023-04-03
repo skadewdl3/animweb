@@ -190,6 +190,11 @@ export default class NumberPlane extends AnimObject {
             point: { x: this.origin.x + this.stepX * i, y: this.origin.y },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
@@ -203,6 +208,11 @@ export default class NumberPlane extends AnimObject {
             point: { x: this.origin.x - this.stepX * i, y: this.origin.y },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
@@ -216,6 +226,11 @@ export default class NumberPlane extends AnimObject {
             point: { x: this.origin.x, y: this.origin.y - this.stepY * i },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
@@ -229,6 +244,11 @@ export default class NumberPlane extends AnimObject {
             point: { x: this.origin.x, y: this.origin.y + this.stepY * i },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
@@ -453,6 +473,12 @@ export default class NumberPlane extends AnimObject {
     }
     for (let point of this.points) {
       point.transform(ltMatrix)
+    }
+    for (let line of this.xGrid) {
+      line.transform(ltMatrix)
+    }
+    for (let line of this.yGrid) {
+      line.transform(ltMatrix)
     }
   }
 }
