@@ -46,6 +46,9 @@ let WebAnim = {
   Text: (config: any) => new Text(config),
   ImplicitCurve: (config: any) => new ImplicitCurve(config),
   LaTeX: (config: any) => new LaTeX(config),
+  Latex: (config: any) => new LaTeX(config),
+  TeX: (config: any) => new LaTeX(config),
+  Tex: (config: any) => new LaTeX(config),
   // transitions
   Create: async (config: any) => scene.add(await Create(config)),
   FadeIn: async (config: any) => scene.add(await FadeIn(config)),

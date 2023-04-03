@@ -1,4 +1,4 @@
-import { evaluate, round } from 'mathjs'
+import { Matrix, evaluate, matrix, multiply } from 'mathjs'
 import p5 from 'p5'
 import { v4 as uuid } from 'uuid'
 import AnimObject, {
@@ -150,6 +150,21 @@ class Point extends AnimObject {
           }
         }
       }
+    })
+  }
+
+  transform(ltMatrix: Matrix): Promise<void> {
+    return new Promise((resolve, reject) => {
+      let x = (this.x - this.parentData.origin.x) / this.parentData.stepX
+      let y = (this.parentData.origin.y - this.y) / this.parentData.stepY
+
+      let pInitial = matrix([[x], [y]])
+      let pFinal = multiply(ltMatrix, pInitial).toArray()
+      // @ts-ignore
+      this.x = this.parentData.origin.x + pFinal[0] * this.parentData.stepX
+      // @ts-ignore
+      this.y = this.parentData.origin.y - pFinal[1] * this.parentData.stepY
+      resolve()
     })
   }
 

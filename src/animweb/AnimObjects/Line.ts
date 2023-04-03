@@ -6,7 +6,15 @@ import AnimObject, {
 } from '../AnimObject'
 import p5 from 'p5'
 import Colors from '../helpers/StandardColors'
-import { evaluate, derivative, round, unit } from 'mathjs'
+import {
+  evaluate,
+  derivative,
+  round,
+  unit,
+  Matrix,
+  matrix,
+  multiply,
+} from 'mathjs'
 import { rangePerFrame, roundOff } from '../helpers/miscellaneous'
 
 export enum Lines {
@@ -88,6 +96,7 @@ export default class Line extends AnimObject {
   thickness: number = 1
   definition: string = ''
   length: number = Infinity
+  offset: number = 0
 
   constructor(config: LineProps) {
     super()
@@ -121,27 +130,21 @@ export default class Line extends AnimObject {
       case Lines.DoublePoint:
         let { x1, x2, y1, y2 } = config
         let s = (y2 - y1) / (x2 - x1)
+        let c = y1 - this.slope * x1
         this.setSlope(s)
-        this.y = (x: number) => {
-          let c = y1 - this.slope * x1
-          return this.slope * x + c
-        }
+        this.offset = c
         this.x = (y: number) => x1
         break
       case Lines.SlopePoint:
         let { point } = config
         this.setSlope(config.slope)
-        this.y = (x: number) => {
-          return this.slope * x + (point.y - this.slope * point.x)
-        }
+        this.offset = point.y - this.slope * point.x
         this.x = (y: number) => point.x
         break
       case Lines.SlopeIntercept:
         let { xIntercept = 0, yIntercept = 0 } = config
         this.setSlope(config.slope)
-        this.y = (x: number) => {
-          return this.slope * (x + xIntercept) + yIntercept
-        }
+        this.offset = yIntercept
         this.x = (y: number) =>
           xIntercept == Infinity || xIntercept == -Infinity
             ? yIntercept
@@ -150,18 +153,20 @@ export default class Line extends AnimObject {
       case Lines.DoubleIntercept:
         let { xIntercept: a, yIntercept: b } = config
         this.setSlope(-b / a)
-        this.y = (x: number) => {
-          return b - this.slope * x
-        }
+        this.offset = b
         this.x = (y: number) => (a == Infinity || b == -Infinity ? b : a)
         break
-      case Lines.Normal:
-        let { alpha, distance } = config
-        this.y = (x: number) => {
-          this.setSlope(-1 / Math.tan((3 * Math.PI) / 2 + alpha))
-          return distance / Math.sin(alpha) + x * this.slope
-        }
+      // case Lines.Normal:
+      //   let { alpha, distance } = config
+      //   this.y = (x: number) => {
+      //     this.setSlope(-1 / Math.tan((3 * Math.PI) / 2 + alpha))
+      //     return distance / Math.sin(alpha) + x * this.slope
+      //   }
       // bug: case of slope = Infinty
+      // fix this go awful code later
+    }
+    this.y = (x: number) => {
+      return this.slope * x + this.offset
     }
     let { range, domain } = this.getLimitsFromLength(0, 0)
     this.domain = domain
@@ -312,6 +317,69 @@ export default class Line extends AnimObject {
           }
         }
       }
+    })
+  }
+
+  transform(ltMatrix: Matrix): Promise<void> {
+    return new Promise((resolve, reject) => {
+      // let { x1, x2, y1, y2 } = config
+      // let s = (y2 - y1) / (x2 - x1)
+      // this.setSlope(s)
+      // this.y = (x: number) => {
+      //   let c = y1 - this.slope * x1
+      //   return this.slope * x + c
+      // }
+      // this.x = (y: number) => x1
+      let x1: number, x2: number, y1: number, y2: number
+      if (this.slope == Infinity || this.slope == -Infinity) {
+        console.log('x', this.x(0))
+        ;[x1, y1, x2, y2] = [this.x(0), 1, this.x(0), 2]
+        let s = (y2 - y1) / (x2 - x1)
+        // let c = y1 - this.slope * x1
+        // this.setSlope(s)
+        // this.offset = c
+        // this.x = (y: number) => x1
+      } else if (this.slope == 0) {
+        ;[x1, y1, x2, y2] = [1, this.y(this.x(0)), 2, this.y(this.x(0))]
+        let s = (y2 - y1) / (x2 - x1)
+        // let c = y1 - this.slope * x1
+        // this.setSlope(s)
+        // this.offset = c
+        // this.x = (y: number) => x1
+      } else {
+        ;[x1, y1, x2, y2] = [0, this.offset, this.x(0), this.y(this.x(0))]
+      }
+      // x1 = (x1 - this.parentData.origin.x) / this.parentData.stepX
+      // y1 = (this.parentData.origin.y - y1) / this.parentData.stepY
+      // x2 = (x2 - this.parentData.origin.x) / this.parentData.stepX
+      // y2 = (this.parentData.origin.y - y2) / this.parentData.stepY
+      console.log(x1, y1, x2, y2)
+
+      let pInitial1 = matrix([[x1], [y1]])
+      let pInitial2 = matrix([[x2], [y2]])
+      let pFinal1 = multiply(ltMatrix, pInitial1).toArray()
+      let pFinal2 = multiply(ltMatrix, pInitial2).toArray()
+      // @ts-ignore
+      // x1 = this.parentData.origin.x + pFinal1[0] * this.parentData.stepX
+      x1 = pFinal1[0]
+      // @ts-ignore
+      // y1 = this.parentData.origin.y + pFinal1[1] * this.parentData.stepY
+      y1 = pFinal1[1]
+      // @ts-ignore
+      // x2 = this.parentData.origin.x + pFinal2[0] * this.parentData.stepX
+      x2 = pFinal2[0]
+      // @ts-ignore
+      // y2 = this.parentData.origin.y + pFinal2[1] * this.parentData.stepY
+      y2 = pFinal2[1]
+      let s = (y2 - y1) / (x2 - x1)
+      this.setSlope(s)
+      let c = y1 - this.slope * x1
+      this.offset = c
+      this.y = (x: number) => {
+        return this.slope * x + c
+      }
+      this.x = (y: number) => x1
+      resolve()
     })
   }
 

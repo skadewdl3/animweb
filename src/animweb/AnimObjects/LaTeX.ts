@@ -61,11 +61,9 @@ export default class LaTeX extends AnimObject {
 
   draw(p: p5) {
     if (!this.latexImage) this.latexImage = p.loadImage(this.base64)
-    // if (this.transition) this.transition()
-    // p.fill(this.color.rgba)
-    // p.textSize(this.size)
-    // p.text(this.latex, this.x, this.y)
-    // p.noFill()
-    if (this.latexImage) p.image(this.latexImage, this.x, this.y)
+    if (this.latexImage) {
+      if (this.transition) this.transition()
+      p.image(this.latexImage, this.x, this.y)
+    }
   }
 }

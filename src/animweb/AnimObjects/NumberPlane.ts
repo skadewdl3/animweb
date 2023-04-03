@@ -118,7 +118,13 @@ export default class NumberPlane extends AnimObject {
           new Point({
             x: this.origin.x + this.stepX * i,
             y: this.origin.y,
-            color: new Color(this.color.rgbaVals),
+            // color: new Color(this.color.rgbaVals),
+            color: StandardColors.Blue(),
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
@@ -129,29 +135,47 @@ export default class NumberPlane extends AnimObject {
           new Point({
             x: this.origin.x - this.stepX * i,
             y: this.origin.y,
-            color: new Color(this.color.rgbaVals),
+            // color: new Color(this.color.rgbaVals),
+            color: StandardColors.Blue(),
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
 
       // +ve y-axis
-      for (let i = 1; i < Math.floor(this.height / (2 * this.stepY)); i++) {
+      // shitty fix to show complete transformation. fix later.
+      for (let i = 1; i < 2 * Math.floor(this.height / (2 * this.stepY)); i++) {
         this.yTicks.push(
           new Point({
             x: this.origin.x,
             y: this.origin.y - this.stepY * i,
             color: new Color(this.color.rgbaVals),
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
 
       // -ve y-axis
-      for (let i = 1; i < Math.floor(this.height / (2 * this.stepY)); i++) {
+      // shitty fix to show complete transformation. fix later.
+      for (let i = 1; i < 2 * Math.floor(this.height / (2 * this.stepY)); i++) {
         this.yTicks.unshift(
           new Point({
             x: this.origin.x,
             y: this.origin.y + this.stepY * i,
             color: new Color(this.color.rgbaVals),
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
@@ -223,7 +247,8 @@ export default class NumberPlane extends AnimObject {
         form: Lines.SlopePoint,
         slope: 0,
         point: { x: 0, y: 0 },
-        color: new Color(this.color.rgbaVals),
+        // color: new Color(this.color.rgbaVals),
+        color: StandardColors.Blue(),
       })
     )
   }
@@ -408,29 +433,13 @@ export default class NumberPlane extends AnimObject {
     console.log(lt)
     let ltMatrix = matrix(lt)
     for (let tick of this.xTicks) {
-      let x = (tick.x - this.origin.x) / this.stepX
-      let y = (this.origin.y - tick.y) / this.stepY
-
-      let pInitial = matrix([[x], [y]])
-      let pFinal = multiply(ltMatrix, pInitial).toArray()
-      // @ts-ignore
-      tick.x = this.origin.x + pFinal[0] * this.stepX
-      // @ts-ignore
-      tick.y = this.origin.y - pFinal[1] * this.stepY
+      tick.transform(ltMatrix)
     }
     for (let tick of this.yTicks) {
-      let x = (tick.x - this.origin.x) / this.stepX
-      let y = (this.origin.y - tick.y) / this.stepY
-      console.log(x, y)
-
-      let pInitial = matrix([[x], [y]])
-      console.log(pInitial)
-      let pFinal = multiply(ltMatrix, pInitial).toArray()
-      console.log(pFinal)
-      // @ts-ignore
-      tick.x = this.origin.x - pFinal[0] * this.stepX
-      // @ts-ignore
-      tick.y = this.origin.y + pFinal[1] * this.stepY
+      tick.transform(ltMatrix)
+    }
+    for (let axis of this.axes) {
+      axis.transform(ltMatrix)
     }
   }
 }
