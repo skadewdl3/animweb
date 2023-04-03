@@ -65,10 +65,11 @@ export default class LaTeX extends AnimObject {
     if (!this.latexImage) this.latexImage = p.loadImage(this.base64)
     if (this.latexImage && !this.rendered) {
       if (this.transition) this.transition()
-      p.image(this.latexImage, this.x, this.y)
+      if (!this.rendered) {
+      }
       let div = p.createDiv(this.latexSVG)
       div.position(this.x, this.y)
-      div.class('bruh')
+      div.class(this.id)
       let uses = [...div.elt.getElementsByTagName('use')]
       uses.forEach((u: any) => {
         console.log(u)
@@ -81,12 +82,13 @@ export default class LaTeX extends AnimObject {
       })
       div.style('transform', 'scale(2)')
       anime({
-        targets: '.bruh path',
+        targets: `.${this.id} path`,
         strokeDashoffset: [anime.setDashoffset, 0],
         easing: 'easeInOutSine',
         duration: 1500,
+        // delay: 5000,
         direction: 'alternate',
-        loop: false,
+        loop: true,
       })
       this.rendered = true
     }

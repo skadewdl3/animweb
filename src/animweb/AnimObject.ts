@@ -87,7 +87,7 @@ export default class AnimObject {
   constructor() {
     this.sceneWidth = Width.full // by default, sceneWidth is width of the full screen
     this.sceneHeight = Height.full // by default, sceneHeight is height of the full screen
-    this.id = uuidv4()
+    this.id = `webanimobject-${uuidv4()}`
   }
 
   /*
