@@ -42,7 +42,7 @@ export default class LaTeX extends AnimObject {
   constructor(config: LaTeXProps) {
     super()
     this.latex = config.latex
-    this.latexSVG = TeXToSVG(this.latex)
+    this.latexSVG = TeXToSVG(String.raw`${this.latex}`)
     this.base64 = svg64(this.latexSVG)
     // console.log(this.base64)
     if (config.color) this.color = config.color
@@ -75,9 +75,9 @@ export default class LaTeX extends AnimObject {
         console.log(u)
         let el = document.querySelector(u.getAttribute('xlink:href'))
         el.style.fill = 'none'
-        el.style.strokeWidth = '5rem'
+        el.style.strokeWidth = '7rem'
         el.style.stroke = 'black'
-        u.parentNode.prepend(el)
+        u.parentNode.prepend(el.cloneNode())
         u.remove()
       })
       div.style('transform', 'scale(2)')
@@ -86,9 +86,8 @@ export default class LaTeX extends AnimObject {
         strokeDashoffset: [anime.setDashoffset, 0],
         easing: 'easeInOutSine',
         duration: 1500,
-        // delay: 5000,
         direction: 'alternate',
-        loop: true,
+        loop: false,
       })
       this.rendered = true
     }
