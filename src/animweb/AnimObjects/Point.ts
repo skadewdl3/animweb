@@ -160,6 +160,7 @@ class Point extends AnimObject {
 
       let pInitial = matrix([[x], [y]])
       let pFinal = multiply(ltMatrix, pInitial).toArray()
+      console.log(pFinal)
       // @ts-ignore
       this.x = this.parentData.origin.x + pFinal[0] * this.parentData.stepX
       // @ts-ignore

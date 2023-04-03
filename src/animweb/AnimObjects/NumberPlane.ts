@@ -298,6 +298,11 @@ export default class NumberPlane extends AnimObject {
             ...config,
             x: this.origin.x + config.x * this.stepX,
             y: this.origin.y - config.y * this.stepY,
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           }),
           transitionOptions
         )
@@ -310,6 +315,11 @@ export default class NumberPlane extends AnimObject {
             ...config,
             x: this.origin.x + config.x * this.stepX,
             y: this.origin.y - config.y * this.stepY,
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
@@ -440,6 +450,9 @@ export default class NumberPlane extends AnimObject {
     }
     for (let axis of this.axes) {
       axis.transform(ltMatrix)
+    }
+    for (let point of this.points) {
+      point.transform(ltMatrix)
     }
   }
 }
