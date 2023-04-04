@@ -29,9 +29,6 @@ export interface CurveProps extends AnimObjectProps {
   sampleRate: number
   domain: [number, number]
   range: [number, number]
-  stepX: number
-  stepY: number
-  origin: { x: number; y: number }
   thickness?: number
 }
 
@@ -41,37 +38,35 @@ export default class Curve extends AnimObject {
   sections: Array<Line> = []
   domain: [number, number]
   range: [number, number]
-  stepX: number
-  stepY: number
   points: Array<{ x: number; y: number }> = []
   lines: Array<Line>
   thickness: number
   anchorPoints: Array<Point> = []
   anchorLines: Array<Line> = []
-  origin: { x: number; y: number }
   iterables = ['lines', 'anchorPoints', 'anchorLines']
 
   constructor({
     definition,
     sampleRate,
     domain,
-    stepX,
-    stepY,
     color,
     range,
     thickness = 1,
-    origin,
+    parentData,
   }: CurveProps) {
     super()
     this.y = definition
     this.sampleRate = sampleRate
     this.domain = domain
     this.range = range
-    this.stepX = stepX
-    this.stepY = stepY
     this.thickness = thickness
     this.lines = []
-    this.origin = origin
+    if (parentData) {
+      this.parentData = {
+        ...this.parentData,
+        ...parentData,
+      }
+    }
     if (color) {
       this.color = color
     }
@@ -85,7 +80,10 @@ export default class Curve extends AnimObject {
     if (rhs.includes('=')) rhs = rhs.split('=')[1]
     for (let x = this.domain[0]; x <= this.domain[1]; x += h) {
       let y = evaluate(rhs, { x })
-      this.points.push({ x: x * this.stepX, y: y * this.stepY })
+      this.points.push({
+        x: x * this.parentData.stepX,
+        y: y * this.parentData.stepY,
+      })
     }
   }
 
@@ -105,6 +103,7 @@ export default class Curve extends AnimObject {
             range: [p1.y, p2.y],
             color: new Color(this.color.rgbaVals),
             thickness: this.thickness,
+            parentData: this.parentData,
           })
         )
       }
@@ -121,13 +120,13 @@ export default class Curve extends AnimObject {
       let point = await transition(
         new Point({
           ...config,
-          x: this.origin.x + x * this.stepX,
-          y: this.origin.y - y * this.stepY,
+          x: this.parentData.origin.x + x * this.parentData.stepX,
+          y: this.parentData.origin.y - y * this.parentData.stepY,
           definition: this.y,
           parentData: {
-            origin: this.origin,
-            stepX: this.stepX,
-            stepY: this.stepY,
+            origin: this.parentData.origin,
+            stepX: this.parentData.stepX,
+            stepY: this.parentData.stepY,
           },
         }),
         config.transitionOptions ? config.transitionOptions : {}
@@ -146,12 +145,12 @@ export default class Curve extends AnimObject {
       let x = config.x
       let y = evaluate(this.y, { x })
       let point = {
-        x: x * this.stepX,
-        y: y * this.stepY,
+        x: x * this.parentData.stepX,
+        y: y * this.parentData.stepY,
       }
       let parts = this.y.split('=')
       let rhs = parts[parts.length - 1]
-      let length = config.length ? config.length : this.stepX * 2
+      let length = config.length ? config.length : this.parentData.stepX * 2
       let transition = Transition(
         config.transition ? config.transition : Transitions.None
       )
@@ -163,9 +162,9 @@ export default class Curve extends AnimObject {
           point,
           definition: this.y,
           parentData: {
-            stepX: this.stepX,
-            stepY: this.stepY,
-            origin: this.origin,
+            stepX: this.parentData.stepX,
+            stepY: this.parentData.stepY,
+            origin: this.parentData.origin,
           },
         }),
         config.transitionOptions ? config.transitionOptions : {}
@@ -183,13 +182,13 @@ export default class Curve extends AnimObject {
     if (this.transition) {
       this.transition()
     }
-    this.lines.forEach(line => {
+    this.lines.forEach((line) => {
       line.draw(p)
     })
-    this.anchorPoints.forEach(point => {
+    this.anchorPoints.forEach((point) => {
       point.draw(p)
     })
-    this.anchorLines.forEach(line => {
+    this.anchorLines.forEach((line) => {
       line.draw(p)
     })
   }

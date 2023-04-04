@@ -1,7 +1,7 @@
 import p5 from 'p5'
 import AnimObject, { AnimObjectProps } from '../AnimObject'
 import Color from '../helpers/Color'
-import TeXToSVG from 'tex-to-svg'
+import TeXToSVG from './../helpers/TexToSVG'
 import svg64 from 'svg64'
 import anime from 'animejs'
 
@@ -78,12 +78,12 @@ export default class LaTeX extends AnimObject {
         console.log(u)
         let el = document.querySelector(u.getAttribute('xlink:href'))
         el.style.fill = 'none'
-        el.style.strokeWidth = '7rem'
+        el.style.strokeWidth = `1rem`
         el.style.stroke = 'black'
         u.parentNode.prepend(el.cloneNode())
         u.remove()
       })
-      div.style('transform', 'scale(2)')
+      div.style('transform', `scale(${this.size / 10})`)
       anime({
         targets: `.${this.id} path`,
         strokeDashoffset: [anime.setDashoffset, 0],

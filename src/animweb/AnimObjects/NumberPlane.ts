@@ -116,10 +116,10 @@ export default class NumberPlane extends AnimObject {
       for (let i = 0; i < Math.floor(this.width / (2 * this.stepX)); i++) {
         this.xTicks.push(
           new Point({
-            x: this.origin.x + this.stepX * i,
-            y: this.origin.y,
-            // color: new Color(this.color.rgbaVals),
-            color: StandardColors.Blue(),
+            x: i,
+            y: 0,
+            color: new Color(this.color.rgbaVals),
+            // color: StandardColors.Blue(),
             parentData: {
               stepX: this.stepX,
               stepY: this.stepY,
@@ -133,10 +133,10 @@ export default class NumberPlane extends AnimObject {
       for (let i = 1; i < Math.floor(this.width / (2 * this.stepX)); i++) {
         this.xTicks.unshift(
           new Point({
-            x: this.origin.x - this.stepX * i,
-            y: this.origin.y,
-            // color: new Color(this.color.rgbaVals),
-            color: StandardColors.Blue(),
+            x: -i,
+            y: 0,
+            color: new Color(this.color.rgbaVals),
+            // color: StandardColors.Blue(),
             parentData: {
               stepX: this.stepX,
               stepY: this.stepY,
@@ -151,8 +151,8 @@ export default class NumberPlane extends AnimObject {
       for (let i = 1; i < 2 * Math.floor(this.height / (2 * this.stepY)); i++) {
         this.yTicks.push(
           new Point({
-            x: this.origin.x,
-            y: this.origin.y - this.stepY * i,
+            y: i,
+            x: 0,
             color: new Color(this.color.rgbaVals),
             parentData: {
               stepX: this.stepX,
@@ -168,8 +168,8 @@ export default class NumberPlane extends AnimObject {
       for (let i = 1; i < 2 * Math.floor(this.height / (2 * this.stepY)); i++) {
         this.yTicks.unshift(
           new Point({
-            x: this.origin.x,
-            y: this.origin.y + this.stepY * i,
+            y: -i,
+            x: 0,
             color: new Color(this.color.rgbaVals),
             parentData: {
               stepX: this.stepX,
@@ -187,7 +187,7 @@ export default class NumberPlane extends AnimObject {
           new Line({
             form: Lines.SlopePoint,
             slope: Infinity,
-            point: { x: this.origin.x + this.stepX * i, y: this.origin.y },
+            point: { x: i, y: 0 },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
             parentData: {
@@ -205,7 +205,7 @@ export default class NumberPlane extends AnimObject {
           new Line({
             form: Lines.SlopePoint,
             slope: Infinity,
-            point: { x: this.origin.x - this.stepX * i, y: this.origin.y },
+            point: { x: -i, y: 0 },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
             parentData: {
@@ -218,12 +218,12 @@ export default class NumberPlane extends AnimObject {
       }
 
       // +ve y-axis
-      for (let i = 1; i < Math.floor(this.height / (2 * this.stepY)); i++) {
+      for (let i = 0; i < Math.floor(this.height / (2 * this.stepY)); i++) {
         this.yGrid.push(
           new Line({
             form: Lines.SlopePoint,
             slope: 0,
-            point: { x: this.origin.x, y: this.origin.y - this.stepY * i },
+            point: { x: 0, y: -i },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
             parentData: {
@@ -241,7 +241,7 @@ export default class NumberPlane extends AnimObject {
           new Line({
             form: Lines.SlopePoint,
             slope: 0,
-            point: { x: this.origin.x, y: this.origin.y + this.stepY * i },
+            point: { x: 0, y: i },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
             parentData: {
@@ -267,8 +267,8 @@ export default class NumberPlane extends AnimObject {
         form: Lines.SlopePoint,
         slope: 0,
         point: { x: 0, y: 0 },
-        // color: new Color(this.color.rgbaVals),
-        color: StandardColors.Blue(),
+        color: new Color(this.color.rgbaVals),
+        // color: StandardColors.Blue(),
       })
     )
   }
@@ -316,8 +316,6 @@ export default class NumberPlane extends AnimObject {
         let point = await transition(
           new Point({
             ...config,
-            x: this.origin.x + config.x * this.stepX,
-            y: this.origin.y - config.y * this.stepY,
             parentData: {
               stepX: this.stepX,
               stepY: this.stepY,
@@ -333,8 +331,6 @@ export default class NumberPlane extends AnimObject {
         this.points.push(
           new Point({
             ...config,
-            x: this.origin.x + config.x * this.stepX,
-            y: this.origin.y - config.y * this.stepY,
             parentData: {
               stepX: this.stepX,
               stepY: this.stepY,
@@ -378,9 +374,11 @@ export default class NumberPlane extends AnimObject {
             domain,
             range,
             sampleRate,
-            stepX: this.stepX,
-            stepY: this.stepY,
-            origin: this.origin,
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           }),
           transitionOptions
         )
@@ -399,9 +397,11 @@ export default class NumberPlane extends AnimObject {
           domain,
           range,
           sampleRate,
-          stepX: this.stepX,
-          stepY: this.stepY,
-          origin: this.origin,
+          parentData: {
+            stepX: this.stepX,
+            stepY: this.stepY,
+            origin: this.origin,
+          },
         })
         curve.updateTransitionQueueFunctions(
           this.queueTransition,

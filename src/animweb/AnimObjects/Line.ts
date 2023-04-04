@@ -128,18 +128,27 @@ export default class Line extends AnimObject {
     if (config.definition) this.definition = config.definition
     switch (config.form) {
       case Lines.DoublePoint:
-        let { x1, x2, y1, y2 } = config
+        let { x1: X1, y1: Y1, x2: X2, y2: Y2 } = config
+        let { x1, y1 } = this.getAbsolutePosition({ x: X1, y: Y1 })
+        let { x2, y2 } = this.getAbsolutePosition({ x: X2, y: Y2 })
         let s = (y2 - y1) / (x2 - x1)
         let c = y1 - this.slope * x1
         this.setSlope(s)
         this.offset = c
         this.x = (y: number) => x1
+        this.y = (x: number) => {
+          return this.slope * x + this.offset
+        }
         break
       case Lines.SlopePoint:
         let { point } = config
+        let { x, y } = this.getAbsolutePosition(point)
         this.setSlope(config.slope)
-        this.offset = point.y - this.slope * point.x
-        this.x = (y: number) => point.x
+        this.offset = y - this.slope * x
+        this.x = (y: number) => x
+        this.y = (x: number) => {
+          return this.slope * x + this.offset
+        }
         break
       case Lines.SlopeIntercept:
         let { xIntercept = 0, yIntercept = 0 } = config
@@ -149,11 +158,17 @@ export default class Line extends AnimObject {
           xIntercept == Infinity || xIntercept == -Infinity
             ? yIntercept
             : xIntercept
+        this.y = (x: number) => {
+          return this.slope * x + this.offset
+        }
         break
       case Lines.DoubleIntercept:
         let { xIntercept: a, yIntercept: b } = config
         this.setSlope(-b / a)
         this.offset = b
+        this.y = (x: number) => {
+          return this.slope * x + this.offset
+        }
         this.x = (y: number) => (a == Infinity || b == -Infinity ? b : a)
         break
       // case Lines.Normal:
@@ -322,37 +337,17 @@ export default class Line extends AnimObject {
 
   transform(ltMatrix: Matrix): Promise<void> {
     return new Promise((resolve, reject) => {
-      // let { x1, x2, y1, y2 } = config
-      // let s = (y2 - y1) / (x2 - x1)
-      // this.setSlope(s)
-      // this.y = (x: number) => {
-      //   let c = y1 - this.slope * x1
-      //   return this.slope * x + c
-      // }
-      // this.x = (y: number) => x1
       let x1: number, x2: number, y1: number, y2: number
       if (this.slope == Infinity || this.slope == -Infinity) {
         console.log('x', this.x(0))
         ;[x1, y1, x2, y2] = [this.x(0), 1, this.x(0), 2]
         let s = (y2 - y1) / (x2 - x1)
-        // let c = y1 - this.slope * x1
-        // this.setSlope(s)
-        // this.offset = c
-        // this.x = (y: number) => x1
       } else if (this.slope == 0) {
         ;[x1, y1, x2, y2] = [1, this.y(this.x(0)), 2, this.y(this.x(0))]
         let s = (y2 - y1) / (x2 - x1)
-        // let c = y1 - this.slope * x1
-        // this.setSlope(s)
-        // this.offset = c
-        // this.x = (y: number) => x1
       } else {
         ;[x1, y1, x2, y2] = [0, this.offset, this.x(0), this.y(this.x(0))]
       }
-      // x1 = (x1 - this.parentData.origin.x) / this.parentData.stepX
-      // y1 = (this.parentData.origin.y - y1) / this.parentData.stepY
-      // x2 = (x2 - this.parentData.origin.x) / this.parentData.stepX
-      // y2 = (this.parentData.origin.y - y2) / this.parentData.stepY
       console.log(x1, y1, x2, y2)
 
       let pInitial1 = matrix([[x1], [y1]])
@@ -360,16 +355,12 @@ export default class Line extends AnimObject {
       let pFinal1 = multiply(ltMatrix, pInitial1).toArray()
       let pFinal2 = multiply(ltMatrix, pInitial2).toArray()
       // @ts-ignore
-      // x1 = this.parentData.origin.x + pFinal1[0] * this.parentData.stepX
       x1 = pFinal1[0]
       // @ts-ignore
-      // y1 = this.parentData.origin.y + pFinal1[1] * this.parentData.stepY
       y1 = pFinal1[1]
       // @ts-ignore
-      // x2 = this.parentData.origin.x + pFinal2[0] * this.parentData.stepX
       x2 = pFinal2[0]
       // @ts-ignore
-      // y2 = this.parentData.origin.y + pFinal2[1] * this.parentData.stepY
       y2 = pFinal2[1]
       let s = (y2 - y1) / (x2 - x1)
       this.setSlope(s)

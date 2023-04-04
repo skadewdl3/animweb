@@ -12,6 +12,7 @@ import { Width, Height } from './helpers/Dimensions'
 import Color from './helpers/Color'
 import StandardColors from './helpers/StandardColors'
 import Transition from './Transition'
+import { number } from 'mathjs'
 
 /*
 Defines what kind of properties/arguments/parameters (aka props)
@@ -22,6 +23,11 @@ export interface AnimObjectProps {
   color?: Color
   backgroundColor?: Color
   maxAlpha?: number
+  parentData?: {
+    origin: { x: number; y: number }
+    stepX: number
+    stepY: number
+  }
 }
 
 /*
@@ -70,6 +76,35 @@ export default class AnimObject {
   queueTransition: Function = () => {}
   unqueueTransition: Function = () => {}
   waitBeforeTransition: Function = () => {}
+  parentData: {
+    origin: { x: number; y: number }
+    stepX: number
+    stepY: number
+  } = { origin: { x: 0, y: 0 }, stepX: 1, stepY: 1 }
+  getRelativePosition: Function = ({
+    x,
+    y,
+  }: {
+    x: number
+    y: number
+  }): { x: number; y: number } => {
+    return {
+      x: (x - this.parentData.origin.x) / this.parentData.stepX,
+      y: (this.parentData.origin.y - y) / this.parentData.stepY,
+    }
+  }
+  getAbsolutePosition: Function = ({
+    x,
+    y,
+  }: {
+    x: number
+    y: number
+  }): { x: number; y: number } => {
+    return {
+      x: this.parentData.origin.x + x * this.parentData.stepX,
+      y: this.parentData.origin.y - y * this.parentData.stepY,
+    }
+  }
   /*
   Right now, the transition method is a placeholder method. When we apply a transition like so:
   FadeIn(Line) or Create(NumberPlane), this method gets modified by FadeIn or Create.
