@@ -394,7 +394,6 @@ export default class Line extends AnimObject {
 
     let p1 = this.getAbsolutePosition({ x: 1, y: 1 })
     let p2 = this.getAbsolutePosition({ x: 2, y: 2 })
-    p.line(p1.x, p1.y, p2.x, p2.y)
     p.translate(-this.parentData.origin.x, -this.parentData.origin.y)
     p.noStroke()
   }
