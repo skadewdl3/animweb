@@ -18,21 +18,10 @@ interface LaTeXProps extends AnimObjectProps {
 export default class LaTeX extends AnimObject {
   latex: string = ''
   latexSVG: string = ''
-  base64: string = ''
-  latexImage: any
   size: number = 16
-  x: number
-  y: number
-  parentData: {
-    origin: { x: number; y: number }
-    stepX: number
-    stepY: number
-  } = {
-    origin: { x: this.sceneWidth / 2, y: this.sceneHeight / 2 },
-    stepX: 1,
-    stepY: 1,
-  }
+  parentDiv?: p5.Element
   rendered: boolean = false
+  position: { x: number; y: number } = { x: 0, y: 0 }
 
   constructor(config: LaTeXProps) {
     super()
@@ -41,8 +30,6 @@ export default class LaTeX extends AnimObject {
     temp.splice(0, 1)
     temp.splice(-1, 1)
     this.latexSVG = TeXToSVG(temp.join(''))
-    this.base64 = svg64(this.latexSVG)
-    // console.log(this.base64)
     if (config.color) this.color = config.color
     if (config.size) this.size = config.size
     if (config.parentData) {
@@ -51,22 +38,19 @@ export default class LaTeX extends AnimObject {
         ...config.parentData,
       }
     }
-    this.x = this.parentData.origin.x
-    this.y = this.parentData.origin.y
     if (config.position) {
-      this.x += config.position.x * this.parentData.stepX
-      this.y -= config.position.y * this.parentData.stepY
+      this.position = config.position
     }
+    this.remove = () => this.parentDiv?.remove()
   }
 
   draw(p: p5) {
-    if (!this.latexImage) this.latexImage = p.loadImage(this.base64)
-    if (this.latexImage && !this.rendered) {
+    if (!this.rendered) {
       if (this.transition) this.transition()
-      if (!this.rendered) {
-      }
+      console.log(this.latexSVG)
       let div = p.createDiv(this.latexSVG)
-      div.position(this.x, this.y)
+      let { x, y } = this.getAbsolutePosition(this.position)
+      div.position(x, y)
       div.class(this.id)
       let uses = [...div.elt.getElementsByTagName('use')]
       uses.forEach((u: any) => {
@@ -78,6 +62,8 @@ export default class LaTeX extends AnimObject {
         u.remove()
       })
       div.style('transform', `scale(${this.size / 10})`)
+      this.parentDiv = div
+
       anime({
         targets: `.${this.id} path`,
         strokeDashoffset: [anime.setDashoffset, 0],
@@ -85,6 +71,11 @@ export default class LaTeX extends AnimObject {
         duration: 1500,
         direction: 'alternate',
         loop: false,
+        complete() {
+          div.elt
+            .getElementsByTagName('path')
+            .forEach((c: any) => (c.style.fill = 'black'))
+        },
       })
       this.rendered = true
     }

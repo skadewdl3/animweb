@@ -179,6 +179,7 @@ export default class Scene {
   }
 
   resetScene() {
+    for (let object of this.objects) if (object.remove) object.remove()
     this.objects = []
     this.transitionQueue = []
   }
