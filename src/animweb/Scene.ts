@@ -219,13 +219,14 @@ export default class Scene {
   }
 
   // adds an AnimObject to be rendered onto the canvas
-  add(obj: AnimObject) {
+  add(obj: AnimObject): AnimObject {
     // updates the sceneHeight anf sceneWidth properties of the AnimObject
     // obj.updateSceneDimensions(this.width, this.height)
     this.updateSceneProps(obj)
 
     // adds the AnimObject to the array of objects to be rendered
     this.objects.push(obj)
+    return obj
   }
 
   // sets up some initial values i.e. witdth, height, background color, etc.

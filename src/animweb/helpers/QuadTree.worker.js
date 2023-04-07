@@ -117,7 +117,6 @@ class QuadTree {
   }
 
   calculateContour(val, [blX, blY], [brX, brY], [trX, trY], [tlX, tlY]) {
-    console.log(arguments)
     let results = []
     let result = {}
     let result1 = {}

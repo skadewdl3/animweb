@@ -84,7 +84,6 @@ export default class ImplicitCurve extends AnimObject {
     } else {
       if (q.contours) {
         q.contours.forEach((contour: any) => {
-          console.log(contour)
           this.graphicsBuffer.line(
             contour.x1,
             contour.y1,
