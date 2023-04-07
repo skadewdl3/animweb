@@ -3,7 +3,7 @@ import p5 from 'p5'
 import Point, { PointProps } from '../AnimObjects/Point'
 import Curve from './../AnimObjects/Curve'
 import Line, { Lines } from './Line'
-import StandardColors from '../helpers/StandardColors'
+import Colors from '../helpers/Colors'
 import Color from '../helpers/Color'
 import TransitionProps, { Transition, Transitions } from '../Transition'
 import Constants from '../helpers/Constants'
@@ -121,7 +121,6 @@ export default class NumberPlane extends AnimObject {
             x: i,
             y: 0,
             color: new Color(this.color.rgbaVals),
-            // color: StandardColors.Blue(),
             parentData: {
               stepX: this.stepX,
               stepY: this.stepY,
@@ -138,7 +137,6 @@ export default class NumberPlane extends AnimObject {
             x: -i,
             y: 0,
             color: new Color(this.color.rgbaVals),
-            // color: StandardColors.Blue(),
             parentData: {
               stepX: this.stepX,
               stepY: this.stepY,
@@ -277,7 +275,6 @@ export default class NumberPlane extends AnimObject {
           stepX: this.stepX,
           stepY: this.stepY,
         },
-        // color: StandardColors.Blue(),
       })
     )
   }

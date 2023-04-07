@@ -5,7 +5,7 @@ import AnimObject, {
   Observer,
 } from '../AnimObject'
 import p5 from 'p5'
-import Colors from '../helpers/StandardColors'
+import Colors from '../helpers/Colors'
 import {
   evaluate,
   derivative,

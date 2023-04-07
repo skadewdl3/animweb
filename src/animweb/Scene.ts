@@ -13,7 +13,7 @@ const p5 = window.p5
 import { createSketch } from './../p5-util/sketch'
 import AnimObject from './AnimObject'
 import Color from './helpers/Color'
-import Colors from './helpers/StandardColors'
+import Colors from './helpers/Colors'
 import Constants from './helpers/Constants'
 import { v4 as uuidv4 } from 'uuid'
 import { wait } from './helpers/miscellaneous'
@@ -35,7 +35,7 @@ export default class Scene {
   startLoop: any = null
   transitionQueue: Array<TransitionQueueItem> = []
 
-  constructor(width = 800, height = 800, backgroundColor = Colors.Gray(0)) {
+  constructor(width = 800, height = 800, backgroundColor = Colors.gray1) {
     this.width = width // default width of the Scene is 800
     this.height = height // default height of the Scene is 800
     this.objects = [] // the objects property will be an Array containing AnimObject instances

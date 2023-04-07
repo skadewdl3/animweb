@@ -1,6 +1,6 @@
 import p5 from 'p5'
 import AnimObject, { AnimObjectProps, Observer } from '../AnimObject'
-import StandardColors from '../helpers/StandardColors'
+import Colors from '../helpers/Colors'
 import { Observables } from '../AnimObject'
 import { roundOff } from '../helpers/miscellaneous'
 import Color from '../helpers/Color'
@@ -14,11 +14,6 @@ interface TextProps extends AnimObjectProps {
     y: number
   }
   style?: TextStyle
-  parentData?: {
-    origin?: { x: number; y: number }
-    stepX?: number
-    stepY?: number
-  }
 }
 
 export enum TextStyle {

@@ -88,7 +88,6 @@ export default class Curve extends AnimObject {
     for (let i = 0; i < this.points.length - 1; i++) {
       let p1 = this.points[i]
       let p2 = this.points[i + 1]
-      console.log(p1, p2)
       this.lines.push(
         new Line({
           form: Lines.DoublePoint,

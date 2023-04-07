@@ -10,7 +10,7 @@ import p5 from 'p5'
 import { v4 as uuidv4 } from 'uuid'
 import { Width, Height } from './helpers/Dimensions'
 import Color from './helpers/Color'
-import StandardColors from './helpers/StandardColors'
+import Colors from './helpers/Colors'
 import Transition from './Transition'
 import { number } from 'mathjs'
 
@@ -67,8 +67,8 @@ export default class AnimObject {
   sceneHeight: number // This property provides access of the height of the scene to every AnimObject
   sceneWidth: number // This property provides access of the height of the scene to every AnimObject
   id: string // A unique identifier created for every AnimObject. Used to identify which AnimObject to remove when Scene.remove is called
-  color: Color = StandardColors.Black() // The fill color of the AnimObject. subclasses may or may not use this prop
-  backgroundColor: Color = StandardColors.Transparent() // The fill bg color of the AnimObject. subclasses may or may not use this prop
+  color: Color = Colors.black // The fill color of the AnimObject. subclasses may or may not use this prop
+  backgroundColor: Color = Colors.transparent // The fill bg color of the AnimObject. subclasses may or may not use this prop
   transition: any = null // A placeholder method that is used to smoothly animate the AnimObject
   maxAlpha: number = 1
   observers: Array<Observer> = [] // An array containing the AnimObjects that are observing come property of this AnimObject

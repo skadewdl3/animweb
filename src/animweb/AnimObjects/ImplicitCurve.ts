@@ -1,7 +1,7 @@
 import p5 from 'p5'
 import { v4 as uuid } from 'uuid'
 import Color from '../helpers/Color'
-import StandardColors from '../helpers/StandardColors'
+import Colors from '../helpers/Colors'
 import AnimObject, { AnimObjectProps } from './../AnimObject'
 import { roundOff } from '../helpers/miscellaneous'
 
@@ -22,7 +22,7 @@ export default class ImplicitCurve extends AnimObject {
   origin: { x: number; y: number }
   quadTree?: any
   thickness: number = 1
-  color: Color = StandardColors.Black()
+  color: Color = Colors.black
   sampleRate: number = 9
   calculatingQuadtree: boolean = false
   webWorker: Worker = new Worker(

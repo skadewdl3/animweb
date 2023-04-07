@@ -2,9 +2,8 @@ import NumberPlane from './animweb/AnimObjects/NumberPlane'
 import Scene from './animweb/Scene'
 import Point from './animweb/AnimObjects/Point'
 import Line, { Lines } from './animweb/AnimObjects/Line'
-import Colors from './animweb/helpers/StandardColors'
 import { Width, Height } from './animweb/helpers/Dimensions'
-import StandardColors from './animweb/helpers/StandardColors'
+import Colors from './animweb/helpers/Colors'
 import FadeIn from './animweb/transitions/FadeIn'
 import FadeOut from './animweb/transitions/FadeOut'
 import Create from './animweb/transitions/Create'
@@ -27,13 +26,13 @@ declare global {
   }
 }
 
-let scene = new Scene(Width.full, Height.full, Colors.Gray(0))
+let scene = new Scene(Width.full, Height.full, Colors.gray0)
 
 let WebAnim = {
   // Basic classes/functions
   scene,
   Color,
-  Colors: StandardColors,
+  Colors,
   Width,
   Height,
   wait: async (config: any) => scene.wait(config),
@@ -50,8 +49,8 @@ let WebAnim = {
   TeX: (config: any) => new LaTeX(config),
   Tex: (config: any) => new LaTeX(config),
   // transitions
-  Create: async (config: any) => scene.add(await Create(config)),
-  FadeIn: async (config: any) => scene.add(await FadeIn(config)),
+  Create: (config: any) => scene.add(Create(config)),
+  FadeIn: (config: any) => scene.add(FadeIn(config)),
   FadeOut,
   // enums
   Transitions,
