@@ -348,55 +348,32 @@ export default class NumberPlane extends AnimObject {
     })
   }
 
-  async plot(config: CurvePlotProps): Promise<Curve> {
-    return new Promise(async (resolve, reject) => {
-      let domain: [number, number] = config.domain
-        ? config.domain
-        : [
-            -Math.floor(this.width / (2 * this.stepX) - 1),
-            Math.floor(this.width / (2 * this.stepX) - 1),
-          ]
+  plot(config: CurvePlotProps): Curve {
+    let domain: [number, number] = config.domain
+      ? config.domain
+      : [
+          -Math.floor(this.width / (2 * this.stepX) - 1),
+          Math.floor(this.width / (2 * this.stepX) - 1),
+        ]
 
-      let range: [number, number] = config.domain
-        ? config.domain
-        : [
-            -Math.floor(this.height / (2 * this.stepY) - 1),
-            Math.floor(this.height / (2 * this.stepY) - 1),
-          ]
+    let range: [number, number] = config.domain
+      ? config.domain
+      : [
+          -Math.floor(this.height / (2 * this.stepY) - 1),
+          Math.floor(this.height / (2 * this.stepY) - 1),
+        ]
 
-      let sampleRate: number = config.sampleRate
-        ? config.sampleRate
-        : Constants.curveSampleRate
+    let sampleRate: number = config.sampleRate
+      ? config.sampleRate
+      : Constants.curveSampleRate
 
-      if (config.transition) {
-        let transition = Transition(config.transition)
-        let transitionOptions = config.transitionOptions
-          ? config.transitionOptions
-          : {}
-        let curve = await transition(
-          new Curve({
-            ...config,
-            domain,
-            range,
-            sampleRate,
-            parentData: {
-              stepX: this.stepX,
-              stepY: this.stepY,
-              origin: this.origin,
-            },
-          }),
-          transitionOptions
-        )
-        curve.updateTransitionQueueFunctions(
-          this.queueTransition,
-          this.unqueueTransition,
-          this.waitBeforeTransition
-        )
-        if (curve instanceof Curve) {
-          this.curves.push(curve)
-        }
-      } else {
-        let curve = new Curve({
+    if (config.transition) {
+      let transition = Transition(config.transition)
+      let transitionOptions = config.transitionOptions
+        ? config.transitionOptions
+        : {}
+      let curve = transition(
+        new Curve({
           ...config,
           domain,
           range,
@@ -406,16 +383,39 @@ export default class NumberPlane extends AnimObject {
             stepY: this.stepY,
             origin: this.origin,
           },
-        })
-        curve.updateTransitionQueueFunctions(
-          this.queueTransition,
-          this.unqueueTransition,
-          this.waitBeforeTransition
-        )
+        }),
+        transitionOptions
+      )
+      curve.updateTransitionQueueFunctions(
+        this.queueTransition,
+        this.unqueueTransition,
+        this.waitBeforeTransition
+      )
+      if (curve instanceof Curve) {
         this.curves.push(curve)
       }
-      resolve(this.curves[this.curves.length - 1])
-    })
+      //@ts-ignore
+      return curve
+    } else {
+      let curve = new Curve({
+        ...config,
+        domain,
+        range,
+        sampleRate,
+        parentData: {
+          stepX: this.stepX,
+          stepY: this.stepY,
+          origin: this.origin,
+        },
+      })
+      curve.updateTransitionQueueFunctions(
+        this.queueTransition,
+        this.unqueueTransition,
+        this.waitBeforeTransition
+      )
+      this.curves.push(curve)
+      return curve
+    }
   }
 
   async plotImplicit(config: ImplicitCurvePlotProps): Promise<ImplicitCurve> {
