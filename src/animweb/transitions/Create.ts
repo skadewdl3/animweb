@@ -247,63 +247,60 @@ const createPointTransitions = async (
   }
 }
 
-const Create = async (
+const Create = (
   object: AnimObject,
   config: CreateTransitionProps = {}
-): Promise<AnimObject> => {
-  return new Promise(async (resolve, reject) => {
-    if (object instanceof Line) {
-      object.transition = createLineTransition(object, config)
-    }
-    if (object instanceof Point) {
-      object.transition = createPointTransition(object, config)
-    }
-    if (object instanceof NumberPlane) {
-      let totalDuration = config.duration
-        ? config.duration
-        : Constants.createNumberPlaneDuration
+): AnimObject => {
+  if (object instanceof Line) {
+    object.transition = createLineTransition(object, config)
+  }
+  if (object instanceof Point) {
+    object.transition = createPointTransition(object, config)
+  }
+  if (object instanceof NumberPlane) {
+    let totalDuration = config.duration
+      ? config.duration
+      : Constants.createNumberPlaneDuration
 
-      hideObjects(object.axes, true)
-      hideObjects(object.xGrid, true)
-      hideObjects(object.yGrid, true)
-      hideObjects(object.xTicks, true)
-      hideObjects(object.yTicks, true)
-      hideObjects(object.points, true)
-      hideObjects(object.curves, true)
+    hideObjects(object.axes, true)
+    hideObjects(object.xGrid, true)
+    hideObjects(object.yGrid, true)
+    hideObjects(object.xTicks, true)
+    hideObjects(object.yTicks, true)
+    hideObjects(object.points, true)
+    hideObjects(object.curves, true)
 
-      object.curves.forEach((curve) => {
-        if (curve instanceof Curve) hideObjects(curve.lines, true)
-      })
+    object.curves.forEach((curve) => {
+      if (curve instanceof Curve) hideObjects(curve.lines, true)
+    })
 
-      hideObjects(object.axes, false)
-      createLineTransitions(object.axes, config, totalDuration / 4)
+    hideObjects(object.axes, false)
+    createLineTransitions(object.axes, config, totalDuration / 4)
+    wait((totalDuration / 6) * 1000).then(() => {
+      createPointTransitions(object.xTicks, config, totalDuration / 4)
+      createPointTransitions(object.yTicks, config, totalDuration / 4)
+      createLineTransitions(object.xGrid, config, totalDuration / 4)
+      createLineTransitions(object.yGrid, config, totalDuration / 4)
       wait((totalDuration / 6) * 1000).then(() => {
-        createPointTransitions(object.xTicks, config, totalDuration / 4)
-        createPointTransitions(object.yTicks, config, totalDuration / 4)
-        createLineTransitions(object.xGrid, config, totalDuration / 4)
-        createLineTransitions(object.yGrid, config, totalDuration / 4)
-        wait((totalDuration / 6) * 1000).then(() => {
-          createPointTransitions(object.points, config, totalDuration / 4)
-          object.curves.forEach((curve) => {
-            if (curve instanceof Curve)
-              createStaggeredLineTransitions(
-                curve.lines,
-                config,
-                totalDuration / 4
-              )
-          })
+        createPointTransitions(object.points, config, totalDuration / 4)
+        object.curves.forEach((curve) => {
+          if (curve instanceof Curve)
+            createStaggeredLineTransitions(
+              curve.lines,
+              config,
+              totalDuration / 4
+            )
         })
       })
-    } else if (object instanceof Curve) {
-      let duration = config.duration
-        ? config.duration
-        : Constants.createLineDuration
-      hideObjects(object.lines, true)
-      createStaggeredLineTransitions(object.lines, config, duration)
-    }
-
-    resolve(object)
-  })
+    })
+  } else if (object instanceof Curve) {
+    let duration = config.duration
+      ? config.duration
+      : Constants.createLineDuration
+    hideObjects(object.lines, true)
+    createStaggeredLineTransitions(object.lines, config, duration)
+  }
+  return object
 }
 
 export default Create

@@ -1,4 +1,4 @@
-import { evaluate, round } from 'mathjs'
+import { Matrix, evaluate, matrix, multiply } from 'mathjs'
 import p5 from 'p5'
 import { v4 as uuid } from 'uuid'
 import AnimObject, {
@@ -14,41 +14,20 @@ import { rangePerFrame } from './../helpers/miscellaneous'
 export interface PointProps extends AnimObjectProps {
   x: number
   y: number
-  z?: number
   size?: number
   definition?: string
-  parentData?: {
-    origin: { x: number; y: number }
-    stepX: number
-    stepY: number
-  }
 }
 
 class Point extends AnimObject {
   x: number
   y: number
-  z?: number
   size: number
   definition: string = ''
-  parentData: {
-    origin: { x: number; y: number }
-    stepX: number
-    stepY: number
-  } = { origin: { x: 0, y: 0 }, stepX: 1, stepY: 1 }
 
-  constructor({
-    x,
-    y,
-    z = 0,
-    size = 5,
-    color,
-    definition,
-    parentData,
-  }: PointProps) {
+  constructor({ x, y, size = 5, color, definition, parentData }: PointProps) {
     super()
     this.x = x
     this.y = y
-    this.z = z
     this.size = size
     if (definition) this.definition = definition
     if (color) this.color = color
@@ -63,22 +42,14 @@ class Point extends AnimObject {
   setX(x: number) {
     this.x = x
     this.observers.forEach((observer: Observer) => {
-      if (observer.property == Observables.x)
-        observer.handler(
-          (this.x - this.parentData.origin.x) / this.parentData.stepX
-        )
+      if (observer.property == Observables.x) observer.handler(this.x)
     })
   }
 
   setY(y: number) {
-    console.log('this ran')
     this.y = y
     this.observers.forEach((observer: Observer) => {
-      console.log('this ran 2')
-      if (observer.property == Observables.y)
-        observer.handler(
-          (this.parentData.origin.y - this.y) / this.parentData.stepY
-        )
+      if (observer.property == Observables.y) observer.handler(this.y)
     })
   }
 
@@ -86,14 +57,10 @@ class Point extends AnimObject {
     this.observers.push(observer)
     switch (observer.property) {
       case Observables.x:
-        observer.handler(
-          (this.x - this.parentData.origin.x) / this.parentData.stepX
-        )
+        observer.handler(this.x)
         break
       case Observables.y:
-        observer.handler(
-          (this.parentData.origin.y - this.y) / this.parentData.stepY
-        )
+        observer.handler(this.y)
         break
     }
   }
@@ -153,13 +120,30 @@ class Point extends AnimObject {
     })
   }
 
+  transform(ltMatrix: Matrix): Promise<void> {
+    return new Promise((resolve, reject) => {
+      // let x = (this.x - this.parentData.origin.x) / this.parentData.stepX
+      // let y = (this.parentData.origin.y - this.y) / this.parentData.stepY
+      let pInitial = matrix([[this.x], [this.y]])
+      let pFinal = multiply(ltMatrix, pInitial).toArray()
+      // @ts-ignore
+      this.x = pFinal[0]
+      // @ts-ignore
+      this.y = pFinal[1]
+      resolve()
+    })
+  }
+
   draw(p: p5) {
     if (this.transition) {
       this.transition()
     }
     p.stroke(this.color.rgba)
     p.strokeWeight(this.size)
-    p.point(this.x, this.y)
+    p.translate(this.parentData.origin.x, this.parentData.origin.y)
+    let { x, y } = this.getAbsolutePosition({ x: this.x, y: this.y })
+    p.point(x, y)
+    p.translate(-this.parentData.origin.x, -this.parentData.origin.y)
     p.noStroke()
   }
 }

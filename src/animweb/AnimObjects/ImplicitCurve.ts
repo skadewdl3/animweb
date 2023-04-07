@@ -1,7 +1,7 @@
 import p5 from 'p5'
 import { v4 as uuid } from 'uuid'
 import Color from '../helpers/Color'
-import StandardColors from '../helpers/StandardColors'
+import Colors from '../helpers/Colors'
 import AnimObject, { AnimObjectProps } from './../AnimObject'
 import { roundOff } from '../helpers/miscellaneous'
 
@@ -22,7 +22,7 @@ export default class ImplicitCurve extends AnimObject {
   origin: { x: number; y: number }
   quadTree?: any
   thickness: number = 1
-  color: Color = StandardColors.Black()
+  color: Color = Colors.black
   sampleRate: number = 9
   calculatingQuadtree: boolean = false
   webWorker: Worker = new Worker(
@@ -68,7 +68,6 @@ export default class ImplicitCurve extends AnimObject {
       })
 
       this.webWorker.onmessage = ({ data }) => {
-        console.log(JSON.parse(data))
         this.quadTree = JSON.parse(data)
         this.calculatingQuadtree = false
         this.webWorker.terminate()
@@ -77,190 +76,21 @@ export default class ImplicitCurve extends AnimObject {
   }
 
   drawQuadtree(p: p5, q: any) {
-    let xMid, xMid1, xMid2
     if (q.ne) {
       this.drawQuadtree(p, q.ne)
       this.drawQuadtree(p, q.nw)
       this.drawQuadtree(p, q.se)
       this.drawQuadtree(p, q.sw)
     } else {
-      switch (q.value) {
-        case 1:
-        case 14:
-          xMid = this.interpolate(
-            q.x,
-            q.y + q.height / 2,
-            q.x + q.width / 2,
-            q.y + q.height
-          )
+      if (q.contours) {
+        q.contours.forEach((contour: any) => {
           this.graphicsBuffer.line(
-            q.x,
-            q.y + q.height / 2,
-            xMid,
-            q.y + q.height / 2
+            contour.x1,
+            contour.y1,
+            contour.x2,
+            contour.y2
           )
-          this.graphicsBuffer.line(
-            xMid,
-            q.y + q.height / 2,
-            q.x + q.width / 2,
-            q.y + q.height
-          )
-
-          break
-        case 2:
-        case 13:
-          xMid = this.interpolate(
-            q.x + q.width / 2,
-            q.y + q.height,
-            q.x + q.width,
-            q.y + q.height / 2
-          )
-          this.graphicsBuffer.line(
-            q.x + q.width / 2,
-            q.y + q.height,
-            xMid,
-            q.y + q.height / 2
-          )
-
-          this.graphicsBuffer.line(
-            xMid,
-            q.y + q.height / 2,
-            q.x + q.width,
-            q.y + q.height / 2
-          )
-          break
-        case 3:
-        case 12:
-          xMid = this.interpolate(
-            q.x,
-            q.y + q.height / 2,
-            q.x + q.width,
-            q.y + q.height / 2
-          )
-          this.graphicsBuffer.line(
-            q.x,
-            q.y + q.height / 2,
-            xMid,
-            q.y + q.height / 2
-          )
-          this.graphicsBuffer.line(
-            xMid,
-            q.y + q.height / 2,
-            q.x + q.width,
-            q.y + q.height / 2
-          )
-          break
-        case 4:
-        case 11:
-          xMid = this.interpolate(
-            q.x + q.width / 2,
-            q.y,
-            q.x + q.width,
-            q.y + q.height / 2
-          )
-          this.graphicsBuffer.line(
-            q.x + q.width / 2,
-            q.y,
-            xMid,
-            q.y + q.height / 2
-          )
-          this.graphicsBuffer.line(
-            xMid,
-            q.y + q.height / 2,
-            q.x + q.width,
-            q.y + q.height / 2
-          )
-          break
-        case 5:
-          xMid1 = this.interpolate(
-            q.x,
-            q.y + q.height / 2,
-            q.x + q.width / 2,
-            q.y + q.height
-          )
-          xMid2 = this.interpolate(
-            q.x + q.width / 2,
-            q.y,
-            q.x + q.width,
-            q.y + q.height / 2
-          )
-          this.graphicsBuffer.line(
-            q.x,
-            q.y + q.height / 2,
-            xMid1,
-            q.y + q.height
-          )
-          this.graphicsBuffer.line(
-            xMid1,
-            q.y + q.height,
-            q.x + q.width / 2,
-            q.y + q.height
-          )
-          this.graphicsBuffer.line(
-            q.x + q.width / 2,
-            q.y,
-            xMid2,
-            q.y + q.height / 2
-          )
-          this.graphicsBuffer.line(
-            xMid2,
-            q.y + q.height / 2,
-            q.x + q.width,
-            q.y + q.height / 2
-          )
-          break
-        case 10:
-          xMid1 = this.interpolate(
-            q.x,
-            q.y + q.height / 2,
-            q.x + q.width / 2,
-            q.y
-          )
-          xMid2 = this.interpolate(
-            q.x + q.width / 2,
-            q.y + q.height,
-            q.x + q.width,
-            q.y + q.height / 2
-          )
-          this.graphicsBuffer.line(q.x, q.y + q.height / 2, xMid1, q.y)
-          this.graphicsBuffer.line(xMid1, q.y, q.x + q.width / 2, q.y)
-          this.graphicsBuffer.line(
-            q.x + q.width / 2,
-            q.y + q.height,
-            xMid2,
-            q.y + q.height / 2
-          )
-          this.graphicsBuffer.line(
-            xMid2,
-            q.y + q.height / 2,
-            q.x + q.width,
-            q.y + q.height / 2
-          )
-          break
-        case 6:
-        case 9:
-          xMid = this.interpolate(
-            q.x + q.width / 2,
-            q.y + q.height,
-            q.x + q.width / 2,
-            q.y
-          )
-          this.graphicsBuffer.line(q.x + q.width / 2, q.y + q.height, xMid, q.y)
-          this.graphicsBuffer.line(xMid, q.y, q.x + q.width / 2, q.y)
-          break
-        case 7:
-        case 8:
-          xMid = this.interpolate(
-            q.x,
-            q.y + q.height / 2,
-            q.x + q.width / 2,
-            q.y
-          )
-          this.graphicsBuffer.line(q.x, q.y + q.height / 2, xMid, q.y)
-          this.graphicsBuffer.line(xMid, q.y, q.x + q.width / 2, q.y)
-          break
-        default:
-          return
+        })
       }
     }
   }
@@ -281,7 +111,6 @@ export default class ImplicitCurve extends AnimObject {
     } else {
       if (!this.calculatingQuadtree) this.calculateQuadtree()
     }
-    if (this.transition) console.log(this.color)
     p.tint(255, roundOff(this.color.rgbaVals[3] * 255, 2))
     p.image(this.graphicsBuffer, 0, 0)
     this.graphicsBuffer.noStroke()

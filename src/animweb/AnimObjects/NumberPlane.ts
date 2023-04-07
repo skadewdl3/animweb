@@ -3,7 +3,7 @@ import p5 from 'p5'
 import Point, { PointProps } from '../AnimObjects/Point'
 import Curve from './../AnimObjects/Curve'
 import Line, { Lines } from './Line'
-import StandardColors from '../helpers/StandardColors'
+import Colors from '../helpers/Colors'
 import Color from '../helpers/Color'
 import TransitionProps, { Transition, Transitions } from '../Transition'
 import Constants from '../helpers/Constants'
@@ -71,6 +71,8 @@ export default class NumberPlane extends AnimObject {
   yGrid: Array<Line> = []
   showTicks: boolean = true
   grid: boolean = false
+  xRange: [number, number] | undefined
+  yRange: [number, number] | undefined
 
   iterables = [
     'points',
@@ -116,9 +118,14 @@ export default class NumberPlane extends AnimObject {
       for (let i = 0; i < Math.floor(this.width / (2 * this.stepX)); i++) {
         this.xTicks.push(
           new Point({
-            x: this.origin.x + this.stepX * i,
-            y: this.origin.y,
+            x: i,
+            y: 0,
             color: new Color(this.color.rgbaVals),
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
@@ -127,31 +134,48 @@ export default class NumberPlane extends AnimObject {
       for (let i = 1; i < Math.floor(this.width / (2 * this.stepX)); i++) {
         this.xTicks.unshift(
           new Point({
-            x: this.origin.x - this.stepX * i,
-            y: this.origin.y,
+            x: -i,
+            y: 0,
             color: new Color(this.color.rgbaVals),
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
 
       // +ve y-axis
-      for (let i = 1; i < Math.floor(this.height / (2 * this.stepY)); i++) {
+      // shitty fix to show complete transformation. fix later.
+      for (let i = 1; i < 2 * Math.floor(this.height / (2 * this.stepY)); i++) {
         this.yTicks.push(
           new Point({
-            x: this.origin.x,
-            y: this.origin.y - this.stepY * i,
+            y: i,
+            x: 0,
             color: new Color(this.color.rgbaVals),
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
 
       // -ve y-axis
-      for (let i = 1; i < Math.floor(this.height / (2 * this.stepY)); i++) {
+      // shitty fix to show complete transformation. fix later.
+      for (let i = 1; i < 2 * Math.floor(this.height / (2 * this.stepY)); i++) {
         this.yTicks.unshift(
           new Point({
-            x: this.origin.x,
-            y: this.origin.y + this.stepY * i,
+            y: -i,
+            x: 0,
             color: new Color(this.color.rgbaVals),
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
@@ -163,48 +187,65 @@ export default class NumberPlane extends AnimObject {
           new Line({
             form: Lines.SlopePoint,
             slope: Infinity,
-            point: { x: this.origin.x + this.stepX * i, y: this.origin.y },
+            point: { x: i, y: 0 },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
-
       // -ve x-axis
       for (let i = 1; i < Math.floor(this.width / (2 * this.stepX)); i++) {
         this.xGrid.unshift(
           new Line({
             form: Lines.SlopePoint,
             slope: Infinity,
-            point: { x: this.origin.x - this.stepX * i, y: this.origin.y },
+            point: { x: -i, y: 0 },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
-
       // +ve y-axis
-      for (let i = 1; i < Math.floor(this.height / (2 * this.stepY)); i++) {
+      for (let i = 0; i < Math.floor(this.height / (2 * this.stepY)); i++) {
         this.yGrid.push(
           new Line({
             form: Lines.SlopePoint,
             slope: 0,
-            point: { x: this.origin.x, y: this.origin.y - this.stepY * i },
+            point: { x: 0, y: i },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
-
       // -ve y-axis
       for (let i = 1; i < Math.floor(this.height / (2 * this.stepY)); i++) {
         this.yGrid.unshift(
           new Line({
             form: Lines.SlopePoint,
             slope: 0,
-            point: { x: this.origin.x, y: this.origin.y + this.stepY * i },
+            point: { x: 0, y: -i },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
@@ -216,6 +257,11 @@ export default class NumberPlane extends AnimObject {
         slope: -Infinity,
         point: { x: 0, y: 0 },
         color: new Color(this.color.rgbaVals),
+        parentData: {
+          origin: this.origin,
+          stepX: this.stepX,
+          stepY: this.stepY,
+        },
       })
     )
     this.axes.push(
@@ -224,6 +270,11 @@ export default class NumberPlane extends AnimObject {
         slope: 0,
         point: { x: 0, y: 0 },
         color: new Color(this.color.rgbaVals),
+        parentData: {
+          origin: this.origin,
+          stepX: this.stepX,
+          stepY: this.stepY,
+        },
       })
     )
   }
@@ -240,13 +291,9 @@ export default class NumberPlane extends AnimObject {
       tick.draw(p)
     })
 
-    p.translate(-this.width / 2, 0)
     this.xGrid.forEach((line) => line.draw(p))
-    p.translate(this.width / 2, 0)
 
-    p.translate(0, +this.height / 2)
     this.yGrid.forEach((line) => line.draw(p))
-    p.translate(0, -this.height / 2)
 
     this.points.forEach((point) => {
       point.draw(p)
@@ -271,8 +318,11 @@ export default class NumberPlane extends AnimObject {
         let point = await transition(
           new Point({
             ...config,
-            x: this.origin.x + config.x * this.stepX,
-            y: this.origin.y - config.y * this.stepY,
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           }),
           transitionOptions
         )
@@ -283,8 +333,11 @@ export default class NumberPlane extends AnimObject {
         this.points.push(
           new Point({
             ...config,
-            x: this.origin.x + config.x * this.stepX,
-            y: this.origin.y - config.y * this.stepY,
+            parentData: {
+              stepX: this.stepX,
+              stepY: this.stepY,
+              origin: this.origin,
+            },
           })
         )
       }
@@ -292,71 +345,74 @@ export default class NumberPlane extends AnimObject {
     })
   }
 
-  async plot(config: CurvePlotProps): Promise<Curve> {
-    return new Promise(async (resolve, reject) => {
-      let domain: [number, number] = config.domain
-        ? config.domain
-        : [
-            -Math.floor(this.width / (2 * this.stepX) - 1),
-            Math.floor(this.width / (2 * this.stepX) - 1),
-          ]
+  plot(config: CurvePlotProps): Curve {
+    let domain: [number, number] = config.domain
+      ? config.domain
+      : [
+          -Math.floor(this.width / (2 * this.stepX) - 1),
+          Math.floor(this.width / (2 * this.stepX) - 1),
+        ]
 
-      let range: [number, number] = config.domain
-        ? config.domain
-        : [
-            -Math.floor(this.height / (2 * this.stepY) - 1),
-            Math.floor(this.height / (2 * this.stepY) - 1),
-          ]
+    let range: [number, number] = config.domain
+      ? config.domain
+      : [
+          -Math.floor(this.height / (2 * this.stepY) - 1),
+          Math.floor(this.height / (2 * this.stepY) - 1),
+        ]
 
-      let sampleRate: number = config.sampleRate
-        ? config.sampleRate
-        : Constants.curveSampleRate
+    let sampleRate: number = config.sampleRate
+      ? config.sampleRate
+      : Constants.curveSampleRate
 
-      if (config.transition) {
-        let transition = Transition(config.transition)
-        let transitionOptions = config.transitionOptions
-          ? config.transitionOptions
-          : {}
-        let curve = await transition(
-          new Curve({
-            ...config,
-            domain,
-            range,
-            sampleRate,
-            stepX: this.stepX,
-            stepY: this.stepY,
-            origin: this.origin,
-          }),
-          transitionOptions
-        )
-        curve.updateTransitionQueueFunctions(
-          this.queueTransition,
-          this.unqueueTransition,
-          this.waitBeforeTransition
-        )
-        console.log(curve)
-        if (curve instanceof Curve) {
-          this.curves.push(curve)
-        }
-      } else {
-        let curve = new Curve({
+    if (config.transition) {
+      let transition = Transition(config.transition)
+      let transitionOptions = config.transitionOptions
+        ? config.transitionOptions
+        : {}
+      let curve = transition(
+        new Curve({
           ...config,
           domain,
           range,
           sampleRate,
+          parentData: {
+            stepX: this.stepX,
+            stepY: this.stepY,
+            origin: this.origin,
+          },
+        }),
+        transitionOptions
+      )
+      curve.updateTransitionQueueFunctions(
+        this.queueTransition,
+        this.unqueueTransition,
+        this.waitBeforeTransition
+      )
+      if (curve instanceof Curve) {
+        this.curves.push(curve)
+      }
+      //@ts-ignore
+      return curve
+    } else {
+      let curve = new Curve({
+        ...config,
+        domain,
+        range,
+        sampleRate,
+        parentData: {
           stepX: this.stepX,
           stepY: this.stepY,
           origin: this.origin,
-        })
-        curve.updateTransitionQueueFunctions(
-          this.queueTransition,
-          this.unqueueTransition,
-          this.waitBeforeTransition
-        )
-        this.curves.push(curve)
-      }
-      resolve(this.curves[this.curves.length - 1])
-    })
+        },
+      })
+      curve.updateTransitionQueueFunctions(
+        this.queueTransition,
+        this.unqueueTransition,
+        this.waitBeforeTransition
+      )
+      this.curves.push(curve)
+      return curve
+    }
   }
 
   async plotImplicit(config: ImplicitCurvePlotProps): Promise<ImplicitCurve> {
@@ -384,7 +440,6 @@ export default class NumberPlane extends AnimObject {
         if (implicitCurve instanceof ImplicitCurve) {
           this.implicitCurves.push(implicitCurve)
           resolve(implicitCurve)
-          // console.log(implicitCurve)
         }
       } else {
         let implicitCurve = new ImplicitCurve({
@@ -405,32 +460,24 @@ export default class NumberPlane extends AnimObject {
   }
 
   async transform(lt: [[number, number], [number, number]]) {
-    console.log(lt)
     let ltMatrix = matrix(lt)
     for (let tick of this.xTicks) {
-      let x = (tick.x - this.origin.x) / this.stepX
-      let y = (this.origin.y - tick.y) / this.stepY
-
-      let pInitial = matrix([[x], [y]])
-      let pFinal = multiply(ltMatrix, pInitial).toArray()
-      // @ts-ignore
-      tick.x = this.origin.x + pFinal[0] * this.stepX
-      // @ts-ignore
-      tick.y = this.origin.y - pFinal[1] * this.stepY
+      tick.transform(ltMatrix)
     }
     for (let tick of this.yTicks) {
-      let x = (tick.x - this.origin.x) / this.stepX
-      let y = (this.origin.y - tick.y) / this.stepY
-      console.log(x, y)
-
-      let pInitial = matrix([[x], [y]])
-      console.log(pInitial)
-      let pFinal = multiply(ltMatrix, pInitial).toArray()
-      console.log(pFinal)
-      // @ts-ignore
-      tick.x = this.origin.x - pFinal[0] * this.stepX
-      // @ts-ignore
-      tick.y = this.origin.y + pFinal[1] * this.stepY
+      tick.transform(ltMatrix)
+    }
+    for (let axis of this.axes) {
+      axis.transform(ltMatrix)
+    }
+    for (let point of this.points) {
+      point.transform(ltMatrix)
+    }
+    for (let line of this.xGrid) {
+      line.transform(ltMatrix)
+    }
+    for (let line of this.yGrid) {
+      line.transform(ltMatrix)
     }
   }
 }

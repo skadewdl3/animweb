@@ -9,9 +9,13 @@ class Quadrant {
     this.y = y
     this.width = width
     this.height = height
+    this.contours = null
   }
   setValue(val) {
     this.value = val
+  }
+  setContours(contours) {
+    this.contours = contours
   }
 }
 
@@ -24,11 +28,29 @@ class QuadTree {
   definition = ''
   maxDepth = 9
 
-  valueFunction = (bl, br, tr, tl) => {
-    return bl + 2 * br + 4 * tr + 8 * tl
+  signum(val) {
+    return val > 0 ? 0 : 1
   }
 
-  constructor({ x, y, width, height, definition, depth, evalDefinition, maxDepth }) {
+  valueFunction = (bl, br, tr, tl) => {
+    return (
+      this.signum(bl) +
+      2 * this.signum(br) +
+      4 * this.signum(tr) +
+      8 * this.signum(tl)
+    )
+  }
+
+  constructor({
+    x,
+    y,
+    width,
+    height,
+    definition,
+    depth,
+    evalDefinition,
+    maxDepth,
+  }) {
     this.x = x
     this.y = y
     this.depth = depth
@@ -76,14 +98,130 @@ class QuadTree {
     this.subdivide(this.sw)
   }
 
-  setValue() {}
+  lerpY(x1, y1, x2, y2) {
+    return (
+      y1 +
+      (y2 - y1) *
+        ((1 - this.evalDefinition(x1, y1)) /
+          (this.evalDefinition(x2, y2) - this.evalDefinition(x1, y1)))
+    )
+  }
+
+  lerpX(x1, y1, x2, y2) {
+    return (
+      x1 +
+      (x2 - x1) *
+        ((1 - this.evalDefinition(x1, y1)) /
+          (this.evalDefinition(x2, y2) - this.evalDefinition(x1, y1)))
+    )
+  }
+
+  calculateContour(val, [blX, blY], [brX, brY], [trX, trY], [tlX, tlY]) {
+    let results = []
+    let result = {}
+    let result1 = {}
+    let result2 = {}
+    switch (val) {
+      case 0:
+      case 15:
+        results = null
+      case 1:
+      case 14:
+        result.x1 = blX
+        result.y1 = this.lerpY(tlX, tlY, blX, blY)
+
+        result.x2 = this.lerpX(brX, brY, blX, blY)
+        result.y2 = blY
+        results.push(result)
+        break
+      case 2:
+      case 13:
+        result.x1 = this.lerpX(blX, blY, brX, brY)
+        result.y1 = brY
+
+        result.x2 = brX
+        result.y2 = this.lerpY(trX, trY, brX, brY)
+        results.push(result)
+        break
+      case 3:
+      case 12:
+        result.x1 = blX
+        result.y1 = this.lerpY(tlX, tlY, blX, blY)
+
+        result.x2 = brX
+        result.y2 = this.lerpY(trX, trY, brX, brY)
+
+        results.push(result)
+        break
+      case 4:
+      case 11:
+        result.x1 = this.lerpX(tlX, tlY, trX, trY)
+        result.y1 = trY
+
+        result.x2 = trX
+        result.y2 = this.lerpY(brX, brY, trX, trY)
+        results.push(result)
+        break
+      case 5:
+        result1.x1 = blX
+        result1.y1 = this.lerpY(tlX, tlY, blX, blY)
+
+        result1.x2 = this.lerpX(brX, brY, blX, blY)
+        result1.y2 = blY
+        results.push(result1)
+
+        result2.x1 = this.lerpX(tlX, tlY, trX, trY)
+        result2.y1 = trY
+
+        result2.x2 = trX
+        result2.y2 = this.lerpY(brX, brY, trX, trY)
+        results.push(result2)
+        break
+      case 10:
+        result1.x1 = tlX
+        result1.y1 = this.lerpY(blX, blY, tlX, tlY)
+
+        result1.x2 = this.lerpX(trX, trY, tlX, tlY)
+        result1.y2 = tlY
+
+        results.push(result1)
+
+        result2.x1 = this.lerpX(blX, blY, brX, brY)
+        result2.y1 = brY
+
+        result2.x2 = brX
+        result2.y2 = this.lerpY(trX, trY, brX, brY)
+        results.push(result2)
+        break
+      case 6:
+      case 9:
+        result.x1 = this.lerpX(tlX, tlY, trX, trY)
+        result.y1 = trY
+
+        result.x2 = this.lerpX(blX, blY, brX, brY)
+        result.y2 = brY
+        results.push(result)
+        break
+      case 7:
+      case 8:
+        result.x1 = tlX
+        result.y1 = this.lerpY(blX, blY, tlX, tlY)
+
+        result.x2 = this.lerpX(trX, trY, tlX, tlY)
+        result.y2 = tlY
+
+        results.push(result)
+        break
+    }
+    return results
+  }
 
   subdivide(q) {
     if (!q.ne) {
       let bl, br, tr, tl, val
       switch (q.direction) {
         case 'ne':
-          [bl, br, tr, tl] = [
+          ;[bl, br, tr, tl] = [
             this.evalDefinition(
               this.x + this.width / 2,
               this.y + this.height / 2
@@ -93,6 +231,7 @@ class QuadTree {
             this.evalDefinition(this.x + this.width / 2, this.y),
           ]
           val = this.valueFunction(bl, br, tr, tl)
+
           if (val == 0 || val == 15) this.ne.setValue(val)
           else {
             if (this.depth <= this.maxDepth)
@@ -104,13 +243,24 @@ class QuadTree {
                 height: this.height / 2,
                 depth: this.depth + 1,
                 evalDefinition: this.evalDefinition,
-                maxDepth: this.maxDepth
+                maxDepth: this.maxDepth,
               })
-            else this.ne.setValue(val)
+            else {
+              this.ne.setValue(val)
+              this.ne.setContours(
+                this.calculateContour(
+                  val,
+                  [this.x + this.width / 2, this.y + this.height / 2],
+                  [this.x + this.width, this.y + this.height / 2],
+                  [this.x + this.width, this.y],
+                  [this.x + this.width / 2, this.y]
+                )
+              )
+            }
           }
           break
         case 'nw':
-          [bl, br, tr, tl] = [
+          ;[bl, br, tr, tl] = [
             this.evalDefinition(this.x, this.y + this.height / 2),
             this.evalDefinition(
               this.x + this.width / 2,
@@ -131,13 +281,24 @@ class QuadTree {
                 height: this.height / 2,
                 depth: this.depth + 1,
                 evalDefinition: this.evalDefinition,
-                maxDepth: this.maxDepth
+                maxDepth: this.maxDepth,
               })
-            else this.nw.setValue(val)
+            else {
+              this.nw.setValue(val)
+              this.nw.setContours(
+                this.calculateContour(
+                  val,
+                  [this.x, this.y + this.height / 2],
+                  [this.x + this.width / 2, this.y + this.height / 2],
+                  [this.x + this.width / 2, this.y],
+                  [this.x, this.y]
+                )
+              )
+            }
           }
           break
         case 'se':
-          [bl, br, tr, tl] = [
+          ;[bl, br, tr, tl] = [
             this.evalDefinition(this.x + this.width / 2, this.y + this.height),
             this.evalDefinition(this.x + this.width, this.y + this.height),
             this.evalDefinition(this.x + this.width, this.y + this.height / 2),
@@ -158,9 +319,20 @@ class QuadTree {
                 height: this.height / 2,
                 depth: this.depth + 1,
                 evalDefinition: this.evalDefinition,
-                maxDepth: this.maxDepth
+                maxDepth: this.maxDepth,
               })
-            this.se.setValue(val)
+            else {
+              this.se.setValue(val)
+              this.se.setContours(
+                this.calculateContour(
+                  val,
+                  [this.x + this.width / 2, this.y + this.height],
+                  [this.x + this.width, this.y + this.height],
+                  [this.x + this.width, this.y + this.height / 2],
+                  [this.x + this.width / 2, this.y + this.height / 2]
+                )
+              )
+            }
           }
           break
         case 'sw':
@@ -185,9 +357,20 @@ class QuadTree {
                 height: this.height / 2,
                 depth: this.depth + 1,
                 evalDefinition: this.evalDefinition,
-                maxDepth: this.maxDepth
+                maxDepth: this.maxDepth,
               })
-            else this.sw.setValue(val)
+            else {
+              this.sw.setValue(val)
+              this.sw.setContours(
+                this.calculateContour(
+                  val,
+                  [this.x, this.y + this.height],
+                  [this.x + this.width / 2, this.y + this.height],
+                  [this.x + this.width / 2, this.y + this.height / 2],
+                  [this.x, this.y + this.height / 2]
+                )
+              )
+            }
           }
           break
       }
@@ -195,9 +378,18 @@ class QuadTree {
   }
 }
 self.onmessage = ({ data }) => {
-  let { definition, depth, height, width, x, y, origin, stepX, stepY, maxDepth } = data
-
-  console.log(definition)
+  let {
+    definition,
+    depth,
+    height,
+    width,
+    x,
+    y,
+    origin,
+    stepX,
+    stepY,
+    maxDepth,
+  } = data
 
   const node = parse(definition)
   const code = node.compile()
@@ -210,7 +402,16 @@ self.onmessage = ({ data }) => {
     return val > 0 ? 0 : 1
   }
 
-  let quadTree = new QuadTree({ x, y, width, height, definition, depth, evalDefinition, maxDepth })
+  let quadTree = new QuadTree({
+    x,
+    y,
+    width,
+    height,
+    definition,
+    depth,
+    evalDefinition,
+    maxDepth,
+  })
   self.postMessage(JSON.stringify(quadTree))
   quadTree = undefined
   definition = undefined

@@ -5,8 +5,16 @@ import AnimObject, {
   Observer,
 } from '../AnimObject'
 import p5 from 'p5'
-import Colors from '../helpers/StandardColors'
-import { evaluate, derivative, round, unit } from 'mathjs'
+import Colors from '../helpers/Colors'
+import {
+  evaluate,
+  derivative,
+  round,
+  unit,
+  Matrix,
+  matrix,
+  multiply,
+} from 'mathjs'
 import { rangePerFrame, roundOff } from '../helpers/miscellaneous'
 
 export enum Lines {
@@ -88,17 +96,18 @@ export default class Line extends AnimObject {
   thickness: number = 1
   definition: string = ''
   length: number = Infinity
+  offset: number = 0
 
   constructor(config: LineProps) {
     super()
     if (config.domain) {
-      this.domain = config.domain
+      this.domain = this.getAbsoluteDomain(config.domain)
     }
     if (config.color) {
       this.color = config.color
     }
     if (config.range) {
-      this.range = config.range
+      this.range = this.getAbsoluteRange(config.range)
     }
     if (config.thickness) {
       this.thickness = config.thickness
@@ -119,53 +128,63 @@ export default class Line extends AnimObject {
     if (config.definition) this.definition = config.definition
     switch (config.form) {
       case Lines.DoublePoint:
-        let { x1, x2, y1, y2 } = config
-        let s = (y2 - y1) / (x2 - x1)
-        this.setSlope(s)
-        this.y = (x: number) => {
-          let c = y1 - this.slope * x1
-          return this.slope * x + c
-        }
+        let { x1: X1, y1: Y1, x2: X2, y2: Y2 } = config
+        let { x: x1, y: y1 } = this.getAbsolutePosition({ x: X1, y: Y1 })
+        let s = (Y2 - Y1) / (X2 - X1)
+        this.setSlope(-s)
+        let c = y1 - this.slope * x1
+        this.offset = c
         this.x = (y: number) => x1
+        this.y = (x: number) => {
+          return this.slope * x + this.offset
+        }
         break
       case Lines.SlopePoint:
         let { point } = config
+        let { x, y } = this.getAbsolutePosition(point)
+
         this.setSlope(config.slope)
+        this.offset = y - this.slope * x
+        this.x = (y: number) => x
         this.y = (x: number) => {
-          return this.slope * x + (point.y - this.slope * point.x)
+          return this.slope * x + this.offset
         }
-        this.x = (y: number) => point.x
         break
-      case Lines.SlopeIntercept:
-        let { xIntercept = 0, yIntercept = 0 } = config
-        this.setSlope(config.slope)
-        this.y = (x: number) => {
-          return this.slope * (x + xIntercept) + yIntercept
-        }
-        this.x = (y: number) =>
-          xIntercept == Infinity || xIntercept == -Infinity
-            ? yIntercept
-            : xIntercept
-        break
+      // woll fix whatever the fuck i did here when i understand what i did
+      // case Lines.SlopeIntercept:
+      //   let { xIntercept = 0, yIntercept = 0 } = config
+      //   this.setSlope(config.slope)
+      //   this.offset = yIntercept
+      //   this.x = (y: number) =>
+      //     xIntercept == Infinity || xIntercept == -Infinity
+      //       ? yIntercept
+      //       : xIntercept
+      //   this.y = (x: number) => {
+      //     return this.slope * x + this.offset
+      //   }
+      //   break
       case Lines.DoubleIntercept:
-        let { xIntercept: a, yIntercept: b } = config
+        let { xIntercept: relativeA, yIntercept: relativeB } = config
+        let { a, b } = this.getAbsolutePosition(relativeA, relativeB)
         this.setSlope(-b / a)
+        this.offset = b
         this.y = (x: number) => {
-          return b - this.slope * x
+          return this.slope * x + this.offset
         }
         this.x = (y: number) => (a == Infinity || b == -Infinity ? b : a)
         break
-      case Lines.Normal:
-        let { alpha, distance } = config
-        this.y = (x: number) => {
-          this.setSlope(-1 / Math.tan((3 * Math.PI) / 2 + alpha))
-          return distance / Math.sin(alpha) + x * this.slope
-        }
+      // case Lines.Normal:
+      //   let { alpha, distance } = config
+      //   this.y = (x: number) => {
+      //     this.setSlope(-1 / Math.tan((3 * Math.PI) / 2 + alpha))
+      //     return distance / Math.sin(alpha) + x * this.slope
+      //   }
       // bug: case of slope = Infinty
+      // fix this go awful code later
     }
-    let { range, domain } = this.getLimitsFromLength(0, 0)
-    this.domain = domain
-    this.range = range
+    this.y = (x: number) => {
+      return this.slope * x + this.offset
+    }
   }
 
   setSlope(slope: number) {
@@ -315,6 +334,43 @@ export default class Line extends AnimObject {
     })
   }
 
+  transform(ltMatrix: Matrix): Promise<void> {
+    return new Promise((resolve, reject) => {
+      let x1: number, x2: number, y1: number, y2: number
+      if (this.slope == Infinity || this.slope == -Infinity) {
+        ;[x1, y1, x2, y2] = [this.x(0), 1, this.x(0), 2]
+        let s = (y2 - y1) / (x2 - x1)
+      } else if (this.slope == 0) {
+        ;[x1, y1, x2, y2] = [1, this.y(this.x(0)), 2, this.y(this.x(0))]
+        let s = (y2 - y1) / (x2 - x1)
+      } else {
+        ;[x1, y1, x2, y2] = [0, this.offset, this.x(0), this.y(this.x(0))]
+      }
+
+      let pInitial1 = matrix([[x1], [y1]])
+      let pInitial2 = matrix([[x2], [y2]])
+      let pFinal1 = multiply(ltMatrix, pInitial1).toArray()
+      let pFinal2 = multiply(ltMatrix, pInitial2).toArray()
+      // @ts-ignore
+      x1 = pFinal1[0]
+      // @ts-ignore
+      y1 = pFinal1[1]
+      // @ts-ignore
+      x2 = pFinal2[0]
+      // @ts-ignore
+      y2 = pFinal2[1]
+      let s = (y2 - y1) / (x2 - x1)
+      this.setSlope(s)
+      let c = y1 - this.slope * x1
+      this.offset = c
+      this.y = (x: number) => {
+        return this.slope * x + c
+      }
+      this.x = (y: number) => x1
+      resolve()
+    })
+  }
+
   draw(p: p5) {
     if (this.transition) this.transition()
     p.stroke(this.color.rgba)
@@ -335,6 +391,9 @@ export default class Line extends AnimObject {
         -this.y(this.domain[1])
       )
     }
+
+    let p1 = this.getAbsolutePosition({ x: 1, y: 1 })
+    let p2 = this.getAbsolutePosition({ x: 2, y: 2 })
     p.translate(-this.parentData.origin.x, -this.parentData.origin.y)
     p.noStroke()
   }

@@ -109,75 +109,71 @@ const fadeInTransitions = (
   )
 }
 
-const FadeIn = async (
+const FadeIn = (
   object: AnimObject,
   config: FadeInTransitionProps = {}
-): Promise<AnimObject> => {
-  return new Promise((resolve, reject) => {
-    if (object instanceof Line) {
-      resetColor(object)
-      object.transition = fadeInTransition(object, config)
-    } else if (object instanceof Point) {
-      resetColor(object)
-      object.transition = fadeInTransition(object, config)
-    } else if (object instanceof NumberPlane) {
-      let totalDuration = config.duration
-        ? config.duration
-        : Constants.fadeInNumberPlaneDuration
+): AnimObject => {
+  if (object instanceof Line) {
+    resetColor(object)
+    object.transition = fadeInTransition(object, config)
+  } else if (object instanceof Point) {
+    resetColor(object)
+    object.transition = fadeInTransition(object, config)
+  } else if (object instanceof NumberPlane) {
+    let totalDuration = config.duration
+      ? config.duration
+      : Constants.fadeInNumberPlaneDuration
 
-      resetColors(object.axes)
-      resetColors(object.xTicks)
-      resetColors(object.yTicks)
-      resetColors(object.xGrid)
-      resetColors(object.yGrid)
-      resetColors(object.points)
-      object.curves.forEach((curve) => {
-        if (curve instanceof Curve) resetColors(curve.lines)
-      })
-      object.implicitCurves.forEach((implicitCurve) => {
-        if (implicitCurve instanceof ImplicitCurve) resetColor(implicitCurve)
-      })
+    resetColors(object.axes)
+    resetColors(object.xTicks)
+    resetColors(object.yTicks)
+    resetColors(object.xGrid)
+    resetColors(object.yGrid)
+    resetColors(object.points)
+    object.curves.forEach((curve) => {
+      if (curve instanceof Curve) resetColors(curve.lines)
+    })
+    object.implicitCurves.forEach((implicitCurve) => {
+      if (implicitCurve instanceof ImplicitCurve) resetColor(implicitCurve)
+    })
 
-      fadeInTransitions(object.axes, config, totalDuration / 3)
+    fadeInTransitions(object.axes, config, totalDuration / 3)
 
-      fadeInTransitions(object.xTicks, config, totalDuration / 3)
-      fadeInTransitions(object.yTicks, config, totalDuration / 3)
-      fadeInTransitions(object.xGrid, config, totalDuration / 3)
-      fadeInTransitions(object.yGrid, config, totalDuration / 3)
+    fadeInTransitions(object.xTicks, config, totalDuration / 3)
+    fadeInTransitions(object.yTicks, config, totalDuration / 3)
+    fadeInTransitions(object.xGrid, config, totalDuration / 3)
+    fadeInTransitions(object.yGrid, config, totalDuration / 3)
 
+    wait((totalDuration / 3) * 1000).then(() => {
+      fadeInTransitions(object.points, config, totalDuration / 3)
       wait((totalDuration / 3) * 1000).then(() => {
-        fadeInTransitions(object.points, config, totalDuration / 3)
-        wait((totalDuration / 3) * 1000).then(() => {
-          object.curves.forEach((curve) => {
-            if (curve instanceof Curve)
-              fadeInTransitions(curve.lines, config, totalDuration / 3)
-          })
-          object.implicitCurves.forEach((implicitCurve) => {
-            if (implicitCurve instanceof ImplicitCurve) {
-              implicitCurve.transition = fadeInTransition(
-                implicitCurve,
-                config,
-                {},
-                totalDuration / 3
-              )
-            }
-          })
+        object.curves.forEach((curve) => {
+          if (curve instanceof Curve)
+            fadeInTransitions(curve.lines, config, totalDuration / 3)
+        })
+        object.implicitCurves.forEach((implicitCurve) => {
+          if (implicitCurve instanceof ImplicitCurve) {
+            implicitCurve.transition = fadeInTransition(
+              implicitCurve,
+              config,
+              {},
+              totalDuration / 3
+            )
+          }
         })
       })
-    } else if (object instanceof Curve) {
-      object.lines.forEach((line) => resetColor(line))
-      fadeInTransitions(object.lines, config)
-    } else if (object instanceof ImplicitCurve) {
-      resetColor(object)
-      object.transition = fadeInTransition(object, config)
-    } else if (object instanceof Text) {
-      resetColor(object)
-      object.transition = fadeInTransition(object, config)
-    }
-    console.log(object instanceof Text)
-
-    resolve(object)
-  })
+    })
+  } else if (object instanceof Curve) {
+    object.lines.forEach((line) => resetColor(line))
+    fadeInTransitions(object.lines, config)
+  } else if (object instanceof ImplicitCurve) {
+    resetColor(object)
+    object.transition = fadeInTransition(object, config)
+  } else if (object instanceof Text) {
+    resetColor(object)
+    object.transition = fadeInTransition(object, config)
+  }
+  return object
 }
 
 export default FadeIn
