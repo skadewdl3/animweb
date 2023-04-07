@@ -141,8 +141,10 @@ class Point extends AnimObject {
     }
     p.stroke(this.color.rgba)
     p.strokeWeight(this.size)
+    p.translate(this.parentData.origin.x, this.parentData.origin.y)
     let { x, y } = this.getAbsolutePosition({ x: this.x, y: this.y })
     p.point(x, y)
+    p.translate(-this.parentData.origin.x, -this.parentData.origin.y)
     p.noStroke()
   }
 }

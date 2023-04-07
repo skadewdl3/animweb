@@ -71,6 +71,8 @@ export default class NumberPlane extends AnimObject {
   yGrid: Array<Line> = []
   showTicks: boolean = true
   grid: boolean = false
+  xRange: [number, number] | undefined
+  yRange: [number, number] | undefined
 
   iterables = [
     'points',
@@ -198,7 +200,6 @@ export default class NumberPlane extends AnimObject {
           })
         )
       }
-
       // -ve x-axis
       for (let i = 1; i < Math.floor(this.width / (2 * this.stepX)); i++) {
         this.xGrid.unshift(
@@ -216,14 +217,13 @@ export default class NumberPlane extends AnimObject {
           })
         )
       }
-
       // +ve y-axis
       for (let i = 0; i < Math.floor(this.height / (2 * this.stepY)); i++) {
         this.yGrid.push(
           new Line({
             form: Lines.SlopePoint,
             slope: 0,
-            point: { x: 0, y: -i },
+            point: { x: 0, y: i },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
             parentData: {
@@ -234,14 +234,13 @@ export default class NumberPlane extends AnimObject {
           })
         )
       }
-
       // -ve y-axis
       for (let i = 1; i < Math.floor(this.height / (2 * this.stepY)); i++) {
         this.yGrid.unshift(
           new Line({
             form: Lines.SlopePoint,
             slope: 0,
-            point: { x: 0, y: i },
+            point: { x: 0, y: -i },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
             parentData: {
@@ -260,6 +259,11 @@ export default class NumberPlane extends AnimObject {
         slope: -Infinity,
         point: { x: 0, y: 0 },
         color: new Color(this.color.rgbaVals),
+        parentData: {
+          origin: this.origin,
+          stepX: this.stepX,
+          stepY: this.stepY,
+        },
       })
     )
     this.axes.push(
@@ -268,6 +272,11 @@ export default class NumberPlane extends AnimObject {
         slope: 0,
         point: { x: 0, y: 0 },
         color: new Color(this.color.rgbaVals),
+        parentData: {
+          origin: this.origin,
+          stepX: this.stepX,
+          stepY: this.stepY,
+        },
         // color: StandardColors.Blue(),
       })
     )
@@ -285,13 +294,9 @@ export default class NumberPlane extends AnimObject {
       tick.draw(p)
     })
 
-    p.translate(-this.width / 2, 0)
     this.xGrid.forEach((line) => line.draw(p))
-    p.translate(this.width / 2, 0)
 
-    p.translate(0, +this.height / 2)
     this.yGrid.forEach((line) => line.draw(p))
-    p.translate(0, -this.height / 2)
 
     this.points.forEach((point) => {
       point.draw(p)

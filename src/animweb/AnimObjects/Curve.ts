@@ -80,10 +80,7 @@ export default class Curve extends AnimObject {
     if (rhs.includes('=')) rhs = rhs.split('=')[1]
     for (let x = this.domain[0]; x <= this.domain[1]; x += h) {
       let y = evaluate(rhs, { x })
-      this.points.push({
-        x: x * this.parentData.stepX,
-        y: y * this.parentData.stepY,
-      })
+      this.points.push({ x, y })
     }
   }
 
@@ -91,23 +88,22 @@ export default class Curve extends AnimObject {
     for (let i = 0; i < this.points.length - 1; i++) {
       let p1 = this.points[i]
       let p2 = this.points[i + 1]
-      if (!(p2.y < -this.sceneHeight / 2 || p1.y > this.sceneHeight / 2)) {
-        this.lines.push(
-          new Line({
-            form: Lines.DoublePoint,
-            x1: p1.x,
-            x2: p2.x,
-            y1: p1.y,
-            y2: p2.y,
-            domain: [p1.x, p2.x],
-            range: [p1.y, p2.y],
-            color: new Color(this.color.rgbaVals),
-            thickness: this.thickness,
-            parentData: this.parentData,
-          })
-        )
-      }
+      this.lines.push(
+        new Line({
+          form: Lines.DoublePoint,
+          x1: p1.x,
+          x2: p2.x,
+          y1: p1.y,
+          y2: p2.y,
+          domain: [p1.x, p2.x],
+          range: [p1.y, p2.y],
+          color: new Color(this.color.rgbaVals),
+          thickness: this.thickness,
+          parentData: this.parentData,
+        })
+      )
     }
+    console.log(this.lines)
   }
 
   async addAnchorPoint(config: CurveAnchorPointProps): Promise<Point> {

@@ -101,10 +101,29 @@ export default class AnimObject {
     y: number
   }): { x: number; y: number } => {
     return {
-      x: this.parentData.origin.x + x * this.parentData.stepX,
-      y: this.parentData.origin.y - y * this.parentData.stepY,
+      x: x * this.parentData.stepX,
+      y: -1 * y * this.parentData.stepY,
     }
   }
+  getAbsoluteRange: Function = ([lowerBound, upperBound]: [number, number]): [
+    number,
+    number
+  ] => {
+    return [
+      this.parentData.origin.y - lowerBound * this.parentData.stepY,
+      this.parentData.origin.y - upperBound * this.parentData.stepY,
+    ]
+  }
+  getAbsoluteDomain: Function = ([lowerBound, upperBound]: [number, number]): [
+    number,
+    number
+  ] => {
+    return [
+      this.parentData.origin.x + lowerBound * this.parentData.stepX,
+      this.parentData.origin.x + upperBound * this.parentData.stepX,
+    ]
+  }
+
   /*
   Right now, the transition method is a placeholder method. When we apply a transition like so:
   FadeIn(Line) or Create(NumberPlane), this method gets modified by FadeIn or Create.

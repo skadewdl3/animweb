@@ -101,13 +101,13 @@ export default class Line extends AnimObject {
   constructor(config: LineProps) {
     super()
     if (config.domain) {
-      this.domain = config.domain
+      this.domain = this.getAbsoluteDomain(config.domain)
     }
     if (config.color) {
       this.color = config.color
     }
     if (config.range) {
-      this.range = config.range
+      this.range = this.getAbsoluteRange(config.range)
     }
     if (config.thickness) {
       this.thickness = config.thickness
@@ -129,11 +129,14 @@ export default class Line extends AnimObject {
     switch (config.form) {
       case Lines.DoublePoint:
         let { x1: X1, y1: Y1, x2: X2, y2: Y2 } = config
-        let { x1, y1 } = this.getAbsolutePosition({ x: X1, y: Y1 })
-        let { x2, y2 } = this.getAbsolutePosition({ x: X2, y: Y2 })
+        console.log(X1, Y1, X2, Y2)
+        let { x: x1, y: y1 } = this.getAbsolutePosition({ x: X1, y: Y1 })
+        let { x: x2, y: y2 } = this.getAbsolutePosition({ x: X2, y: Y2 })
+        // console.log(this.getAbsolutePosition({ x: X1, y: Y1 }))
         let s = (y2 - y1) / (x2 - x1)
-        let c = y1 - this.slope * x1
         this.setSlope(s)
+        let c = y1 - this.slope * x1
+        console.log(s, c)
         this.offset = c
         this.x = (y: number) => x1
         this.y = (x: number) => {
@@ -143,6 +146,8 @@ export default class Line extends AnimObject {
       case Lines.SlopePoint:
         let { point } = config
         let { x, y } = this.getAbsolutePosition(point)
+        console.log(point, { x, y })
+
         this.setSlope(config.slope)
         this.offset = y - this.slope * x
         this.x = (y: number) => x
@@ -150,20 +155,22 @@ export default class Line extends AnimObject {
           return this.slope * x + this.offset
         }
         break
-      case Lines.SlopeIntercept:
-        let { xIntercept = 0, yIntercept = 0 } = config
-        this.setSlope(config.slope)
-        this.offset = yIntercept
-        this.x = (y: number) =>
-          xIntercept == Infinity || xIntercept == -Infinity
-            ? yIntercept
-            : xIntercept
-        this.y = (x: number) => {
-          return this.slope * x + this.offset
-        }
-        break
+      // woll fix whatever the fuck i did here when i understand what i did
+      // case Lines.SlopeIntercept:
+      //   let { xIntercept = 0, yIntercept = 0 } = config
+      //   this.setSlope(config.slope)
+      //   this.offset = yIntercept
+      //   this.x = (y: number) =>
+      //     xIntercept == Infinity || xIntercept == -Infinity
+      //       ? yIntercept
+      //       : xIntercept
+      //   this.y = (x: number) => {
+      //     return this.slope * x + this.offset
+      //   }
+      //   break
       case Lines.DoubleIntercept:
-        let { xIntercept: a, yIntercept: b } = config
+        let { xIntercept: relativeA, yIntercept: relativeB } = config
+        let { a, b } = this.getAbsolutePosition(relativeA, relativeB)
         this.setSlope(-b / a)
         this.offset = b
         this.y = (x: number) => {
@@ -183,9 +190,8 @@ export default class Line extends AnimObject {
     this.y = (x: number) => {
       return this.slope * x + this.offset
     }
-    let { range, domain } = this.getLimitsFromLength(0, 0)
-    this.domain = domain
-    this.range = range
+
+    console.log('this ran')
   }
 
   setSlope(slope: number) {
@@ -394,6 +400,10 @@ export default class Line extends AnimObject {
         -this.y(this.domain[1])
       )
     }
+
+    let p1 = this.getAbsolutePosition({ x: 1, y: 1 })
+    let p2 = this.getAbsolutePosition({ x: 2, y: 2 })
+    p.line(p1.x, p1.y, p2.x, p2.y)
     p.translate(-this.parentData.origin.x, -this.parentData.origin.y)
     p.noStroke()
   }
