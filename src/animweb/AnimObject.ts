@@ -102,7 +102,7 @@ export default class AnimObject {
   }): { x: number; y: number } => {
     return {
       x: x * this.parentData.stepX,
-      y: -1 * y * this.parentData.stepY,
+      y: -y * this.parentData.stepY,
     }
   }
   getAbsoluteRange: Function = ([lowerBound, upperBound]: [number, number]): [
@@ -110,8 +110,8 @@ export default class AnimObject {
     number
   ] => {
     return [
-      this.parentData.origin.y - lowerBound * this.parentData.stepY,
-      this.parentData.origin.y - upperBound * this.parentData.stepY,
+      -lowerBound * this.parentData.stepY,
+      -upperBound * this.parentData.stepY,
     ]
   }
   getAbsoluteDomain: Function = ([lowerBound, upperBound]: [number, number]): [
@@ -119,8 +119,8 @@ export default class AnimObject {
     number
   ] => {
     return [
-      this.parentData.origin.x + lowerBound * this.parentData.stepX,
-      this.parentData.origin.x + upperBound * this.parentData.stepX,
+      lowerBound * this.parentData.stepX,
+      upperBound * this.parentData.stepX,
     ]
   }
 

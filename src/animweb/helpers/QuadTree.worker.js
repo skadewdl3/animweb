@@ -197,8 +197,6 @@ class QuadTree {
 self.onmessage = ({ data }) => {
   let { definition, depth, height, width, x, y, origin, stepX, stepY, maxDepth } = data
 
-  console.log(definition)
-
   const node = parse(definition)
   const code = node.compile()
 

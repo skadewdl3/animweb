@@ -88,6 +88,7 @@ export default class Curve extends AnimObject {
     for (let i = 0; i < this.points.length - 1; i++) {
       let p1 = this.points[i]
       let p2 = this.points[i + 1]
+      console.log(p1, p2)
       this.lines.push(
         new Line({
           form: Lines.DoublePoint,
@@ -95,15 +96,14 @@ export default class Curve extends AnimObject {
           x2: p2.x,
           y1: p1.y,
           y2: p2.y,
-          domain: [p1.x, p2.x],
-          range: [p1.y, p2.y],
+          domain: this.getAbsoluteDomain([p1.x, p2.x]),
+          range: this.getAbsoluteRange([p1.y, p2.y]),
           color: new Color(this.color.rgbaVals),
           thickness: this.thickness,
           parentData: this.parentData,
         })
       )
     }
-    console.log(this.lines)
   }
 
   async addAnchorPoint(config: CurveAnchorPointProps): Promise<Point> {

@@ -392,7 +392,6 @@ export default class NumberPlane extends AnimObject {
           this.unqueueTransition,
           this.waitBeforeTransition
         )
-        console.log(curve)
         if (curve instanceof Curve) {
           this.curves.push(curve)
         }
@@ -444,7 +443,6 @@ export default class NumberPlane extends AnimObject {
         if (implicitCurve instanceof ImplicitCurve) {
           this.implicitCurves.push(implicitCurve)
           resolve(implicitCurve)
-          // console.log(implicitCurve)
         }
       } else {
         let implicitCurve = new ImplicitCurve({
@@ -465,7 +463,6 @@ export default class NumberPlane extends AnimObject {
   }
 
   async transform(lt: [[number, number], [number, number]]) {
-    console.log(lt)
     let ltMatrix = matrix(lt)
     for (let tick of this.xTicks) {
       tick.transform(ltMatrix)

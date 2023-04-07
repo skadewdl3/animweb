@@ -68,7 +68,6 @@ export default class ImplicitCurve extends AnimObject {
       })
 
       this.webWorker.onmessage = ({ data }) => {
-        console.log(JSON.parse(data))
         this.quadTree = JSON.parse(data)
         this.calculatingQuadtree = false
         this.webWorker.terminate()
@@ -281,7 +280,6 @@ export default class ImplicitCurve extends AnimObject {
     } else {
       if (!this.calculatingQuadtree) this.calculateQuadtree()
     }
-    if (this.transition) console.log(this.color)
     p.tint(255, roundOff(this.color.rgbaVals[3] * 255, 2))
     p.image(this.graphicsBuffer, 0, 0)
     this.graphicsBuffer.noStroke()

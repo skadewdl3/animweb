@@ -13,11 +13,6 @@ interface LaTeXProps extends AnimObjectProps {
     x: number
     y: number
   }
-  parentData?: {
-    origin?: { x: number; y: number }
-    stepX?: number
-    stepY?: number
-  }
 }
 
 export default class LaTeX extends AnimObject {
@@ -75,7 +70,6 @@ export default class LaTeX extends AnimObject {
       div.class(this.id)
       let uses = [...div.elt.getElementsByTagName('use')]
       uses.forEach((u: any) => {
-        console.log(u)
         let el = document.querySelector(u.getAttribute('xlink:href'))
         el.style.fill = 'none'
         el.style.strokeWidth = `1rem`

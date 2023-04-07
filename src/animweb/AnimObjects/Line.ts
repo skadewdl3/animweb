@@ -129,14 +129,10 @@ export default class Line extends AnimObject {
     switch (config.form) {
       case Lines.DoublePoint:
         let { x1: X1, y1: Y1, x2: X2, y2: Y2 } = config
-        console.log(X1, Y1, X2, Y2)
         let { x: x1, y: y1 } = this.getAbsolutePosition({ x: X1, y: Y1 })
-        let { x: x2, y: y2 } = this.getAbsolutePosition({ x: X2, y: Y2 })
-        // console.log(this.getAbsolutePosition({ x: X1, y: Y1 }))
-        let s = (y2 - y1) / (x2 - x1)
-        this.setSlope(s)
+        let s = (Y2 - Y1) / (X2 - X1)
+        this.setSlope(-s)
         let c = y1 - this.slope * x1
-        console.log(s, c)
         this.offset = c
         this.x = (y: number) => x1
         this.y = (x: number) => {
@@ -146,7 +142,6 @@ export default class Line extends AnimObject {
       case Lines.SlopePoint:
         let { point } = config
         let { x, y } = this.getAbsolutePosition(point)
-        console.log(point, { x, y })
 
         this.setSlope(config.slope)
         this.offset = y - this.slope * x
@@ -190,8 +185,6 @@ export default class Line extends AnimObject {
     this.y = (x: number) => {
       return this.slope * x + this.offset
     }
-
-    console.log('this ran')
   }
 
   setSlope(slope: number) {
@@ -345,7 +338,6 @@ export default class Line extends AnimObject {
     return new Promise((resolve, reject) => {
       let x1: number, x2: number, y1: number, y2: number
       if (this.slope == Infinity || this.slope == -Infinity) {
-        console.log('x', this.x(0))
         ;[x1, y1, x2, y2] = [this.x(0), 1, this.x(0), 2]
         let s = (y2 - y1) / (x2 - x1)
       } else if (this.slope == 0) {
@@ -354,7 +346,6 @@ export default class Line extends AnimObject {
       } else {
         ;[x1, y1, x2, y2] = [0, this.offset, this.x(0), this.y(this.x(0))]
       }
-      console.log(x1, y1, x2, y2)
 
       let pInitial1 = matrix([[x1], [y1]])
       let pInitial2 = matrix([[x2], [y2]])

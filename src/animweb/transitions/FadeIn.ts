@@ -174,8 +174,6 @@ const FadeIn = async (
       resetColor(object)
       object.transition = fadeInTransition(object, config)
     }
-    console.log(object instanceof Text)
-
     resolve(object)
   })
 }
