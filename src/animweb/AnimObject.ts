@@ -178,6 +178,18 @@ export default class AnimObject {
     }
   }
 
+  setOpacity(opacity: number) {
+    this.color.setAlpha(opacity)
+    if (this.iterables.length != 0) {
+      this.iterables.forEach((name: string) => {
+        // @ts-ignore
+        this[name].forEach((o: AnimObject) => {
+          o.setOpacity(opacity)
+        })
+      })
+    }
+  }
+
   /*
   This is a placeholder method. Since every AnimObject (Point, Line, etc) is drawn in a different way
   we use only a placeholder here, since it is common to every AnimObject.
