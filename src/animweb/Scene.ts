@@ -208,15 +208,15 @@ export default class Scene {
 
   queueTransition(transition: TransitionQueueItem) {
     this.transitionQueue.push(transition)
-    console.log('queued', [...this.transitionQueue])
+    // console.log('queued', [...this.transitionQueue])
   }
 
   unqueueTransition(transition: TransitionQueueItem) {
-    console.log(this.transitionQueue)
+    // console.log(this.transitionQueue)
     this.transitionQueue = this.transitionQueue.filter(({ id }) => {
       return id != transition.id
     })
-    console.log('unqueued', [...this.transitionQueue])
+    // console.log('unqueued', [...this.transitionQueue])
   }
 
   // adds an AnimObject to be rendered onto the canvas

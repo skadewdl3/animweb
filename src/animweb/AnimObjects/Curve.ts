@@ -166,6 +166,10 @@ export default class Curve extends AnimObject {
     return line
   }
 
+  transform(lt: any) {
+    console.log(lt)
+  }
+
   draw(p: p5) {
     if (this.transition) {
       this.transition()

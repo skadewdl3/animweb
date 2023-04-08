@@ -1,21 +1,13 @@
 import AnimObject, {
   AnimObjectProps,
-  AnimObjects,
   Observables,
   Observer,
 } from '../AnimObject'
 import p5 from 'p5'
 import Colors from '../helpers/Colors'
-import {
-  evaluate,
-  derivative,
-  round,
-  unit,
-  Matrix,
-  matrix,
-  multiply,
-} from 'mathjs'
+import { evaluate, derivative, Matrix, matrix, multiply } from 'mathjs'
 import { rangePerFrame, roundOff } from '../helpers/miscellaneous'
+import { v4 as uuid } from 'uuid'
 
 export enum Lines {
   DoublePoint,
@@ -335,41 +327,78 @@ export default class Line extends AnimObject {
     })
   }
 
-  transform(ltMatrix: Matrix): Promise<void> {
-    return new Promise((resolve, reject) => {
-      let x1: number, x2: number, y1: number, y2: number
-      if (this.slope == Infinity || this.slope == -Infinity) {
-        ;[x1, y1, x2, y2] = [this.x(0), 1, this.x(0), 2]
-        let s = (y2 - y1) / (x2 - x1)
-      } else if (this.slope == 0) {
-        ;[x1, y1, x2, y2] = [1, this.y(this.x(0)), 2, this.y(this.x(0))]
-        let s = (y2 - y1) / (x2 - x1)
-      } else {
-        ;[x1, y1, x2, y2] = [0, this.offset, this.x(0), this.y(this.x(0))]
-      }
-
-      let pInitial1 = matrix([[x1], [y1]])
-      let pInitial2 = matrix([[x2], [y2]])
-      let pFinal1 = multiply(ltMatrix, pInitial1).toArray()
-      let pFinal2 = multiply(ltMatrix, pInitial2).toArray()
-      // @ts-ignore
-      x1 = pFinal1[0]
-      // @ts-ignore
-      y1 = pFinal1[1]
-      // @ts-ignore
-      x2 = pFinal2[0]
-      // @ts-ignore
-      y2 = pFinal2[1]
+  transform({
+    ltMatrix,
+    duration = 1,
+  }: {
+    ltMatrix: Matrix
+    duration: number
+  }) {
+    let x1: number, x2: number, y1: number, y2: number
+    if (this.slope == Infinity || this.slope == -Infinity) {
+      ;[x1, y1, x2, y2] = [this.x(0), 1, this.x(0), 2]
       let s = (y2 - y1) / (x2 - x1)
-      this.setSlope(s)
-      let c = y1 - this.slope * x1
-      this.offset = c
-      this.y = (x: number) => {
-        return this.slope * x + c
+    } else if (this.slope == 0) {
+      ;[x1, y1, x2, y2] = [1, this.y(this.x(0)), 2, this.y(this.x(0))]
+      let s = (y2 - y1) / (x2 - x1)
+    } else {
+      ;[x1, y1, x2, y2] = [0, this.offset, this.x(0), this.y(this.x(0))]
+    }
+
+    let pInitial1 = matrix([[x1], [y1]])
+    let pInitial2 = matrix([[x2], [y2]])
+    let pFinal1 = multiply(ltMatrix, pInitial1).toArray()
+    let pFinal2 = multiply(ltMatrix, pInitial2).toArray()
+
+    x1 = parseFloat(pFinal1[0].toString())
+    y1 = parseFloat(pFinal1[1].toString())
+    x2 = parseFloat(pFinal2[0].toString())
+    y2 = parseFloat(pFinal2[1].toString())
+
+    // Write code to smoothly transition between the two lines
+
+    let finalSlope = (y2 - y1) / (x2 - x1)
+    let finalOffset = y1 - this.slope * x1
+
+    let transitionQueueItem = {
+      id: uuid(),
+    }
+    let queued = false
+    let currentAngle = Math.atan(this.slope)
+    if (this.slope != Infinity) {
+      console.log(this.offset)
+      console.log(finalOffset)
+    }
+    let angleSpeed = rangePerFrame(
+      Math.atan(finalSlope) - Math.atan(this.slope),
+      duration
+    )
+    let offsetSpeed = rangePerFrame(finalOffset - this.offset, duration)
+    this.transition = () => {
+      if (!queued) {
+        queued = true
+        this.queueTransition(transitionQueueItem)
       }
-      this.x = (y: number) => x1
-      resolve()
-    })
+      if (
+        roundOff(this.slope, 2) == finalSlope &&
+        roundOff(this.offset, 2) == finalOffset
+      ) {
+        this.unqueueTransition(transitionQueueItem)
+        this.transition = null
+        this.slope = finalSlope
+        this.offset = finalOffset
+      } else {
+        let currentAngle = Math.atan(this.slope)
+
+        currentAngle += angleSpeed
+        this.slope = Math.tan(currentAngle)
+        this.offset += offsetSpeed
+        this.y = (x: number) => {
+          return this.slope * x + this.offset
+        }
+        this.x = (y: number) => -this.offset / this.slope
+      }
+    }
   }
 
   draw(p: p5) {
