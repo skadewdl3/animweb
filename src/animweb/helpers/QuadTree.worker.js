@@ -1,4 +1,5 @@
-import { evaluate, parse } from 'mathjs'
+import { evaluate, log, parse } from 'mathjs'
+import { roundOff } from './miscellaneous'
 
 class Quadrant {
   value = 0
@@ -20,7 +21,6 @@ class Quadrant {
 }
 
 class QuadTree {
-  maxDepth = 5
   x = 0
   y = 0
   width = 0
@@ -29,7 +29,7 @@ class QuadTree {
   maxDepth = 9
 
   signum(val) {
-    return val > 0 ? 0 : 1
+    return val <= 0 ? 1 : 0
   }
 
   valueFunction = (bl, br, tr, tl) => {
@@ -98,22 +98,19 @@ class QuadTree {
     this.subdivide(this.sw)
   }
 
-  lerpY(x1, y1, x2, y2) {
-    return (
-      y1 +
-      (y2 - y1) *
-        ((1 - this.evalDefinition(x1, y1)) /
-          (this.evalDefinition(x2, y2) - this.evalDefinition(x1, y1)))
-    )
+  getT(x1, y1, x2, y2) {
+    let v1 = this.evalDefinition(x1, y1)
+    let v2 = this.evalDefinition(x2, y2)
+    let t = (-v1) / (v2 - v1)
+    return t
   }
 
-  lerpX(x1, y1, x2, y2) {
-    return (
-      x1 +
-      (x2 - x1) *
-        ((1 - this.evalDefinition(x1, y1)) /
-          (this.evalDefinition(x2, y2) - this.evalDefinition(x1, y1)))
-    )
+  lerpY(x1, y1, x2, y2,  t = this.getT(x1, y1, x2, y2)) {
+    return y1 + (y2 - y1) * t
+  }
+
+  lerpX(x1, y1, x2, y2, t = this.getT(x1, y1, x2, y2)) {
+    return x1 + (x2 - x1) * t
   }
 
   calculateContour(val, [blX, blY], [brX, brY], [trX, trY], [tlX, tlY]) {
@@ -126,7 +123,6 @@ class QuadTree {
       case 15:
         results = null
       case 1:
-      case 14:
         result.x1 = blX
         result.y1 = this.lerpY(tlX, tlY, blX, blY)
 
@@ -134,17 +130,31 @@ class QuadTree {
         result.y2 = blY
         results.push(result)
         break
+      case 14:
+        result.x1 = tlX
+        result.y1 = this.lerpY(blX, blY, tlX, tlY)
+
+        result.x2 = this.lerpX(blX, blY, brX, brY)
+        result.y2 = brY
+        results.push(result)
+        break
       case 2:
-      case 13:
         result.x1 = this.lerpX(blX, blY, brX, brY)
         result.y1 = brY
 
+        result.x2 = trX
+        result.y2 = this.lerpY(brX, brY, trX, trY)
+        results.push(result)
+        break
+      case 13:
+        result.x1 = this.lerpX(brX, brY, blX, blY)
+        result.y1 = brY
+
         result.x2 = brX
-        result.y2 = this.lerpY(trX, trY, brX, brY)
+        result.y2 = this.lerpY(brX, brY, trX, trY)
         results.push(result)
         break
       case 3:
-      case 12:
         result.x1 = blX
         result.y1 = this.lerpY(tlX, tlY, blX, blY)
 
@@ -153,13 +163,29 @@ class QuadTree {
 
         results.push(result)
         break
+      case 12:
+        result.x1 = tlX
+        result.y1 = this.lerpY(blX, blY, tlX, tlY)
+
+        result.x2 = trX
+        result.y2 = this.lerpY(brX, brY, trX, trY)
+
+        results.push(result)
+        break
       case 4:
-      case 11:
         result.x1 = this.lerpX(tlX, tlY, trX, trY)
         result.y1 = trY
 
         result.x2 = trX
         result.y2 = this.lerpY(brX, brY, trX, trY)
+        results.push(result)
+        break
+      case 11:
+        result.x1 = this.lerpX(trX, trY, tlX, tlY)
+        result.y1 = trY
+
+        result.x2 = trX
+        result.y2 = this.lerpY(trX, trY, brX, brY)
         results.push(result)
         break
       case 5:
@@ -178,31 +204,46 @@ class QuadTree {
         results.push(result2)
         break
       case 10:
-        result1.x1 = tlX
+        result1.x1 = blX
         result1.y1 = this.lerpY(blX, blY, tlX, tlY)
 
-        result1.x2 = this.lerpX(trX, trY, tlX, tlY)
-        result1.y2 = tlY
+        result1.x2 = this.lerpX(blX, blY, brX, brY)
+        result1.y2 = blY
 
         results.push(result1)
 
-        result2.x1 = this.lerpX(blX, blY, brX, brY)
-        result2.y1 = brY
+        result2.x1 = this.lerpX(trX, trY, tlX, tlY)
+        result2.y1 = trY
 
-        result2.x2 = brX
+        result2.x2 = trX
         result2.y2 = this.lerpY(trX, trY, brX, brY)
         results.push(result2)
         break
       case 6:
-      case 9:
         result.x1 = this.lerpX(tlX, tlY, trX, trY)
-        result.y1 = trY
+        result.y1 = tlY
 
         result.x2 = this.lerpX(blX, blY, brX, brY)
+        result.y2 = blY
+        results.push(result)
+        break
+      case 9:
+        result.x1 = this.lerpX(trX, trY, tlX, tlY)
+        result.y1 = trY
+
+        result.x2 = this.lerpX(brX, brY, blX, blY)
         result.y2 = brY
         results.push(result)
         break
       case 7:
+        result.x1 = tlX
+        result.y1 = this.lerpY(tlX, tlY, blX, blY)
+
+        result.x2 = this.lerpX(tlX, tlY, trX, trY)
+        result.y2 = tlY
+
+        results.push(result)
+        break
       case 8:
         result.x1 = tlX
         result.y1 = this.lerpY(blX, blY, tlX, tlY)
@@ -395,11 +436,16 @@ self.onmessage = ({ data }) => {
   const code = node.compile()
 
   let evalDefinition = (x, y) => {
+    let c = {
+      x: (x - origin.x) / stepX,
+      y: (origin.y - y) / stepY,
+    }
+    
     let val = code.evaluate({
       x: (x - origin.x) / stepX,
       y: (origin.y - y) / stepY,
     })
-    return val > 0 ? 0 : 1
+    return val
   }
 
   let quadTree = new QuadTree({

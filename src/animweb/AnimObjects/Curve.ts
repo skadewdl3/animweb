@@ -55,7 +55,18 @@ export default class Curve extends AnimObject {
     parentData,
   }: CurveProps) {
     super()
-    this.y = definition
+    let temp = definition
+    let parts = temp.split('=')
+    if (parts.length == 1) this.y = definition
+    else {
+      temp = parts[0]
+      for (let part of parts) {
+        if (part == parts[0]) continue
+        temp = `${temp} - (${part})`
+      }
+      console.log(temp)
+      this.y = temp
+    }
     this.sampleRate = sampleRate
     this.domain = domain
     this.range = range
@@ -77,10 +88,9 @@ export default class Curve extends AnimObject {
   getFunctionValues() {
     let h = (this.domain[1] - this.domain[0]) / this.sampleRate
     let rhs = this.y
-    if (rhs.includes('=')) rhs = rhs.split('=')[1]
     for (let x = this.domain[0]; x <= this.domain[1]; x += h) {
-      let y = evaluate(rhs, { x })
-      this.points.push({ x, y })
+      let y = evaluate(rhs, { x, y: 0 })
+      this.points.push({ x, y: -y })
     }
   }
 
@@ -105,86 +115,64 @@ export default class Curve extends AnimObject {
     }
   }
 
-  async addAnchorPoint(config: CurveAnchorPointProps): Promise<Point> {
-    return new Promise(async (resolve, reject) => {
-      let x = config.x
-      let y = evaluate(this.y, { x })
-      let transition = Transition(
-        config.transition ? config.transition : Transitions.None
-      )
-      let point = await transition(
-        new Point({
-          ...config,
-          x: this.parentData.origin.x + x * this.parentData.stepX,
-          y: this.parentData.origin.y - y * this.parentData.stepY,
-          definition: this.y,
-          parentData: {
-            origin: this.parentData.origin,
-            stepX: this.parentData.stepX,
-            stepY: this.parentData.stepY,
-          },
-        }),
-        config.transitionOptions ? config.transitionOptions : {}
-      )
-      if (point instanceof Point) {
-        this.anchorPoints.push(point)
-        resolve(point)
-      } else {
-        reject()
-      }
-    })
+  addAnchorPoint(config: CurveAnchorPointProps): Point {
+    let x = config.x
+    let y = evaluate(this.y, { x })
+    let transition = Transition(
+      config.transition ? config.transition : Transitions.None
+    )
+    let point = transition<Point>(
+      new Point({
+        ...config,
+        x: this.parentData.origin.x + x * this.parentData.stepX,
+        y: this.parentData.origin.y - y * this.parentData.stepY,
+        definition: this.y,
+        parentData: {
+          origin: this.parentData.origin,
+          stepX: this.parentData.stepX,
+          stepY: this.parentData.stepY,
+        },
+      }),
+      config.transitionOptions ? config.transitionOptions : {}
+    )
+    return point
   }
 
-  addAnchorLine(config: CurveAnchorLineProps): Promise<Line> {
-    return new Promise(async (resolve, reject) => {
-      let x = config.x
-      let y = evaluate(this.y, { x })
-      let point = {
-        x: x * this.parentData.stepX,
-        y: y * this.parentData.stepY,
-      }
-      let parts = this.y.split('=')
-      let rhs = parts[parts.length - 1]
-      let length = config.length ? config.length : this.parentData.stepX * 2
-      let transition = Transition(
-        config.transition ? config.transition : Transitions.None
-      )
-      let line = await transition(
-        new Line({
-          ...config,
-          form: Lines.SlopePoint,
-          slope: derivative(rhs, 'x').evaluate({ x }),
-          point,
-          definition: this.y,
-          parentData: {
-            stepX: this.parentData.stepX,
-            stepY: this.parentData.stepY,
-            origin: this.parentData.origin,
-          },
-        }),
-        config.transitionOptions ? config.transitionOptions : {}
-      )
-      if (line instanceof Line) {
-        this.anchorLines.push(line)
-        resolve(line)
-      } else {
-        reject()
-      }
-    })
+  addTangent(config: CurveAnchorLineProps): Line {
+    let x = config.x
+    let y = evaluate(this.y, { x })
+    let parts = this.y.split('=')
+    let rhs = parts[parts.length - 1]
+    // let length = config.length ? config.length : this.parentData.stepX * 2
+    let transition = Transition(
+      config.transition ? config.transition : Transitions.None
+    )
+    let line = transition<Line>(
+      new Line({
+        ...config,
+        form: Lines.SlopePoint,
+        slope: derivative(rhs, 'x').evaluate({ x }),
+        point: { x, y },
+        definition: this.y,
+        parentData: {
+          stepX: this.parentData.stepX,
+          stepY: this.parentData.stepY,
+          origin: this.parentData.origin,
+        },
+      }),
+      config.transitionOptions ? config.transitionOptions : {}
+    )
+    this.anchorLines.push(line)
+    return line
   }
 
   draw(p: p5) {
     if (this.transition) {
       this.transition()
     }
-    this.lines.forEach((line) => {
-      line.draw(p)
-    })
-    this.anchorPoints.forEach((point) => {
-      point.draw(p)
-    })
-    this.anchorLines.forEach((line) => {
-      line.draw(p)
+    this.iterables.forEach((name: string) => {
+      // @ts-ignore
+      this[name].forEach((o: AnimObject) => o.draw(p))
     })
   }
 }

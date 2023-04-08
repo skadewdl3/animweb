@@ -11,9 +11,8 @@ import Curve from './animweb/AnimObjects/Curve'
 import Color from './animweb/helpers/Color'
 import { Transitions } from './animweb/Transition'
 import Text, { TextStyle } from './animweb/AnimObjects/Text'
-import { Observables, AnimObjects } from './animweb/AnimObject'
+import AnimObject, { Observables, AnimObjects } from './animweb/AnimObject'
 import Constants from './animweb/helpers/Constants'
-import { wait } from './animweb/helpers/miscellaneous'
 import ImplicitCurve from './animweb/AnimObjects/ImplicitCurve'
 import LaTeX from './animweb/AnimObjects/LaTeX'
 
@@ -36,9 +35,7 @@ let WebAnim = {
   Width,
   Height,
   wait: async (config: any) => scene.wait(config),
-  show: async (config: any) => {
-    scene.add(config)
-  },
+  show: (config: any) => scene.add(config),
   // AnimObjects
   NumberPlane: (config: any) => new NumberPlane(config),
   Line: (config: any) => new Line(config),
@@ -51,8 +48,10 @@ let WebAnim = {
   TeX: (config: any) => new LaTeX(config),
   Tex: (config: any) => new LaTeX(config),
   // transitions
-  Create: (config: any) => scene.add(Create(config)),
-  FadeIn: (config: any) => scene.add(FadeIn(config)),
+  Create: (object: AnimObject, config: any) =>
+    scene.add(Create(object, config)),
+  FadeIn: (object: AnimObject, config: any) =>
+    scene.add(FadeIn(object, config)),
   FadeOut,
   // enums
   Transitions,

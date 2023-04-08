@@ -8,22 +8,16 @@ import { roundOff } from '../helpers/miscellaneous'
 interface ImplicitCurveProps extends AnimObjectProps {
   definition: string
   sampleRate?: number
-  stepX: number
-  stepY: number
-  origin: { x: number; y: number }
   thickness?: number
   color?: Color
 }
 
 export default class ImplicitCurve extends AnimObject {
   definition: string = ''
-  stepX: number
-  stepY: number
-  origin: { x: number; y: number }
   quadTree?: any
   thickness: number = 1
   color: Color = Colors.black
-  sampleRate: number = 9
+  sampleRate: number = 6
   calculatingQuadtree: boolean = false
   webWorker: Worker = new Worker(
     new URL('./../helpers/QuadTree.worker.js', import.meta.url),
@@ -34,20 +28,27 @@ export default class ImplicitCurve extends AnimObject {
 
   constructor(config: ImplicitCurveProps) {
     super()
-    this.definition = config.definition
-    this.stepX = config.stepX
-    this.stepY = config.stepY
-    this.origin = config.origin
+    let temp = config.definition
+    let parts = temp.split('=')
+    if (parts.length == 1) this.definition = config.definition
+    else {
+      temp = parts[0]
+      for (let part of parts) {
+        if (part == parts[0]) continue
+        temp = `${temp} - (${part})`
+      }
+      console.log(temp)
+      this.definition = temp
+    }
+    if (config.parentData) {
+      this.parentData = {
+        ...this.parentData,
+        ...config.parentData,
+      }
+    }
     if (config.thickness) this.thickness = config.thickness
     if (config.color) this.color = config.color
     if (config.sampleRate) this.sampleRate = config.sampleRate / 100
-  }
-
-  interpolate(x1: number, y1: number, x2: number, y2: number) {
-    let r = -y2 / (y1 - y2)
-
-    if (r >= 0 && r <= 1) return r * (x1 - x2) + x2
-    return (x1 + x2) * 0.5
   }
 
   calculateQuadtree() {
@@ -60,9 +61,9 @@ export default class ImplicitCurve extends AnimObject {
         height: this.sceneHeight,
         definition: this.definition,
         depth: 0,
-        origin: this.origin,
-        stepX: this.stepX,
-        stepY: this.stepY,
+        origin: this.parentData.origin,
+        stepX: this.parentData.stepX,
+        stepY: this.parentData.stepY,
         maxDepth: this.sampleRate,
         id: this.id,
       })

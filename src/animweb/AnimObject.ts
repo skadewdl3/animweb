@@ -76,6 +76,7 @@ export default class AnimObject {
   queueTransition: Function = () => {}
   unqueueTransition: Function = () => {}
   waitBeforeTransition: Function = () => {}
+  remove?: Function
   parentData: {
     origin: { x: number; y: number }
     stepX: number

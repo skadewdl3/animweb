@@ -247,10 +247,10 @@ const createPointTransitions = async (
   }
 }
 
-const Create = (
-  object: AnimObject,
+const Create = <Object extends AnimObject>(
+  object: Object,
   config: CreateTransitionProps = {}
-): AnimObject => {
+): Object => {
   if (object instanceof Line) {
     object.transition = createLineTransition(object, config)
   }

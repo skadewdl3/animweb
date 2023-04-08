@@ -112,10 +112,10 @@ const fadeOutTransitions = (
   )
 }
 
-const FadeOut = (
-  object: AnimObject,
+const FadeOut = <Object extends AnimObject>(
+  object: Object,
   config: FadeOutTransitionProps = {}
-): AnimObject => {
+): Object => {
   if (object instanceof Line) {
     resetColor(object)
     object.transition = fadeOutTransition(object, config)

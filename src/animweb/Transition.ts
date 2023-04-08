@@ -22,16 +22,24 @@ export enum Transitions {
   None = 'None',
 }
 
-export const Transition = (type: Transitions) => {
+type TrasitionReturnType = <Object extends AnimObject>(
+  obj: Object,
+  config: any
+) => Object
+
+export const Transition = (type: Transitions): TrasitionReturnType => {
   switch (type) {
     case Transitions.FadeIn:
-      return FadeIn
+      return <Object extends AnimObject>(obj: Object, config: any) =>
+        FadeIn<Object>(obj, config)
     case Transitions.FadeOut:
-      return FadeOut
+      return <Object extends AnimObject>(obj: Object, config: any) =>
+        FadeOut<Object>(obj, config)
     case Transitions.Create:
-      return Create
+      return <Object extends AnimObject>(obj: Object, config: any) =>
+        Create<Object>(obj, config)
     default:
-      return (object: AnimObject, config: TransitionProps) => object
+      return <Object extends AnimObject>(object: Object, config: any) => object
   }
 }
 
