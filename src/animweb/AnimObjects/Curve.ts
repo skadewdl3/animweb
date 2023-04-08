@@ -55,7 +55,18 @@ export default class Curve extends AnimObject {
     parentData,
   }: CurveProps) {
     super()
-    this.y = definition
+    let temp = definition
+    let parts = temp.split('=')
+    if (parts.length == 1) this.y = definition
+    else {
+      temp = parts[0]
+      for (let part of parts) {
+        if (part == parts[0]) continue
+        temp = `${temp} - (${part})`
+      }
+      console.log(temp)
+      this.y = temp
+    }
     this.sampleRate = sampleRate
     this.domain = domain
     this.range = range
@@ -77,10 +88,9 @@ export default class Curve extends AnimObject {
   getFunctionValues() {
     let h = (this.domain[1] - this.domain[0]) / this.sampleRate
     let rhs = this.y
-    if (rhs.includes('=')) rhs = rhs.split('=')[1]
     for (let x = this.domain[0]; x <= this.domain[1]; x += h) {
-      let y = evaluate(rhs, { x })
-      this.points.push({ x, y })
+      let y = evaluate(rhs, { x, y: 0 })
+      this.points.push({ x, y: -y })
     }
   }
 
