@@ -109,10 +109,10 @@ const fadeInTransitions = (
   )
 }
 
-const FadeIn = (
-  object: AnimObject,
+const FadeIn = <Object extends AnimObject>(
+  object: Object,
   config: FadeInTransitionProps = {}
-): AnimObject => {
+): Object => {
   if (object instanceof Line) {
     resetColor(object)
     object.transition = fadeInTransition(object, config)

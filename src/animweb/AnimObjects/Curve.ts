@@ -135,42 +135,39 @@ export default class Curve extends AnimObject {
     })
   }
 
-  addAnchorLine(config: CurveAnchorLineProps): Promise<Line> {
-    return new Promise(async (resolve, reject) => {
-      let x = config.x
-      let y = evaluate(this.y, { x })
-      let point = {
-        x: x * this.parentData.stepX,
-        y: y * this.parentData.stepY,
-      }
-      let parts = this.y.split('=')
-      let rhs = parts[parts.length - 1]
-      let length = config.length ? config.length : this.parentData.stepX * 2
-      let transition = Transition(
-        config.transition ? config.transition : Transitions.None
-      )
-      let line = await transition(
-        new Line({
-          ...config,
-          form: Lines.SlopePoint,
-          slope: derivative(rhs, 'x').evaluate({ x }),
-          point,
-          definition: this.y,
-          parentData: {
-            stepX: this.parentData.stepX,
-            stepY: this.parentData.stepY,
-            origin: this.parentData.origin,
-          },
-        }),
-        config.transitionOptions ? config.transitionOptions : {}
-      )
-      if (line instanceof Line) {
-        this.anchorLines.push(line)
-        resolve(line)
-      } else {
-        reject()
-      }
-    })
+  addTangent(config: CurveAnchorLineProps): Line {
+    let x = config.x
+    let y = evaluate(this.y, { x })
+    let point = {
+      x: x * this.parentData.stepX,
+      y: y * this.parentData.stepY,
+    }
+    let parts = this.y.split('=')
+    let rhs = parts[parts.length - 1]
+    console.log(parts)
+    // let length = config.length ? config.length : this.parentData.stepX * 2
+    let transition = Transition(
+      config.transition ? config.transition : Transitions.None
+    )
+    let line = transition<Line>(
+      new Line({
+        ...config,
+        form: Lines.SlopePoint,
+        slope: derivative(rhs, 'x').evaluate({ x }),
+        point,
+        definition: this.y,
+        parentData: {
+          stepX: this.parentData.stepX,
+          stepY: this.parentData.stepY,
+          origin: this.parentData.origin,
+        },
+      }),
+      config.transitionOptions ? config.transitionOptions : {}
+    )
+    if (line instanceof Line) {
+      this.anchorLines.push(line)
+    }
+    return line
   }
 
   draw(p: p5) {

@@ -130,8 +130,9 @@ export default class Line extends AnimObject {
       case Lines.DoublePoint:
         let { x1: X1, y1: Y1, x2: X2, y2: Y2 } = config
         let { x: x1, y: y1 } = this.getAbsolutePosition({ x: X1, y: Y1 })
+        y1 *= -1
         let s = (Y2 - Y1) / (X2 - X1)
-        this.setSlope(-s)
+        this.setSlope(s)
         let c = y1 - this.slope * x1
         this.offset = c
         this.x = (y: number) => x1
@@ -392,8 +393,6 @@ export default class Line extends AnimObject {
       )
     }
 
-    let p1 = this.getAbsolutePosition({ x: 1, y: 1 })
-    let p2 = this.getAbsolutePosition({ x: 2, y: 2 })
     p.translate(-this.parentData.origin.x, -this.parentData.origin.y)
     p.noStroke()
   }
