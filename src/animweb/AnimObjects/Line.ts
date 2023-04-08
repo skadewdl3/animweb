@@ -358,47 +358,81 @@ export default class Line extends AnimObject {
     // Write code to smoothly transition between the two lines
 
     let finalSlope = (y2 - y1) / (x2 - x1)
-    let finalOffset = y1 - this.slope * x1
+    let finalOffset = y2 - finalSlope * x2
 
+    // console.log(pInitial1.toArray(), pFinal1, this.slope, finalSlope)
     let transitionQueueItem = {
       id: uuid(),
     }
     let queued = false
-    let currentAngle = Math.atan(this.slope)
-    if (this.slope != Infinity) {
-      console.log(this.offset)
-      console.log(finalOffset)
-    }
-    let angleSpeed = rangePerFrame(
-      Math.atan(finalSlope) - Math.atan(this.slope),
-      duration
-    )
-    let offsetSpeed = rangePerFrame(finalOffset - this.offset, duration)
-    this.transition = () => {
-      if (!queued) {
-        queued = true
-        this.queueTransition(transitionQueueItem)
-      }
-      if (
-        roundOff(this.slope, 2) == finalSlope &&
-        roundOff(this.offset, 2) == finalOffset
-      ) {
-        this.unqueueTransition(transitionQueueItem)
-        this.transition = null
-        this.slope = finalSlope
-        this.offset = finalOffset
-      } else {
-        let currentAngle = Math.atan(this.slope)
-
-        currentAngle += angleSpeed
-        this.slope = Math.tan(currentAngle)
-        this.offset += offsetSpeed
-        this.y = (x: number) => {
-          return this.slope * x + this.offset
+    if (this.slope == Infinity && finalSlope == Infinity) {
+      let xSpeed = rangePerFrame(x2 - this.x(1), duration)
+      this.transition = () => {
+        if (!queued) {
+          queued = true
+          this.queueTransition(transitionQueueItem)
         }
-        this.x = (y: number) => -this.offset / this.slope
+        if (roundOff(this.x(1), 2) == roundOff(x2, 2)) {
+          this.unqueueTransition(transitionQueueItem)
+          this.transition = null
+        } else {
+          let curX = this.x(1)
+          this.x = (y: number) => curX + xSpeed
+        }
+      }
+      console.log(xSpeed)
+    } else if (this.slope == 0 && finalSlope == 0) {
+      let ySpeed = rangePerFrame(y2 - this.y(this.x(1)), duration)
+      this.transition = () => {
+        if (!queued) {
+          queued = true
+          this.queueTransition(transitionQueueItem)
+        }
+        if (roundOff(this.y(this.x(1)), 2) == roundOff(y2, 2)) {
+          this.unqueueTransition(transitionQueueItem)
+          this.offset = finalOffset
+          this.transition = null
+        } else {
+          this.offset += ySpeed
+        }
       }
     }
+    // let currentAngle = Math.atan(this.slope)
+    // let finalAngle = Math.atan(finalSlope)
+    // // if (this.slope == Infinity) {
+    // //   console.log(currentAngle)
+    // //   console.log(finalAngle)
+    // // }
+    // let angleSpeed = rangePerFrame(
+    //   Math.atan(finalSlope) - Math.atan(this.slope),
+    //   duration
+    // )
+    // let offsetSpeed = rangePerFrame(finalOffset - this.offset, duration)
+    // this.transition = () => {
+    //   if (!queued) {
+    //     queued = true
+    //     this.queueTransition(transitionQueueItem)
+    //   }
+    //   if (
+    //     roundOff(this.slope, 2) == finalSlope &&
+    //     roundOff(this.offset, 2) == finalOffset
+    //   ) {
+    //     this.unqueueTransition(transitionQueueItem)
+    //     this.transition = null
+    //     this.slope = finalSlope
+    //     this.offset = finalOffset
+    //   } else {
+    //     let currentAngle = Math.atan(this.slope)
+
+    //     currentAngle += angleSpeed
+    //     this.slope = Math.tan(currentAngle)
+    //     this.offset += offsetSpeed
+    //     this.y = (x: number) => {
+    //       return this.slope * x + this.offset
+    //     }
+    //     this.x = (y: number) => -this.offset / this.slope
+    //   }
+    // }
   }
 
   draw(p: p5) {

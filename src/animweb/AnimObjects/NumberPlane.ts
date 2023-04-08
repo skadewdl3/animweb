@@ -255,7 +255,7 @@ export default class NumberPlane extends AnimObject {
     this.axes.push(
       new Line({
         form: Lines.SlopePoint,
-        slope: -Infinity,
+        slope: Infinity,
         point: { x: 0, y: 0 },
         color: new Color(this.color.rgbaVals),
         parentData: {
