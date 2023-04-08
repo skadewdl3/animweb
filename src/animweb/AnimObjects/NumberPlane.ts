@@ -182,6 +182,7 @@ export default class NumberPlane extends AnimObject {
     }
 
     if (this.grid) {
+      // +ve x-axis
       for (let i = 0; i < Math.floor(this.width / (2 * this.stepX)); i++) {
         this.xGrid.push(
           new Line({
@@ -280,69 +281,32 @@ export default class NumberPlane extends AnimObject {
   }
 
   draw(p: p5) {
-    this.axes.forEach((axes) => {
-      axes.draw(p)
-    })
-
-    this.xTicks.forEach((tick) => {
-      tick.draw(p)
-    })
-    this.yTicks.forEach((tick) => {
-      tick.draw(p)
-    })
-
-    this.xGrid.forEach((line) => line.draw(p))
-
-    this.yGrid.forEach((line) => line.draw(p))
-
-    this.points.forEach((point) => {
-      point.draw(p)
-    })
-
-    this.curves.forEach((curve) => {
-      curve.draw(p)
-    })
-
-    this.implicitCurves.forEach((implicitCurve) => {
-      implicitCurve.draw(p)
+    this.iterables.forEach((name: string) => {
+      //@ts-ignore
+      this[name].forEach((o: AnimObject) => o.draw(p))
     })
   }
 
-  async point(config: PointPlotProps): Promise<Point> {
-    return new Promise(async (resolve, reject) => {
-      if (config.transition) {
-        let transition = Transition(config.transition)
-        let transitionOptions = config.transitionOptions
-          ? config.transitionOptions
-          : {}
-        let point = await transition(
-          new Point({
-            ...config,
-            parentData: {
-              stepX: this.stepX,
-              stepY: this.stepY,
-              origin: this.origin,
-            },
-          }),
-          transitionOptions
-        )
-        if (point instanceof Point) {
-          this.points.push(point)
-        }
-      } else {
-        this.points.push(
-          new Point({
-            ...config,
-            parentData: {
-              stepX: this.stepX,
-              stepY: this.stepY,
-              origin: this.origin,
-            },
-          })
-        )
-      }
-      resolve(this.points[this.points.length - 1])
-    })
+  point(config: PointPlotProps): Point {
+    let transition = Transition(
+      config.transition ? config.transition : Transitions.None
+    )
+    let transitionOptions = config.transitionOptions
+      ? config.transitionOptions
+      : {}
+    let point = transition<Point>(
+      new Point({
+        ...config,
+        parentData: {
+          stepX: this.stepX,
+          stepY: this.stepY,
+          origin: this.origin,
+        },
+      }),
+      transitionOptions
+    )
+    this.points.push(point)
+    return point
   }
 
   plot(config: CurvePlotProps): Curve {
@@ -364,37 +328,14 @@ export default class NumberPlane extends AnimObject {
       ? config.sampleRate
       : Constants.curveSampleRate
 
-    if (config.transition) {
-      let transition = Transition(config.transition)
-      let transitionOptions = config.transitionOptions
-        ? config.transitionOptions
-        : {}
-      let curve = transition(
-        new Curve({
-          ...config,
-          domain,
-          range,
-          sampleRate,
-          parentData: {
-            stepX: this.stepX,
-            stepY: this.stepY,
-            origin: this.origin,
-          },
-        }),
-        transitionOptions
-      )
-      curve.updateTransitionQueueFunctions(
-        this.queueTransition,
-        this.unqueueTransition,
-        this.waitBeforeTransition
-      )
-      if (curve instanceof Curve) {
-        this.curves.push(curve)
-      }
-      //@ts-ignore
-      return curve
-    } else {
-      let curve = new Curve({
+    let transition = Transition(
+      config.transition ? config.transition : Transitions.None
+    )
+    let transitionOptions = config.transitionOptions
+      ? config.transitionOptions
+      : {}
+    let curve = transition<Curve>(
+      new Curve({
         ...config,
         domain,
         range,
@@ -404,59 +345,44 @@ export default class NumberPlane extends AnimObject {
           stepY: this.stepY,
           origin: this.origin,
         },
-      })
-      curve.updateTransitionQueueFunctions(
-        this.queueTransition,
-        this.unqueueTransition,
-        this.waitBeforeTransition
-      )
-      this.curves.push(curve)
-      return curve
-    }
+      }),
+      transitionOptions
+    )
+    curve.updateTransitionQueueFunctions(
+      this.queueTransition,
+      this.unqueueTransition,
+      this.waitBeforeTransition
+    )
+    this.curves.push(curve)
+    return curve
   }
 
-  async plotImplicit(config: ImplicitCurvePlotProps): Promise<ImplicitCurve> {
-    return new Promise(async (resolve, reject) => {
-      if (config.transition) {
-        let transition = Transition(config.transition)
-        let transitionOptions = config.transitionOptions
-          ? config.transitionOptions
-          : {}
+  plotImplicit(config: ImplicitCurvePlotProps): ImplicitCurve {
+    let transition = Transition(
+      config.transition ? config.transition : Transitions.None
+    )
+    let transitionOptions = config.transitionOptions
+      ? config.transitionOptions
+      : {}
 
-        let implicitCurve = await transition(
-          new ImplicitCurve({
-            ...config,
-            stepX: this.stepX,
-            stepY: this.stepY,
-            origin: this.origin,
-          }),
-          transitionOptions
-        )
-        implicitCurve.updateTransitionQueueFunctions(
-          this.queueTransition,
-          this.unqueueTransition,
-          this.waitBeforeTransition
-        )
-        if (implicitCurve instanceof ImplicitCurve) {
-          this.implicitCurves.push(implicitCurve)
-          resolve(implicitCurve)
-        }
-      } else {
-        let implicitCurve = new ImplicitCurve({
-          ...config,
+    let implicitCurve = transition<ImplicitCurve>(
+      new ImplicitCurve({
+        ...config,
+        parentData: {
           stepX: this.stepX,
           stepY: this.stepY,
           origin: this.origin,
-        })
-        implicitCurve.updateTransitionQueueFunctions(
-          this.queueTransition,
-          this.unqueueTransition,
-          this.waitBeforeTransition
-        )
-        this.implicitCurves.push(implicitCurve)
-        resolve(implicitCurve)
-      }
-    })
+        },
+      }),
+      transitionOptions
+    )
+    implicitCurve.updateTransitionQueueFunctions(
+      this.queueTransition,
+      this.unqueueTransition,
+      this.waitBeforeTransition
+    )
+    this.implicitCurves.push(implicitCurve)
+    return implicitCurve
   }
 
   async transform(lt: [[number, number], [number, number]]) {

@@ -35,9 +35,7 @@ let WebAnim = {
   Width,
   Height,
   wait: async (config: any) => scene.wait(config),
-  show: async (config: any) => {
-    scene.add(config)
-  },
+  show: (config: any) => scene.add(config),
   // AnimObjects
   NumberPlane: (config: any) => new NumberPlane(config),
   Line: (config: any) => new Line(config),
