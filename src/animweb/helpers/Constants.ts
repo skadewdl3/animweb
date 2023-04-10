@@ -7,6 +7,7 @@ const Constants = {
   createNumberPlaneDuration: 10,
   fadeInNumberPlaneDuration: 10,
   curveSampleRate: 250,
+  Infinity: 5000,
 }
 
 export default Constants

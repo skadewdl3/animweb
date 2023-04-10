@@ -1,5 +1,4 @@
 import p5 from 'p5'
-import { v4 as uuid } from 'uuid'
 import Color from '../helpers/Color'
 import Colors from '../helpers/Colors'
 import AnimObject, { AnimObjectProps } from './../AnimObject'

@@ -19,9 +19,28 @@ export const roundOff = (num, scale) => {
   }
 }
 
+export const degToRad = (deg) => {
+  return (deg * Math.PI) / 180
+}
+
+export const radToDeg = (rad) => {
+  return (rad * 180) / Math.PI
+}
+
 export const rangePerFrame = (range, duration) => {
   let fps = Constants.FrameRate
   let rangePerSecond = range / duration
   let rangePerFrame = rangePerSecond / fps
   return rangePerFrame
+}
+
+export const getQuadrant = (x, y) => {
+  if (x >= 0) {
+    if (y >= 0) return 1
+    if (y <= 0) return 4
+  }
+  if (x < 0) {
+    if (y >= 0) return 2
+    if (y <= 0) return 3
+  }
 }

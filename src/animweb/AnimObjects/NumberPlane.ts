@@ -8,7 +8,7 @@ import Color from '../helpers/Color'
 import TransitionProps, { Transition, Transitions } from '../Transition'
 import Constants from '../helpers/Constants'
 import ImplicitCurve from './ImplicitCurve'
-import { matrix, multiply } from 'mathjs'
+import { Matrix, matrix } from 'mathjs'
 
 interface NumberPlaneProps extends AnimObjectProps {
   stepX?: number
@@ -21,6 +21,8 @@ interface NumberPlaneProps extends AnimObjectProps {
   origin?: { x: number; y: number }
   showTicks?: boolean
   grid?: boolean
+  xGrid?: boolean
+  yGrid?: boolean
 }
 
 interface ImplicitCurvePlotProps extends AnimObjectProps {
@@ -70,7 +72,8 @@ export default class NumberPlane extends AnimObject {
   xGrid: Array<Line> = []
   yGrid: Array<Line> = []
   showTicks: boolean = true
-  grid: boolean = false
+  showXGrid: boolean = false
+  showYGrid: boolean = false
   xRange: [number, number] | undefined
   yRange: [number, number] | undefined
 
@@ -98,6 +101,8 @@ export default class NumberPlane extends AnimObject {
     color,
     showTicks = true,
     grid = false,
+    xGrid,
+    yGrid,
   }: NumberPlaneProps = {}) {
     super()
     this.stepX = stepX ? stepX : step
@@ -111,11 +116,20 @@ export default class NumberPlane extends AnimObject {
       : { x: (this.x + this.width) / 2, y: (this.y + this.height) / 2 }
 
     this.showTicks = showTicks
-    this.grid = grid
+    if (xGrid) {
+      this.showXGrid = true
+    }
+    if (yGrid) {
+      this.showYGrid = true
+    }
+    if (grid) {
+      this.showXGrid = true
+      this.showYGrid = true
+    }
 
     // +ve x-axis
     if (this.showTicks) {
-      for (let i = 0; i < Math.floor(this.width / (2 * this.stepX)); i++) {
+      for (let i = 0; i < Math.floor(this.width / this.stepX); i++) {
         this.xTicks.push(
           new Point({
             x: i,
@@ -131,7 +145,7 @@ export default class NumberPlane extends AnimObject {
       }
 
       // -ve x-axis
-      for (let i = 1; i < Math.floor(this.width / (2 * this.stepX)); i++) {
+      for (let i = 1; i < Math.floor(this.width / this.stepX); i++) {
         this.xTicks.unshift(
           new Point({
             x: -i,
@@ -148,7 +162,7 @@ export default class NumberPlane extends AnimObject {
 
       // +ve y-axis
       // shitty fix to show complete transformation. fix later.
-      for (let i = 1; i < 2 * Math.floor(this.height / (2 * this.stepY)); i++) {
+      for (let i = 1; i < 2 * Math.floor(this.height / this.stepY); i++) {
         this.yTicks.push(
           new Point({
             y: i,
@@ -165,7 +179,7 @@ export default class NumberPlane extends AnimObject {
 
       // -ve y-axis
       // shitty fix to show complete transformation. fix later.
-      for (let i = 1; i < 2 * Math.floor(this.height / (2 * this.stepY)); i++) {
+      for (let i = 1; i < 2 * Math.floor(this.height / this.stepY); i++) {
         this.yTicks.unshift(
           new Point({
             y: -i,
@@ -181,13 +195,13 @@ export default class NumberPlane extends AnimObject {
       }
     }
 
-    if (this.grid) {
+    if (this.showXGrid) {
       // +ve x-axis
-      for (let i = 0; i < Math.floor(this.width / (2 * this.stepX)); i++) {
+      for (let i = 0; i < Math.floor(this.width / this.stepX); i++) {
         this.xGrid.push(
           new Line({
             form: Lines.SlopePoint,
-            slope: Infinity,
+            slope: Constants.Infinity,
             point: { x: i, y: 0 },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
@@ -200,11 +214,11 @@ export default class NumberPlane extends AnimObject {
         )
       }
       // -ve x-axis
-      for (let i = 1; i < Math.floor(this.width / (2 * this.stepX)); i++) {
+      for (let i = 1; i < Math.floor(this.width / this.stepX); i++) {
         this.xGrid.unshift(
           new Line({
             form: Lines.SlopePoint,
-            slope: Infinity,
+            slope: Constants.Infinity,
             point: { x: -i, y: 0 },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
@@ -216,8 +230,10 @@ export default class NumberPlane extends AnimObject {
           })
         )
       }
+    }
+    if (this.showYGrid) {
       // +ve y-axis
-      for (let i = 0; i < Math.floor(this.height / (2 * this.stepY)); i++) {
+      for (let i = 0; i < Math.floor(this.height / this.stepY); i++) {
         this.yGrid.push(
           new Line({
             form: Lines.SlopePoint,
@@ -234,7 +250,7 @@ export default class NumberPlane extends AnimObject {
         )
       }
       // -ve y-axis
-      for (let i = 1; i < Math.floor(this.height / (2 * this.stepY)); i++) {
+      for (let i = 1; i < Math.floor(this.height / this.stepY); i++) {
         this.yGrid.unshift(
           new Line({
             form: Lines.SlopePoint,
@@ -255,7 +271,7 @@ export default class NumberPlane extends AnimObject {
     this.axes.push(
       new Line({
         form: Lines.SlopePoint,
-        slope: -Infinity,
+        slope: Constants.Infinity,
         point: { x: 0, y: 0 },
         color: new Color(this.color.rgbaVals),
         parentData: {
@@ -385,25 +401,13 @@ export default class NumberPlane extends AnimObject {
     return implicitCurve
   }
 
-  async transform(lt: [[number, number], [number, number]]) {
-    let ltMatrix = matrix(lt)
-    for (let tick of this.xTicks) {
-      tick.transform(ltMatrix)
-    }
-    for (let tick of this.yTicks) {
-      tick.transform(ltMatrix)
-    }
-    for (let axis of this.axes) {
-      axis.transform(ltMatrix)
-    }
-    for (let point of this.points) {
-      point.transform(ltMatrix)
-    }
-    for (let line of this.xGrid) {
-      line.transform(ltMatrix)
-    }
-    for (let line of this.yGrid) {
-      line.transform(ltMatrix)
-    }
+  async transform(lt: [[number, number], [number, number]] | Matrix) {
+    let ltMatrix: any
+    if (lt instanceof Matrix) ltMatrix = lt
+    else ltMatrix = matrix(lt)
+    this.iterables.forEach((name: string) => {
+      //@ts-ignore
+      this[name].forEach((o: AnimObject) => o.transform({ ltMatrix }))
+    })
   }
 }

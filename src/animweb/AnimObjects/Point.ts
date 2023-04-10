@@ -120,18 +120,43 @@ class Point extends AnimObject {
     })
   }
 
-  transform(ltMatrix: Matrix): Promise<void> {
-    return new Promise((resolve, reject) => {
-      // let x = (this.x - this.parentData.origin.x) / this.parentData.stepX
-      // let y = (this.parentData.origin.y - this.y) / this.parentData.stepY
-      let pInitial = matrix([[this.x], [this.y]])
-      let pFinal = multiply(ltMatrix, pInitial).toArray()
-      // @ts-ignore
-      this.x = pFinal[0]
-      // @ts-ignore
-      this.y = pFinal[1]
-      resolve()
-    })
+  transform({
+    ltMatrix,
+    duration = 1,
+  }: {
+    ltMatrix: Matrix
+    duration: number
+  }) {
+    let pInitial = matrix([[this.x], [this.y]])
+    let pFinal = multiply(ltMatrix, pInitial).toArray()
+    let newX = parseFloat(pFinal[0].toString())
+    let newY = parseFloat(pFinal[1].toString())
+    let distance = Math.sqrt((newX - this.x) ** 2 + (newY - this.y) ** 2)
+
+    let speed = rangePerFrame(Math.abs(distance), duration)
+    let transitionQueueItem = {
+      id: uuid(),
+    }
+    let queued = false
+    this.transition = () => {
+      let currentDistance = Math.sqrt(
+        (newX - this.x) ** 2 + (newY - this.y) ** 2
+      )
+      if (!queued) {
+        this.queueTransition(transitionQueueItem)
+        queued = true
+      }
+      if (roundOff(currentDistance, 2) == 0) {
+        this.unqueueTransition(transitionQueueItem)
+        this.x = newX
+        this.y = newY
+        this.transition = null
+      } else {
+        let angle = Math.atan2(newY - this.y, newX - this.x)
+        this.x += speed * Math.cos(angle)
+        this.y += speed * Math.sin(angle)
+      }
+    }
   }
 
   draw(p: p5) {
