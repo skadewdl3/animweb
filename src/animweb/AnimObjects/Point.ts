@@ -129,7 +129,6 @@ class Point extends AnimObject {
   }) {
     let pInitial = matrix([[this.x], [this.y]])
     let pFinal = multiply(ltMatrix, pInitial).toArray()
-    // this.x = pFinal[0]
     let newX = parseFloat(pFinal[0].toString())
     let newY = parseFloat(pFinal[1].toString())
     let distance = Math.sqrt((newX - this.x) ** 2 + (newY - this.y) ** 2)

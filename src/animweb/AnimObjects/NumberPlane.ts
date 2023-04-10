@@ -21,6 +21,8 @@ interface NumberPlaneProps extends AnimObjectProps {
   origin?: { x: number; y: number }
   showTicks?: boolean
   grid?: boolean
+  xGrid?: boolean
+  yGrid?: boolean
 }
 
 interface ImplicitCurvePlotProps extends AnimObjectProps {
@@ -70,7 +72,8 @@ export default class NumberPlane extends AnimObject {
   xGrid: Array<Line> = []
   yGrid: Array<Line> = []
   showTicks: boolean = true
-  grid: boolean = false
+  showXGrid: boolean = false
+  showYGrid: boolean = false
   xRange: [number, number] | undefined
   yRange: [number, number] | undefined
 
@@ -98,6 +101,8 @@ export default class NumberPlane extends AnimObject {
     color,
     showTicks = true,
     grid = false,
+    xGrid,
+    yGrid,
   }: NumberPlaneProps = {}) {
     super()
     this.stepX = stepX ? stepX : step
@@ -111,7 +116,16 @@ export default class NumberPlane extends AnimObject {
       : { x: (this.x + this.width) / 2, y: (this.y + this.height) / 2 }
 
     this.showTicks = showTicks
-    this.grid = grid
+    if (xGrid) {
+      this.showXGrid = true
+    }
+    if (yGrid) {
+      this.showYGrid = true
+    }
+    if (grid) {
+      this.showXGrid = true
+      this.showYGrid = true
+    }
 
     // +ve x-axis
     if (this.showTicks) {
@@ -181,13 +195,13 @@ export default class NumberPlane extends AnimObject {
       }
     }
 
-    if (this.grid) {
+    if (this.showXGrid) {
       // +ve x-axis
       for (let i = 0; i < Math.floor(this.width / this.stepX); i++) {
         this.xGrid.push(
           new Line({
             form: Lines.SlopePoint,
-            slope: Infinity,
+            slope: Constants.Infinity,
             point: { x: i, y: 0 },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
@@ -204,7 +218,7 @@ export default class NumberPlane extends AnimObject {
         this.xGrid.unshift(
           new Line({
             form: Lines.SlopePoint,
-            slope: Infinity,
+            slope: Constants.Infinity,
             point: { x: -i, y: 0 },
             color: new Color(this.color.rgbaVals),
             maxAlpha: 0.3,
@@ -216,6 +230,8 @@ export default class NumberPlane extends AnimObject {
           })
         )
       }
+    }
+    if (this.showYGrid) {
       // +ve y-axis
       for (let i = 0; i < Math.floor(this.height / this.stepY); i++) {
         this.yGrid.push(
@@ -255,7 +271,7 @@ export default class NumberPlane extends AnimObject {
     this.axes.push(
       new Line({
         form: Lines.SlopePoint,
-        slope: Infinity,
+        slope: Constants.Infinity,
         point: { x: 0, y: 0 },
         color: new Color(this.color.rgbaVals),
         parentData: {

@@ -5,9 +5,15 @@ import AnimObject, {
 } from '../AnimObject'
 import p5 from 'p5'
 import Colors from '../helpers/Colors'
-import { evaluate, derivative, Matrix, matrix, multiply } from 'mathjs'
-import { rangePerFrame, roundOff } from '../helpers/miscellaneous'
+import { evaluate, derivative, Matrix, matrix, multiply, round } from 'mathjs'
+import {
+  radToDeg,
+  rangePerFrame,
+  roundOff,
+  getQuadrant,
+} from '../helpers/miscellaneous'
 import { v4 as uuid } from 'uuid'
+import Constants from '../helpers/Constants'
 
 export enum Lines {
   DoublePoint,
@@ -71,8 +77,12 @@ type LineProps =
   | NormalForm
 
 export default class Line extends AnimObject {
-  y: (x: number) => number = () => 0
-  x: (y: number) => number = () => 0
+  y: Function = (x: number) => {
+    return this.slope * x + this.offset
+  }
+  x: Function = () => {
+    return -this.offset / this.slope
+  }
   parentData: {
     origin: { x: number; y: number }
     stepX: number
@@ -89,6 +99,8 @@ export default class Line extends AnimObject {
   definition: string = ''
   length: number = Infinity
   offset: number = 0
+  point1: { x: number; y: number } = { x: 0, y: 0 }
+  point2: { x: number; y: number } = { x: 0, y: 0 }
 
   constructor(config: LineProps) {
     super()
@@ -127,10 +139,8 @@ export default class Line extends AnimObject {
         this.setSlope(s)
         let c = y1 - this.slope * x1
         this.offset = c
-        this.x = (y: number) => x1
-        this.y = (x: number) => {
-          return this.slope * x + this.offset
-        }
+        this.point1 = { x: x1, y: y1 }
+        this.point2 = { x: X2, y: Y2 }
         break
       case Lines.SlopePoint:
         let { point } = config
@@ -138,10 +148,18 @@ export default class Line extends AnimObject {
 
         this.setSlope(config.slope)
         this.offset = y - this.slope * x
-        this.x = (y: number) => x
-        this.y = (x: number) => {
-          return this.slope * x + this.offset
+
+        this.point1 = { x, y }
+        if (
+          this.slope == Constants.Infinity ||
+          this.slope == -Constants.Infinity
+        ) {
+          this.point2 = { x: this.point1.x, y: this.point1.y + 1 }
         }
+        if (this.slope == 0) {
+          this.point2 = { x: this.point1.x + 1, y: this.point1.y }
+        }
+
         break
       // woll fix whatever the fuck i did here when i understand what i did
       // case Lines.SlopeIntercept:
@@ -161,10 +179,6 @@ export default class Line extends AnimObject {
         let { a, b } = this.getAbsolutePosition(relativeA, relativeB)
         this.setSlope(-b / a)
         this.offset = b
-        this.y = (x: number) => {
-          return this.slope * x + this.offset
-        }
-        this.x = (y: number) => (a == Infinity || b == -Infinity ? b : a)
         break
       // case Lines.Normal:
       //   let { alpha, distance } = config
@@ -174,9 +188,6 @@ export default class Line extends AnimObject {
       //   }
       // bug: case of slope = Infinty
       // fix this go awful code later
-    }
-    this.y = (x: number) => {
-      return this.slope * x + this.offset
     }
   }
 
@@ -334,94 +345,72 @@ export default class Line extends AnimObject {
     ltMatrix: Matrix
     duration: number
   }) {
-    let x1: number, x2: number, y1: number, y2: number
-    if (this.slope == Infinity || this.slope == -Infinity) {
-      ;[x1, y1, x2, y2] = [this.x(0), 1, this.x(0), 2]
-      let s = (y2 - y1) / (x2 - x1)
-    } else if (this.slope == 0) {
-      ;[x1, y1, x2, y2] = [1, this.y(this.x(0)), 2, this.y(this.x(0))]
-      let s = (y2 - y1) / (x2 - x1)
-    } else {
-      ;[x1, y1, x2, y2] = [0, this.offset, this.x(0), this.y(this.x(0))]
-    }
+    // if (this.slope >= Constants.Infinity) {
+    //   ;[x1, y1, x2, y2] = [this.x(0), 1, this.x(0), 2]
+    // } else if (this.slope <= -Constants.Infinity) {
+    //   ;[x1, y1, x2, y2] = [this.x(0), 2, this.x(0), 1]
+    // } else if (this.slope == 0) {
+    //   ;[x1, y1, x2, y2] = [1, this.y(this.x(0)), 2, this.y(this.x(0))]
+    // } else {
+    //   ;[x1, y1, x2, y2] = [0, this.offset, this.x(0), this.y(this.x(0))]
+    // }
+
+    let x1 = this.point1.x
+    let y1 = this.point1.y
+    let x2 = this.point2.x
+    let y2 = this.point2.y
+
+    console.log({ x1, y1 }, { x2, y2 })
 
     let pInitial1 = matrix([[x1], [y1]])
     let pInitial2 = matrix([[x2], [y2]])
     let pFinal1 = multiply(ltMatrix, pInitial1).toArray()
     let pFinal2 = multiply(ltMatrix, pInitial2).toArray()
 
-    x1 = parseFloat(pFinal1[0].toString())
-    y1 = parseFloat(pFinal1[1].toString())
-    x2 = parseFloat(pFinal2[0].toString())
-    y2 = parseFloat(pFinal2[1].toString())
+    let newX1 = parseFloat(pFinal1[0].toString())
+    let newY1 = parseFloat(pFinal1[1].toString())
+    let newX2 = parseFloat(pFinal2[0].toString())
+    let newY2 = parseFloat(pFinal2[1].toString())
+    let newSlope = (newY2 - newY1) / (newX2 - newX1)
 
-    // Write code to smoothly transition between the two lines
+    console.log({ newX1, newY1 }, { newX2, newY2 })
 
-    let finalSlope = (y2 - y1) / (x2 - x1)
-    let finalOffset = y2 - finalSlope * x2
+    let x1Speed = rangePerFrame(newX1 - x1, duration)
+    let y1Speed = rangePerFrame(newY1 - y1, duration)
+    let x2Speed = rangePerFrame(newX2 - x2, duration)
+    let y2Speed = rangePerFrame(newY2 - y2, duration)
 
     let transitionQueueItem = {
       id: uuid(),
     }
+
     let queued = false
-    if (this.slope == Infinity && finalSlope == Infinity) {
-      let xSpeed = rangePerFrame(x2 - this.x(1), duration)
-      this.transition = () => {
-        if (!queued) {
-          queued = true
-          this.queueTransition(transitionQueueItem)
-        }
-        if (roundOff(this.x(1), 2) == roundOff(x2, 2)) {
-          this.unqueueTransition(transitionQueueItem)
-          this.transition = null
-        } else {
-          let curX = this.x(1)
-          this.x = (y: number) => curX + xSpeed
-        }
+
+    this.transition = () => {
+      if (!queued) {
+        queued = true
+        this.queueTransition(transitionQueueItem)
       }
-    } else if (this.slope == 0 && finalSlope == 0) {
-      let ySpeed = rangePerFrame(y2 - this.y(this.x(1)), duration)
-      this.transition = () => {
-        if (!queued) {
-          queued = true
-          this.queueTransition(transitionQueueItem)
-        }
-        if (roundOff(this.y(this.x(1)), 2) == roundOff(y2, 2)) {
-          this.unqueueTransition(transitionQueueItem)
-          this.offset = finalOffset
-          this.transition = null
-        } else {
-          this.offset += ySpeed
-        }
-      }
-    } else {
-      let initialAngle = Math.atan(this.slope)
-      let finalAngle = initialAngle + Math.atan(finalSlope)
-      console.log(initialAngle, finalAngle)
-      let angleSpeed = rangePerFrame(finalAngle - initialAngle, duration)
-      let offsetSpeed = rangePerFrame(finalOffset - this.offset, duration)
-      this.transition = () => {
-        if (!queued) {
-          queued = true
-          this.queueTransition(transitionQueueItem)
-        }
-        if (
-          roundOff(this.slope, 2) == finalSlope &&
-          roundOff(this.offset, 2) == finalOffset
-        ) {
-          this.unqueueTransition(transitionQueueItem)
-          this.transition = null
-          this.slope = finalSlope
-          this.offset = finalOffset
-        } else {
-          initialAngle += angleSpeed
-          this.slope = Math.tan(initialAngle)
-          this.offset += offsetSpeed
-          this.y = (x: number) => {
-            return this.slope * x + this.offset
-          }
-          this.x = (y: number) => -this.offset / this.slope
-        }
+      if (
+        roundOff(x1, 2) == roundOff(newX1, 2) &&
+        roundOff(y1, 2) == roundOff(newY1, 2) &&
+        roundOff(x2, 2) == roundOff(newX2, 2) &&
+        roundOff(y2, 2) == roundOff(newY2, 2)
+      ) {
+        this.transition = null
+        this.unqueueTransition(transitionQueueItem)
+        this.point1 = { x: newX1, y: newY1 }
+        this.point2 = { x: newX2, y: newY2 }
+      } else {
+        x1 += x1Speed
+        y1 += y1Speed
+        x2 += x2Speed
+        y2 += y2Speed
+        let s = (y2 - y1) / (x2 - x1)
+        if (s >= Constants.Infinity) s = Constants.Infinity
+        if (s <= -Constants.Infinity) s = -Constants.Infinity
+        this.setSlope(s)
+        this.offset = y1 - this.slope * x1
       }
     }
   }
@@ -431,21 +420,21 @@ export default class Line extends AnimObject {
     p.stroke(this.color.rgba)
     p.strokeWeight(this.thickness)
     p.translate(this.parentData.origin.x, this.parentData.origin.y)
-    if (this.slope == Infinity || this.slope == -Infinity) {
-      p.line(
-        this.x(this.range[0]),
-        -this.range[0],
-        this.x(this.range[1]),
-        -this.range[1]
-      )
-    } else {
-      p.line(
-        this.domain[0],
-        -this.y(this.domain[0]),
-        this.domain[1],
-        -this.y(this.domain[1])
-      )
-    }
+    // if (this.slope == Infinity || this.slope == -Infinity) {
+    //   p.line(
+    //     this.x(this.range[0]),
+    //     -this.range[0],
+    //     this.x(this.range[1]),
+    //     -this.range[1]
+    //   )
+    // } else {
+    p.line(
+      this.domain[0],
+      -this.y(this.domain[0]),
+      this.domain[1],
+      -this.y(this.domain[1])
+    )
+    // }
 
     p.translate(-this.parentData.origin.x, -this.parentData.origin.y)
     p.noStroke()
