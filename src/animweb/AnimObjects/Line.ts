@@ -6,12 +6,7 @@ import AnimObject, {
 import p5 from 'p5'
 import Colors from '../helpers/Colors'
 import { evaluate, derivative, Matrix, matrix, multiply, round } from 'mathjs'
-import {
-  radToDeg,
-  rangePerFrame,
-  roundOff,
-  getQuadrant,
-} from '../helpers/miscellaneous'
+import { radToDeg, rangePerFrame, roundOff } from '../helpers/miscellaneous'
 import { v4 as uuid } from 'uuid'
 import Constants from '../helpers/Constants'
 

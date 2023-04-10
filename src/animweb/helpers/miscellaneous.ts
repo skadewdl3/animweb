@@ -34,19 +34,40 @@ export const rangePerFrame = (range, duration) => {
   return rangePerFrame
 }
 
-export const getQuadrant = (x, y) => {
-  
-  if (x == 0 && y > 0) return -1
-  if (x == 0 && y < 0) return -2
-  if (y == 0 && x > 0) return -3
-  if (y == 0 && x < 0) return -4
-
-  if (x > 0) {
-    if (y > 0) return 1
-    if (y < 0) return 4
+export const getQuadrant = (config: number | { x: number; y: number }) => {
+  let angle = null,
+    x = null,
+    y = null
+  if (typeof config == 'number') angle = radToDeg(config)
+  else {
+    x = config.x
+    y = config.y
   }
-  if (x < 0) {
-    if (y > 0) return 2
-    if (y < 0) return 3
+
+  if (angle != null) {
+    // find quadrant from angle
+    if (angle == 0) return -3
+    if (angle == 90) return -1
+    if (angle == 180 || angle == -180) return -4
+    if (angle == -90) return -2
+
+    if (angle > 0 && angle < 90) return 1
+    if (angle > 90 && angle < 180) return 2
+    if (angle < -90 && angle > -180) return 3
+    if (angle < 0 && angle > -90) return 4
+  } else {
+    if (x == 0 && y > 0) return -1
+    if (x == 0 && y < 0) return -2
+    if (y == 0 && x > 0) return -3
+    if (y == 0 && x < 0) return -4
+
+    if (x > 0) {
+      if (y > 0) return 1
+      if (y < 0) return 4
+    }
+    if (x < 0) {
+      if (y > 0) return 2
+      if (y < 0) return 3
+    }
   }
 }

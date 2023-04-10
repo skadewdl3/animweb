@@ -16,7 +16,7 @@ import Constants from './animweb/helpers/Constants'
 import ImplicitCurve from './animweb/AnimObjects/ImplicitCurve'
 import LaTeX from './animweb/AnimObjects/LaTeX'
 import Matrix from './animweb/helpers/Matrix'
-import Vector from './animweb/AnimObjects/Vector'
+import Vector, { Vectors } from './animweb/AnimObjects/Vector'
 
 declare global {
   interface Window {
@@ -64,6 +64,7 @@ let WebAnim = {
   TextStyle,
   AnimObjects,
   Constants,
+  Vectors,
 }
 
 window.WebAnim = WebAnim
