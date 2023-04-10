@@ -345,16 +345,6 @@ export default class Line extends AnimObject {
     ltMatrix: Matrix
     duration: number
   }) {
-    // if (this.slope >= Constants.Infinity) {
-    //   ;[x1, y1, x2, y2] = [this.x(0), 1, this.x(0), 2]
-    // } else if (this.slope <= -Constants.Infinity) {
-    //   ;[x1, y1, x2, y2] = [this.x(0), 2, this.x(0), 1]
-    // } else if (this.slope == 0) {
-    //   ;[x1, y1, x2, y2] = [1, this.y(this.x(0)), 2, this.y(this.x(0))]
-    // } else {
-    //   ;[x1, y1, x2, y2] = [0, this.offset, this.x(0), this.y(this.x(0))]
-    // }
-
     let x1 = this.point1.x
     let y1 = this.point1.y
     let x2 = this.point2.x
@@ -420,21 +410,12 @@ export default class Line extends AnimObject {
     p.stroke(this.color.rgba)
     p.strokeWeight(this.thickness)
     p.translate(this.parentData.origin.x, this.parentData.origin.y)
-    // if (this.slope == Infinity || this.slope == -Infinity) {
-    //   p.line(
-    //     this.x(this.range[0]),
-    //     -this.range[0],
-    //     this.x(this.range[1]),
-    //     -this.range[1]
-    //   )
-    // } else {
     p.line(
       this.domain[0],
       -this.y(this.domain[0]),
       this.domain[1],
       -this.y(this.domain[1])
     )
-    // }
 
     p.translate(-this.parentData.origin.x, -this.parentData.origin.y)
     p.noStroke()

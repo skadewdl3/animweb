@@ -8,7 +8,7 @@ import Color from '../helpers/Color'
 import TransitionProps, { Transition, Transitions } from '../Transition'
 import Constants from '../helpers/Constants'
 import ImplicitCurve from './ImplicitCurve'
-import { matrix } from 'mathjs'
+import { Matrix, matrix } from 'mathjs'
 
 interface NumberPlaneProps extends AnimObjectProps {
   stepX?: number
@@ -401,8 +401,10 @@ export default class NumberPlane extends AnimObject {
     return implicitCurve
   }
 
-  async transform(lt: [[number, number], [number, number]]) {
-    let ltMatrix = matrix(lt)
+  async transform(lt: [[number, number], [number, number]] | Matrix) {
+    let ltMatrix: any
+    if (lt instanceof Matrix) ltMatrix = lt
+    else ltMatrix = matrix(lt)
     this.iterables.forEach((name: string) => {
       //@ts-ignore
       this[name].forEach((o: AnimObject) => o.transform({ ltMatrix }))

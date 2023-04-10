@@ -15,6 +15,7 @@ import AnimObject, { Observables, AnimObjects } from './animweb/AnimObject'
 import Constants from './animweb/helpers/Constants'
 import ImplicitCurve from './animweb/AnimObjects/ImplicitCurve'
 import LaTeX from './animweb/AnimObjects/LaTeX'
+import Matrix from './animweb/helpers/Matrix'
 
 declare global {
   interface Window {
@@ -32,6 +33,7 @@ let WebAnim = {
   scene,
   Color,
   Colors,
+  Matrix,
   Width,
   Height,
   wait: async (config: any) => scene.wait(config),
