@@ -9,6 +9,7 @@ import TransitionProps, { Transition, Transitions } from '../Transition'
 import Constants from '../helpers/Constants'
 import ImplicitCurve from './ImplicitCurve'
 import { Matrix, matrix } from 'mathjs'
+import Vector, { VectorProps } from './Vector'
 
 interface NumberPlaneProps extends AnimObjectProps {
   stepX?: number
@@ -71,6 +72,7 @@ export default class NumberPlane extends AnimObject {
   yTicks: Array<Point> = []
   xGrid: Array<Line> = []
   yGrid: Array<Line> = []
+  vectors: Array<Vector> = []
   showTicks: boolean = true
   showXGrid: boolean = false
   showYGrid: boolean = false
@@ -87,6 +89,7 @@ export default class NumberPlane extends AnimObject {
     'xGrid',
     'yGrid',
     'implicitCurves',
+    'vectors',
   ]
 
   constructor({
@@ -399,6 +402,19 @@ export default class NumberPlane extends AnimObject {
     )
     this.implicitCurves.push(implicitCurve)
     return implicitCurve
+  }
+
+  vector(config: VectorProps) {
+    this.vectors.push(
+      new Vector({
+        ...config,
+        parentData: {
+          stepX: this.stepX,
+          stepY: this.stepY,
+          origin: this.origin,
+        },
+      })
+    )
   }
 
   async transform(lt: [[number, number], [number, number]] | Matrix) {

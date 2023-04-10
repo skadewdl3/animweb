@@ -11,8 +11,9 @@ import { v4 as uuidv4 } from 'uuid'
 import { Width, Height } from './helpers/Dimensions'
 import Color from './helpers/Color'
 import Colors from './helpers/Colors'
-import Transition from './Transition'
+import Transition, { Transitions } from './Transition'
 import { number } from 'mathjs'
+import TransitionProps from './Transition'
 
 /*
 Defines what kind of properties/arguments/parameters (aka props)
@@ -28,6 +29,10 @@ export interface AnimObjectProps {
     stepX: number
     stepY: number
   }
+  thickness?: number
+  size?: number
+  transition?: Transitions
+  transitionOptions?: TransitionProps
 }
 
 /*
