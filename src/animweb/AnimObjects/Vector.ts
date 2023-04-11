@@ -8,7 +8,7 @@ import {
   rangePerFrame,
   roundOff,
 } from '../helpers/miscellaneous'
-import { Matrix as MatrixType, multiply } from 'mathjs'
+import { multiply } from 'mathjs'
 import Matrix from '../helpers/Matrix'
 import { v4 as uuid } from 'uuid'
 
@@ -101,17 +101,17 @@ export default class Vector extends AnimObject {
     ltMatrix,
     duration = 1,
   }: {
-    ltMatrix: MatrixType
+    ltMatrix: Matrix
     duration: number
   }) {
     let headMatrix = Matrix.fromColumns([this.head.x, this.head.y])
-    let newHeadMatrix = multiply(ltMatrix, headMatrix).toArray()
+    let newHeadMatrix = ltMatrix.multiply(headMatrix).toArray()
 
     let newHeadX = parseFloat(newHeadMatrix[0].toString())
     let newHeadY = parseFloat(newHeadMatrix[1].toString())
 
     let tailMatrix = Matrix.fromColumns([this.tail.x, this.tail.y])
-    let newTailMatrix = multiply(ltMatrix, tailMatrix).toArray()
+    let newTailMatrix = ltMatrix.multiply(tailMatrix).toArray()
 
     let newTailX = parseFloat(newTailMatrix[0].toString())
     let newTailY = parseFloat(newTailMatrix[1].toString())

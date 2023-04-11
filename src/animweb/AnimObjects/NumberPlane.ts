@@ -8,8 +8,9 @@ import Color from '../helpers/Color'
 import TransitionProps, { Transition, Transitions } from '../Transition'
 import Constants from '../helpers/Constants'
 import ImplicitCurve from './ImplicitCurve'
-import { Matrix, matrix } from 'mathjs'
+import { matrix } from 'mathjs'
 import Vector, { VectorProps } from './Vector'
+import Matrix from '../helpers/Matrix'
 
 interface NumberPlaneProps extends AnimObjectProps {
   stepX?: number
@@ -64,7 +65,6 @@ export default class NumberPlane extends AnimObject {
     y: number
   }
   points: Array<Point> = []
-  ticks: Array<Point> = []
   curves: Array<Curve> = []
   implicitCurves: Array<ImplicitCurve> = []
   axes: Array<Line> = []
@@ -81,7 +81,6 @@ export default class NumberPlane extends AnimObject {
 
   iterables = [
     'points',
-    'ticks',
     'curves',
     'axes',
     'xTicks',
@@ -91,6 +90,9 @@ export default class NumberPlane extends AnimObject {
     'implicitCurves',
     'vectors',
   ]
+
+  planeComponents = ['xTicks', 'yTicks', 'xGrid', 'yGrid']
+  drawnComponents = ['points', 'curves', 'axes', 'implicitCurves', 'vectors']
 
   constructor({
     stepX,
@@ -304,7 +306,12 @@ export default class NumberPlane extends AnimObject {
   }
 
   draw(p: p5) {
-    this.iterables.forEach((name: string) => {
+    this.planeComponents.forEach((name: string) => {
+      //@ts-ignore
+      this[name].forEach((o: AnimObject) => o.draw(p))
+    })
+
+    this.drawnComponents.forEach((name: string) => {
       //@ts-ignore
       this[name].forEach((o: AnimObject) => o.draw(p))
     })
