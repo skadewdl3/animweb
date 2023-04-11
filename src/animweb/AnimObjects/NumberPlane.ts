@@ -129,6 +129,10 @@ export default class NumberPlane extends AnimObject {
       this.showXGrid = true
       this.showYGrid = true
     }
+    if (color) {
+      this.color = color
+      console.log(this.color)
+    }
 
     // +ve x-axis
     if (this.showTicks) {
@@ -137,7 +141,7 @@ export default class NumberPlane extends AnimObject {
           new Point({
             x: i,
             y: 0,
-            color: new Color(this.color.rgbaVals),
+            color: this.color.copy(),
             parentData: {
               stepX: this.stepX,
               stepY: this.stepY,
@@ -153,7 +157,7 @@ export default class NumberPlane extends AnimObject {
           new Point({
             x: -i,
             y: 0,
-            color: new Color(this.color.rgbaVals),
+            color: this.color.copy(),
             parentData: {
               stepX: this.stepX,
               stepY: this.stepY,
@@ -170,7 +174,7 @@ export default class NumberPlane extends AnimObject {
           new Point({
             y: i,
             x: 0,
-            color: new Color(this.color.rgbaVals),
+            color: this.color.copy(),
             parentData: {
               stepX: this.stepX,
               stepY: this.stepY,
@@ -187,7 +191,7 @@ export default class NumberPlane extends AnimObject {
           new Point({
             y: -i,
             x: 0,
-            color: new Color(this.color.rgbaVals),
+            color: this.color.copy(),
             parentData: {
               stepX: this.stepX,
               stepY: this.stepY,
@@ -206,7 +210,7 @@ export default class NumberPlane extends AnimObject {
             form: Lines.SlopePoint,
             slope: Constants.Infinity,
             point: { x: i, y: 0 },
-            color: new Color(this.color.rgbaVals),
+            color: this.color.copy(),
             maxAlpha: 0.3,
             parentData: {
               stepX: this.stepX,
@@ -223,7 +227,7 @@ export default class NumberPlane extends AnimObject {
             form: Lines.SlopePoint,
             slope: Constants.Infinity,
             point: { x: -i, y: 0 },
-            color: new Color(this.color.rgbaVals),
+            color: this.color.copy(),
             maxAlpha: 0.3,
             parentData: {
               stepX: this.stepX,
@@ -242,7 +246,7 @@ export default class NumberPlane extends AnimObject {
             form: Lines.SlopePoint,
             slope: 0,
             point: { x: 0, y: i },
-            color: new Color(this.color.rgbaVals),
+            color: this.color.copy(),
             maxAlpha: 0.3,
             parentData: {
               stepX: this.stepX,
@@ -259,7 +263,7 @@ export default class NumberPlane extends AnimObject {
             form: Lines.SlopePoint,
             slope: 0,
             point: { x: 0, y: -i },
-            color: new Color(this.color.rgbaVals),
+            color: this.color.copy(),
             maxAlpha: 0.3,
             parentData: {
               stepX: this.stepX,
@@ -276,7 +280,7 @@ export default class NumberPlane extends AnimObject {
         form: Lines.SlopePoint,
         slope: Constants.Infinity,
         point: { x: 0, y: 0 },
-        color: new Color(this.color.rgbaVals),
+        color: this.color.copy(),
         parentData: {
           origin: this.origin,
           stepX: this.stepX,
@@ -289,7 +293,7 @@ export default class NumberPlane extends AnimObject {
         form: Lines.SlopePoint,
         slope: 0,
         point: { x: 0, y: 0 },
-        color: new Color(this.color.rgbaVals),
+        color: this.color.copy(),
         parentData: {
           origin: this.origin,
           stepX: this.stepX,
@@ -315,6 +319,7 @@ export default class NumberPlane extends AnimObject {
       : {}
     let point = transition<Point>(
       new Point({
+        color: this.color.copy(),
         ...config,
         parentData: {
           stepX: this.stepX,
@@ -355,6 +360,7 @@ export default class NumberPlane extends AnimObject {
       : {}
     let curve = transition<Curve>(
       new Curve({
+        color: this.color.copy(),
         ...config,
         domain,
         range,
@@ -386,6 +392,7 @@ export default class NumberPlane extends AnimObject {
 
     let implicitCurve = transition<ImplicitCurve>(
       new ImplicitCurve({
+        color: this.color.copy(),
         ...config,
         parentData: {
           stepX: this.stepX,
@@ -405,16 +412,17 @@ export default class NumberPlane extends AnimObject {
   }
 
   vector(config: VectorProps) {
-    this.vectors.push(
-      new Vector({
-        ...config,
-        parentData: {
-          stepX: this.stepX,
-          stepY: this.stepY,
-          origin: this.origin,
-        },
-      })
-    )
+    let vec = new Vector({
+      color: this.color.copy(),
+      ...config,
+      parentData: {
+        stepX: this.stepX,
+        stepY: this.stepY,
+        origin: this.origin,
+      },
+    })
+    this.vectors.push(vec)
+    return vec
   }
 
   async transform(lt: [[number, number], [number, number]] | Matrix) {

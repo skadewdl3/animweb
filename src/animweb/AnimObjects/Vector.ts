@@ -2,7 +2,15 @@ import p5 from 'p5'
 import AnimObject, { AnimObjectProps } from '../AnimObject'
 import Color from '../helpers/Color'
 import Colors from '../helpers/Colors'
-import { getQuadrant, radToDeg } from '../helpers/miscellaneous'
+import {
+  getQuadrant,
+  radToDeg,
+  rangePerFrame,
+  roundOff,
+} from '../helpers/miscellaneous'
+import { Matrix as MatrixType, multiply } from 'mathjs'
+import Matrix from '../helpers/Matrix'
+import { v4 as uuid } from 'uuid'
 
 export enum Vectors {
   OriginCentered = 'OriginCentered',
@@ -34,6 +42,8 @@ export default class Vector extends AnimObject {
   length: number = 0
   vertices: Array<{ x: number; y: number }> = []
   angle: number = 0
+  arrowApexAngle: number = Math.PI / 6
+  arrowSideLength: number = 10
 
   constructor({
     form = Vectors.OriginCentered,
@@ -81,6 +91,75 @@ export default class Vector extends AnimObject {
     let yAx = -1 / xAx
   }
 
+  calculateArrowVertices() {
+    let quadrant = getQuadrant(radToDeg(this.angle))
+    console.log(radToDeg(this.angle), quadrant)
+    return quadrant
+  }
+
+  transform({
+    ltMatrix,
+    duration = 1,
+  }: {
+    ltMatrix: MatrixType
+    duration: number
+  }) {
+    let headMatrix = Matrix.fromColumns([this.head.x, this.head.y])
+    let newHeadMatrix = multiply(ltMatrix, headMatrix).toArray()
+
+    let newHeadX = parseFloat(newHeadMatrix[0].toString())
+    let newHeadY = parseFloat(newHeadMatrix[1].toString())
+
+    let tailMatrix = Matrix.fromColumns([this.tail.x, this.tail.y])
+    let newTailMatrix = multiply(ltMatrix, tailMatrix).toArray()
+
+    let newTailX = parseFloat(newTailMatrix[0].toString())
+    let newTailY = parseFloat(newTailMatrix[1].toString())
+
+    let transitionQueueItem = {
+      id: uuid(),
+    }
+    let queued = false
+
+    let headXSpeed = rangePerFrame(newHeadX - this.head.x, duration)
+    let headYSpeed = rangePerFrame(newHeadY - this.head.y, duration)
+    let tailXSpeed = rangePerFrame(newTailX - this.tail.x, duration)
+    let tailYSpeed = rangePerFrame(newTailY - this.tail.y, duration)
+
+    this.transition = () => {
+      if (!queued) {
+        this.queueTransition(transitionQueueItem)
+        queued = true
+      }
+      if (
+        roundOff(this.head.x, 2) == roundOff(newHeadX, 2) &&
+        roundOff(this.head.y, 2) == roundOff(newHeadY, 2) &&
+        roundOff(this.tail.x, 2) == roundOff(newTailX, 2) &&
+        roundOff(this.tail.y, 2) == roundOff(newTailY, 2)
+      ) {
+        this.transition = null
+        this.unqueueTransition(transitionQueueItem)
+        this.head.x = newHeadX
+        this.head.y = newHeadY
+        this.tail.x = newTailX
+        this.tail.y = newTailY
+        this.angle = Math.atan2(
+          this.head.y - this.tail.y,
+          this.head.x - this.tail.x
+        )
+      } else {
+        this.head.x += headXSpeed
+        this.head.y += headYSpeed
+        this.tail.x += tailXSpeed
+        this.tail.y += tailYSpeed
+        this.angle = Math.atan2(
+          this.head.y - this.tail.y,
+          this.head.x - this.tail.x
+        )
+      }
+    }
+  }
+
   draw(p: p5) {
     if (this.transition) this.transition()
     p.stroke(this.color.rgba)
@@ -90,13 +169,22 @@ export default class Vector extends AnimObject {
     let { x: headX, y: headY } = this.getAbsolutePosition(this.head)
     let { x: tailX, y: tailY } = this.getAbsolutePosition(this.tail)
     p.line(tailX, tailY, headX, headY)
+
     p.push()
     p.translate(headX, headY)
-    let quadrant = getQuadrant(this.angle)
-    if (quadrant == 2 || quadrant == 4 || (quadrant && quadrant < 0))
-      p.rotate(Math.PI / 2 - this.angle)
-    else p.rotate(this.angle)
-    p.triangle(-this.p * 0.5, this.p, this.p * 0.5, this.p, 0, 0)
+    let v1 = p.createVector(1, 0)
+    v1.setHeading(Math.PI - this.angle - this.arrowApexAngle)
+    v1.setMag(this.arrowSideLength)
+    let v2 = p.createVector(1, 0)
+    v2.setHeading(Math.PI - this.angle + this.arrowApexAngle)
+    v2.setMag(this.arrowSideLength)
+
+    p.beginShape()
+    p.vertex(0, 0)
+    p.vertex(v1.x, v1.y)
+    p.vertex(v2.x, v2.y)
+    p.endShape()
+
     p.pop()
     p.translate(-this.parentData.origin.x, -this.parentData.origin.y)
     p.noStroke()

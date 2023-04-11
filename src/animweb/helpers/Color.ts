@@ -169,4 +169,9 @@ export default class Color {
     this.rgbaVals[3] = alpha
     this.refresh()
   }
+
+  copy(): Color {
+    let color = new Color(this.rgbaVals)
+    return color
+  }
 }

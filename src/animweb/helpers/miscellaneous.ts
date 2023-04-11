@@ -38,14 +38,14 @@ export const getQuadrant = (config: number | { x: number; y: number }) => {
   let angle = null,
     x = null,
     y = null
-  if (typeof config == 'number') angle = radToDeg(config)
+  if (typeof config == 'number') angle = config
   else {
     x = config.x
     y = config.y
   }
-
-  if (angle != null) {
+  if (angle) {
     // find quadrant from angle
+    console.log('this ran')
     if (angle == 0) return -3
     if (angle == 90) return -1
     if (angle == 180 || angle == -180) return -4
