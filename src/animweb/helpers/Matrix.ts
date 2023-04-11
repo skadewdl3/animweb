@@ -1,62 +1,16 @@
 import {
   matrix,
   Matrix as MatrixType,
+  rotationMatrix,
   identity as identityMatrix,
   zeros as zeroMatrix,
   multiply as matmul,
+  add as matadd,
+  det as matdet,
+  transpose as mattranspose,
+  inv as matinv,
+  trace as mattrace,
 } from 'mathjs'
-
-const fromRows = (...args: Array<any>): MatrixType => {
-  let m = matrix()
-
-  args.forEach((row: Array<any>, rowIndex: number) => {
-    row.forEach((el: number, colIndex: number) => {
-      m.set([rowIndex, colIndex], el)
-    })
-  })
-  return m
-}
-
-const fromColumns = (...args: Array<any>): MatrixType => {
-  let m = matrix()
-
-  args.forEach((col: Array<any>, colIndex: number) => {
-    col.forEach((el: number, rowIndex: number) => {
-      m.set([rowIndex, colIndex], el)
-    })
-  })
-  return m
-}
-
-const identity = (order: number) => {
-  return identityMatrix(order)
-}
-
-const zeros = (order: number) => {
-  return zeroMatrix(order)
-}
-
-let matrixCreators = {
-  fromRows,
-  fromColumns,
-  identity,
-  zeros,
-}
-
-class MatrixClass {
-  [matrixCreatorID: string]: Function
-
-  constructor() {
-    for (let [matrixCreatorID, matrixCreator] of Object.entries(
-      matrixCreators
-    )) {
-      Object.defineProperty(this, matrixCreatorID, {
-        // @ts-ignore
-        get: () => matrixCreator,
-      })
-    }
-  }
-}
 
 export default class Matrix {
   matrix: MatrixType = matrix()
@@ -67,6 +21,21 @@ export default class Matrix {
       row.forEach((el: number, colIndex: number) => {
         this.matrix.set([rowIndex, colIndex], el)
       })
+    })
+
+    Object.defineProperties(this, {
+      determinant: {
+        get: () => matdet(this.matrix),
+      },
+      transpose: {
+        get: () => Matrix.fromMatrix(mattranspose(this.matrix)),
+      },
+      inverse: {
+        get: () => Matrix.fromMatrix(matinv(this.matrix)),
+      },
+      trace: {
+        get: () => mattrace(this.matrix),
+      },
     })
   }
 
@@ -88,7 +57,21 @@ export default class Matrix {
     return matrix
   }
 
-  static fromMatrix(m: MatrixType) {
+  static fromAngle(angle: number) {
+    return Matrix.fromMatrix(rotationMatrix(angle))
+  }
+
+  static identity(order: number) {
+    // @ts-ignore
+    return Matrix.fromMatrix(identityMatrix(order))
+  }
+
+  static zeros(order: number) {
+    // @ts-ignore
+    return Matrix.fromMatrix(zeroMatrix(order))
+  }
+
+  private static fromMatrix(m: MatrixType) {
     let c = new Matrix([])
     c.matrix = m
     return c
@@ -97,6 +80,22 @@ export default class Matrix {
   multiply(r: Matrix | number): Matrix {
     if (typeof r === 'number') return Matrix.fromMatrix(matmul(this.matrix, r))
     else return Matrix.fromMatrix(matmul(this.matrix, r.matrix))
+  }
+
+  add(r: Matrix) {
+    return Matrix.fromMatrix(matadd(this.matrix, r.matrix))
+  }
+
+  subtract(r: Matrix) {
+    return Matrix.fromMatrix(matadd(this.matrix, r.multiply(-1).matrix))
+  }
+
+  pow(n: number) {
+    let result = Matrix.fromMatrix(this.matrix)
+    for (let i = 1; i < n; i++) {
+      result = result.multiply(result)
+    }
+    return result
   }
 
   toArray() {

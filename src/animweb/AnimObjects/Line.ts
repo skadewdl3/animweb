@@ -105,7 +105,6 @@ export default class Line extends AnimObject {
     }
     if (config.color) {
       this.color = config.color
-      console.log(config.color)
     }
     if (config.range) {
       this.range = this.getAbsoluteRange(config.range)

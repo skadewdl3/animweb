@@ -65,7 +65,6 @@ export default class NumberPlane extends AnimObject {
     y: number
   }
   points: Array<Point> = []
-  ticks: Array<Point> = []
   curves: Array<Curve> = []
   implicitCurves: Array<ImplicitCurve> = []
   axes: Array<Line> = []
@@ -82,7 +81,6 @@ export default class NumberPlane extends AnimObject {
 
   iterables = [
     'points',
-    'ticks',
     'curves',
     'axes',
     'xTicks',
@@ -92,6 +90,9 @@ export default class NumberPlane extends AnimObject {
     'implicitCurves',
     'vectors',
   ]
+
+  planeComponents = ['xTicks', 'yTicks', 'xGrid', 'yGrid']
+  drawnComponents = ['points', 'curves', 'axes', 'implicitCurves', 'vectors']
 
   constructor({
     stepX,
@@ -305,7 +306,12 @@ export default class NumberPlane extends AnimObject {
   }
 
   draw(p: p5) {
-    this.iterables.forEach((name: string) => {
+    this.planeComponents.forEach((name: string) => {
+      //@ts-ignore
+      this[name].forEach((o: AnimObject) => o.draw(p))
+    })
+
+    this.drawnComponents.forEach((name: string) => {
       //@ts-ignore
       this[name].forEach((o: AnimObject) => o.draw(p))
     })
