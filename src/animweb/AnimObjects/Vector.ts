@@ -37,7 +37,6 @@ export default class Vector extends AnimObject {
   head: { x: number; y: number } = { x: 0, y: 0 }
   tail: { x: number; y: number } = { x: 0, y: 0 }
   thickness: number = 1
-  color: Color = Colors.black
   p: number = 5
   length: number = 0
   vertices: Array<{ x: number; y: number }> = []

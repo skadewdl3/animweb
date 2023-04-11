@@ -114,7 +114,9 @@ export default class Line extends AnimObject {
     }
     if (config.maxAlpha) {
       this.maxAlpha = config.maxAlpha
-      this.color.setAlpha(this.maxAlpha)
+      if (this.color.rgbaVals[3] > this.maxAlpha) {
+        this.color.setAlpha(this.maxAlpha)
+      }
     }
     if (config.parentData) {
       this.parentData = {

@@ -121,6 +121,10 @@ export default class NumberPlane extends AnimObject {
       : { x: (this.x + this.width) / 2, y: (this.y + this.height) / 2 }
 
     this.showTicks = showTicks
+    if (color) {
+      this.color = color
+      console.log(this.color)
+    }
     if (xGrid) {
       this.showXGrid = true
     }
@@ -131,10 +135,7 @@ export default class NumberPlane extends AnimObject {
       this.showXGrid = true
       this.showYGrid = true
     }
-    if (color) {
-      this.color = color
-      console.log(this.color)
-    }
+    
 
     // +ve x-axis
     if (this.showTicks) {
