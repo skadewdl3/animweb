@@ -8,8 +8,9 @@ import Color from '../helpers/Color'
 import TransitionProps, { Transition, Transitions } from '../Transition'
 import Constants from '../helpers/Constants'
 import ImplicitCurve from './ImplicitCurve'
-import { Matrix, matrix } from 'mathjs'
+import { matrix } from 'mathjs'
 import Vector, { VectorProps } from './Vector'
+import Matrix from '../helpers/Matrix'
 
 interface NumberPlaneProps extends AnimObjectProps {
   stepX?: number

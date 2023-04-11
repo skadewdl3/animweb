@@ -5,7 +5,8 @@ import AnimObject, {
 } from '../AnimObject'
 import p5 from 'p5'
 import Colors from '../helpers/Colors'
-import { evaluate, derivative, Matrix, matrix, multiply, round } from 'mathjs'
+import { evaluate, derivative, matrix, multiply, round } from 'mathjs'
+import Matrix from '../helpers/Matrix'
 import { radToDeg, rangePerFrame, roundOff } from '../helpers/miscellaneous'
 import { v4 as uuid } from 'uuid'
 import Constants from '../helpers/Constants'
@@ -346,10 +347,10 @@ export default class Line extends AnimObject {
     let x2 = this.point2.x
     let y2 = this.point2.y
 
-    let pInitial1 = matrix([[x1], [y1]])
-    let pInitial2 = matrix([[x2], [y2]])
-    let pFinal1 = multiply(ltMatrix, pInitial1).toArray()
-    let pFinal2 = multiply(ltMatrix, pInitial2).toArray()
+    let pInitial1 = Matrix.fromColumns([x1, y1])
+    let pInitial2 = Matrix.fromColumns([x2, y2])
+    let pFinal1 = ltMatrix.multiply(pInitial1).toArray()
+    let pFinal2 = ltMatrix.multiply(pInitial2).toArray()
 
     let newX1 = parseFloat(pFinal1[0].toString())
     let newY1 = parseFloat(pFinal1[1].toString())

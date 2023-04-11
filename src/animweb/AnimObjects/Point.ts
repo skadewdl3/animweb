@@ -1,4 +1,4 @@
-import { Matrix, evaluate, matrix, multiply } from 'mathjs'
+import { evaluate, matrix } from 'mathjs'
 import p5 from 'p5'
 import { v4 as uuid } from 'uuid'
 import AnimObject, {
@@ -10,6 +10,7 @@ import AnimObject, {
 import Color from '../helpers/Color'
 import { roundOff } from '../helpers/miscellaneous'
 import { rangePerFrame } from './../helpers/miscellaneous'
+import Matrix from '../helpers/Matrix'
 
 export interface PointProps extends AnimObjectProps {
   x: number
@@ -127,8 +128,8 @@ class Point extends AnimObject {
     ltMatrix: Matrix
     duration: number
   }) {
-    let pInitial = matrix([[this.x], [this.y]])
-    let pFinal = multiply(ltMatrix, pInitial).toArray()
+    let pInitial = Matrix.fromColumns([this.x, this.y])
+    let pFinal = ltMatrix.multiply(pInitial).toArray()
     let newX = parseFloat(pFinal[0].toString())
     let newY = parseFloat(pFinal[1].toString())
     let distance = Math.sqrt((newX - this.x) ** 2 + (newY - this.y) ** 2)
