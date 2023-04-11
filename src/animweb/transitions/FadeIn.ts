@@ -9,6 +9,7 @@ import { wait, roundOff, rangePerFrame } from '../helpers/miscellaneous'
 import TransitionProps, { TransitionTypes } from '../Transition'
 import ImplicitCurve from '../AnimObjects/ImplicitCurve'
 import Text from '../AnimObjects/Text'
+import Vector from '../AnimObjects/Vector'
 
 interface FadeInTransitionProps extends TransitionProps {}
 
@@ -170,6 +171,9 @@ const FadeIn = <Object extends AnimObject>(
     resetColor(object)
     object.transition = fadeInTransition(object, config)
   } else if (object instanceof Text) {
+    resetColor(object)
+    object.transition = fadeInTransition(object, config)
+  } else if (object instanceof Vector) {
     resetColor(object)
     object.transition = fadeInTransition(object, config)
   }

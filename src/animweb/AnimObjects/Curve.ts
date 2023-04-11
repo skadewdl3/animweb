@@ -11,8 +11,6 @@ interface CurveAnchorPointProps extends AnimObjectProps {
   x: number
   size?: number
   color?: Color
-  transition?: Transitions
-  transitionOptions?: TransitionProps
 }
 
 interface CurveAnchorLineProps extends AnimObjectProps {
@@ -20,8 +18,6 @@ interface CurveAnchorLineProps extends AnimObjectProps {
   length?: number
   thickness?: number
   color?: Color
-  transition?: Transitions
-  transitionOptions?: TransitionProps
 }
 
 export interface CurveProps extends AnimObjectProps {

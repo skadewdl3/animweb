@@ -16,6 +16,7 @@ import Constants from './animweb/helpers/Constants'
 import ImplicitCurve from './animweb/AnimObjects/ImplicitCurve'
 import LaTeX from './animweb/AnimObjects/LaTeX'
 import Matrix from './animweb/helpers/Matrix'
+import Vector, { Vectors } from './animweb/AnimObjects/Vector'
 
 declare global {
   interface Window {
@@ -49,6 +50,7 @@ let WebAnim = {
   Latex: (config: any) => new LaTeX(config),
   TeX: (config: any) => new LaTeX(config),
   Tex: (config: any) => new LaTeX(config),
+  Vector: (config: any) => new Vector(config),
   // transitions
   Create: (object: AnimObject, config: any) =>
     scene.add(Create(object, config)),
@@ -62,6 +64,7 @@ let WebAnim = {
   TextStyle,
   AnimObjects,
   Constants,
+  Vectors,
 }
 
 window.WebAnim = WebAnim

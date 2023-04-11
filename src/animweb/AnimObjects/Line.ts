@@ -6,12 +6,7 @@ import AnimObject, {
 import p5 from 'p5'
 import Colors from '../helpers/Colors'
 import { evaluate, derivative, Matrix, matrix, multiply, round } from 'mathjs'
-import {
-  radToDeg,
-  rangePerFrame,
-  roundOff,
-  getQuadrant,
-} from '../helpers/miscellaneous'
+import { radToDeg, rangePerFrame, roundOff } from '../helpers/miscellaneous'
 import { v4 as uuid } from 'uuid'
 import Constants from '../helpers/Constants'
 
@@ -109,6 +104,7 @@ export default class Line extends AnimObject {
     }
     if (config.color) {
       this.color = config.color
+      console.log(config.color)
     }
     if (config.range) {
       this.range = this.getAbsoluteRange(config.range)
@@ -350,8 +346,6 @@ export default class Line extends AnimObject {
     let x2 = this.point2.x
     let y2 = this.point2.y
 
-    console.log({ x1, y1 }, { x2, y2 })
-
     let pInitial1 = matrix([[x1], [y1]])
     let pInitial2 = matrix([[x2], [y2]])
     let pFinal1 = multiply(ltMatrix, pInitial1).toArray()
@@ -361,9 +355,6 @@ export default class Line extends AnimObject {
     let newY1 = parseFloat(pFinal1[1].toString())
     let newX2 = parseFloat(pFinal2[0].toString())
     let newY2 = parseFloat(pFinal2[1].toString())
-    let newSlope = (newY2 - newY1) / (newX2 - newX1)
-
-    console.log({ newX1, newY1 }, { newX2, newY2 })
 
     let x1Speed = rangePerFrame(newX1 - x1, duration)
     let y1Speed = rangePerFrame(newY1 - y1, duration)
