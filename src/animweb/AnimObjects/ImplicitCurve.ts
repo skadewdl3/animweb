@@ -64,6 +64,7 @@ export default class ImplicitCurve extends AnimObject {
         stepX: this.parentData.stepX,
         stepY: this.parentData.stepY,
         maxDepth: this.sampleRate,
+        minDepth: 6,
         id: this.id,
       })
 

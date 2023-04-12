@@ -94,7 +94,6 @@ export default class Color {
   rgb: string = '' // RGB string - 'rgb(255, 0, 0)'
   rgba: string = '' // RGBA string - 'rgba(255, 0, 0, 0.5)'
   id: string = uuid() // A unique id to identify the color (like AnimObject.id)
-
   rgbaVals: [number, number, number, number] = [0, 0, 0, 0] // Store separate R, G, B, A values
 
   // Color can be initialised with the following formats
@@ -133,6 +132,16 @@ export default class Color {
       this.rgb = RGBAToRGBString(this.rgbaVals)
       this.rgba = RGBAToRGBAString(this.rgbaVals)
     }
+
+    Object.defineProperties(this, {
+      isTransparent: {
+        get: () =>
+          this.rgbaVals[0] == 0 &&
+          this.rgbaVals[1] == 0 &&
+          this.rgbaVals[2] == 0 &&
+          this.rgbaVals[3] == 0,
+      },
+    })
   }
 
   /*

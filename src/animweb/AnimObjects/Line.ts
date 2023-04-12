@@ -10,6 +10,7 @@ import Matrix from '../helpers/Matrix'
 import { radToDeg, rangePerFrame, roundOff } from '../helpers/miscellaneous'
 import { v4 as uuid } from 'uuid'
 import Constants from '../helpers/Constants'
+import { LinearTransformProps } from './NumberPlane'
 
 export enum Lines {
   DoublePoint,
@@ -114,7 +115,9 @@ export default class Line extends AnimObject {
     }
     if (config.maxAlpha) {
       this.maxAlpha = config.maxAlpha
-      this.color.setAlpha(this.maxAlpha)
+      if (this.color.rgbaVals[3] > this.maxAlpha) {
+        this.color.setAlpha(this.maxAlpha)
+      }
     }
     if (config.parentData) {
       this.parentData = {
@@ -334,13 +337,7 @@ export default class Line extends AnimObject {
     })
   }
 
-  transform({
-    ltMatrix,
-    duration = 1,
-  }: {
-    ltMatrix: Matrix
-    duration: number
-  }) {
+  transform(ltMatrix: Matrix, { duration }: LinearTransformProps) {
     let x1 = this.point1.x
     let y1 = this.point1.y
     let x2 = this.point2.x

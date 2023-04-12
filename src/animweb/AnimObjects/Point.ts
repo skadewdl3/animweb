@@ -11,6 +11,7 @@ import Color from '../helpers/Color'
 import { roundOff } from '../helpers/miscellaneous'
 import { rangePerFrame } from './../helpers/miscellaneous'
 import Matrix from '../helpers/Matrix'
+import { LinearTransformProps } from './NumberPlane'
 
 export interface PointProps extends AnimObjectProps {
   x: number
@@ -121,13 +122,7 @@ class Point extends AnimObject {
     })
   }
 
-  transform({
-    ltMatrix,
-    duration = 1,
-  }: {
-    ltMatrix: Matrix
-    duration: number
-  }) {
+  transform(ltMatrix: Matrix, { duration }: LinearTransformProps) {
     let pInitial = Matrix.fromColumns([this.x, this.y])
     let pFinal = ltMatrix.multiply(pInitial).toArray()
     let newX = parseFloat(pFinal[0].toString())

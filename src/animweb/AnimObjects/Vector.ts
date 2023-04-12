@@ -3,6 +3,7 @@ import AnimObject, { AnimObjectProps } from '../AnimObject'
 import Color from '../helpers/Color'
 import Colors from '../helpers/Colors'
 import {
+  degToRad,
   getQuadrant,
   radToDeg,
   rangePerFrame,
@@ -11,6 +12,7 @@ import {
 import { multiply } from 'mathjs'
 import Matrix from '../helpers/Matrix'
 import { v4 as uuid } from 'uuid'
+import { LinearTransformProps } from './NumberPlane'
 
 export enum Vectors {
   OriginCentered = 'OriginCentered',
@@ -34,10 +36,10 @@ interface FreeVectorProps extends CommonVectorProps {
 export type VectorProps = OriginCenteredVectorProps | FreeVectorProps
 
 export default class Vector extends AnimObject {
+  form: Vectors = Vectors.OriginCentered
   head: { x: number; y: number } = { x: 0, y: 0 }
   tail: { x: number; y: number } = { x: 0, y: 0 }
   thickness: number = 1
-  color: Color = Colors.black
   p: number = 5
   length: number = 0
   vertices: Array<{ x: number; y: number }> = []
@@ -51,7 +53,7 @@ export default class Vector extends AnimObject {
     y = 0,
     head = { x: 0, y: 0 },
     tail = { x: 0, y: 0 },
-    thickness = 1,
+    thickness = 3,
     color = Colors.black,
     parentData = {
       origin: { x: 0, y: 0 },
@@ -60,6 +62,7 @@ export default class Vector extends AnimObject {
     },
   }) {
     super()
+    this.form = form
     if (form == Vectors.OriginCentered) {
       this.head = { x, y }
       this.tail = { x: 0, y: 0 }
@@ -78,32 +81,13 @@ export default class Vector extends AnimObject {
     this.parentData = parentData
   }
 
-  calculateVertices() {
-    let { x: headX, y: headY } = this.getAbsolutePosition(this.head)
-    let { x: tailX, y: tailY } = this.getAbsolutePosition(this.tail)
-    let distance = Math.sqrt((headX - tailX) ** 2 + (headY - tailY) ** 2)
-
-    let t = distance / this.p
-    let x = (1 - t) * headX + t * tailX
-    let y = (1 - t) * headY + t * tailY
-
-    let xAx = (headX - tailX) / (headY - tailY)
-    let yAx = -1 / xAx
-  }
-
   calculateArrowVertices() {
     let quadrant = getQuadrant(radToDeg(this.angle))
     console.log(radToDeg(this.angle), quadrant)
     return quadrant
   }
 
-  transform({
-    ltMatrix,
-    duration = 1,
-  }: {
-    ltMatrix: Matrix
-    duration: number
-  }) {
+  transform(ltMatrix: Matrix, { duration }: LinearTransformProps) {
     let headMatrix = Matrix.fromColumns([this.head.x, this.head.y])
     let newHeadMatrix = ltMatrix.multiply(headMatrix).toArray()
 
@@ -158,6 +142,25 @@ export default class Vector extends AnimObject {
         )
       }
     }
+  }
+
+  scale(scalar: number) {
+    let linearTransform = Matrix.identity(2).multiply(scalar)
+    this.transform(linearTransform, { duration: 1 })
+  }
+
+  rotate(angle: number) {
+    let radians = degToRad(angle)
+    let linearTransform = Matrix.fromAngle(radians)
+    this.transform(linearTransform, { duration: 1 })
+  }
+
+  copy() {
+    let newVector = Object.assign(
+      Object.create(Object.getPrototypeOf(this)),
+      this
+    )
+    return newVector
   }
 
   draw(p: p5) {
