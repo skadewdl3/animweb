@@ -53,6 +53,10 @@ interface PointPlotProps extends AnimObjectProps {
   transitionOptions?: TransitionProps
 }
 
+export interface LinearTransformProps {
+  duration: number
+}
+
 export default class NumberPlane extends AnimObject {
   stepX: number
   stepY: number
@@ -135,7 +139,6 @@ export default class NumberPlane extends AnimObject {
       this.showXGrid = true
       this.showYGrid = true
     }
-    
 
     // +ve x-axis
     if (this.showTicks) {
@@ -433,13 +436,16 @@ export default class NumberPlane extends AnimObject {
     return vec
   }
 
-  async transform(lt: [[number, number], [number, number]] | Matrix) {
+  async transform(
+    lt: [[number, number], [number, number]] | Matrix,
+    config: LinearTransformProps = { duration: 1 }
+  ) {
     let ltMatrix: any
     if (lt instanceof Matrix) ltMatrix = lt
     else ltMatrix = matrix(lt)
     this.iterables.forEach((name: string) => {
       //@ts-ignore
-      this[name].forEach((o: AnimObject) => o.transform({ ltMatrix }))
+      this[name].forEach((o: AnimObject) => o.transform(ltMatrix, config))
     })
   }
 }
