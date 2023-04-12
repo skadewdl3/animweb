@@ -36,6 +36,7 @@ interface FreeVectorProps extends CommonVectorProps {
 export type VectorProps = OriginCenteredVectorProps | FreeVectorProps
 
 export default class Vector extends AnimObject {
+  form: Vectors = Vectors.OriginCentered
   head: { x: number; y: number } = { x: 0, y: 0 }
   tail: { x: number; y: number } = { x: 0, y: 0 }
   thickness: number = 1
@@ -61,6 +62,7 @@ export default class Vector extends AnimObject {
     },
   }) {
     super()
+    this.form = form
     if (form == Vectors.OriginCentered) {
       this.head = { x, y }
       this.tail = { x: 0, y: 0 }
@@ -151,6 +153,14 @@ export default class Vector extends AnimObject {
     let radians = degToRad(angle)
     let linearTransform = Matrix.fromAngle(radians)
     this.transform(linearTransform, { duration: 1 })
+  }
+
+  copy() {
+    let newVector = Object.assign(
+      Object.create(Object.getPrototypeOf(this)),
+      this
+    )
+    return newVector
   }
 
   draw(p: p5) {

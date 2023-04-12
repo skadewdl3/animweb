@@ -1,4 +1,4 @@
-import { evaluate, log, parse } from 'mathjs'
+import { evaluate, log, min, parse } from 'mathjs'
 import { roundOff } from './miscellaneous'
 
 class Quadrant {
@@ -50,6 +50,7 @@ class QuadTree {
     depth,
     evalDefinition,
     maxDepth,
+    minDepth,
   }) {
     this.x = x
     this.y = y
@@ -59,6 +60,7 @@ class QuadTree {
     this.definition = definition
     this.evalDefinition = evalDefinition
     this.maxDepth = maxDepth
+    this.minDepth = minDepth
     this.ne = new Quadrant({
       value: 0,
       direction: 'ne',
@@ -101,11 +103,11 @@ class QuadTree {
   getT(x1, y1, x2, y2) {
     let v1 = this.evalDefinition(x1, y1)
     let v2 = this.evalDefinition(x2, y2)
-    let t = (-v1) / (v2 - v1)
+    let t = -v1 / (v2 - v1)
     return t
   }
 
-  lerpY(x1, y1, x2, y2,  t = this.getT(x1, y1, x2, y2)) {
+  lerpY(x1, y1, x2, y2, t = this.getT(x1, y1, x2, y2)) {
     return y1 + (y2 - y1) * t
   }
 
@@ -273,32 +275,48 @@ class QuadTree {
           ]
           val = this.valueFunction(bl, br, tr, tl)
 
-          if (val == 0 || val == 15) this.ne.setValue(val)
-          else {
-            if (this.depth <= this.maxDepth)
-              this.ne = new QuadTree({
-                definition: this.definition,
-                x: this.x + this.width / 2,
-                y: this.y,
-                width: this.width / 2,
-                height: this.height / 2,
-                depth: this.depth + 1,
-                evalDefinition: this.evalDefinition,
-                maxDepth: this.maxDepth,
-              })
+          if (this.depth <= this.minDepth) {
+            this.ne = new QuadTree({
+              definition: this.definition,
+              x: this.x + this.width / 2,
+              y: this.y,
+              width: this.width / 2,
+              height: this.height / 2,
+              depth: this.depth + 1,
+              evalDefinition: this.evalDefinition,
+              maxDepth: this.maxDepth,
+              minDepth: this.minDepth,
+            })
+          } else {
+            if (val == 0 || val == 15) this.ne.setValue(val)
             else {
-              this.ne.setValue(val)
-              this.ne.setContours(
-                this.calculateContour(
-                  val,
-                  [this.x + this.width / 2, this.y + this.height / 2],
-                  [this.x + this.width, this.y + this.height / 2],
-                  [this.x + this.width, this.y],
-                  [this.x + this.width / 2, this.y]
+              if (this.depth <= this.maxDepth)
+                this.ne = new QuadTree({
+                  definition: this.definition,
+                  x: this.x + this.width / 2,
+                  y: this.y,
+                  width: this.width / 2,
+                  height: this.height / 2,
+                  depth: this.depth + 1,
+                  evalDefinition: this.evalDefinition,
+                  maxDepth: this.maxDepth,
+                minDepth: this.minDepth
+                })
+              else {
+                this.ne.setValue(val)
+                this.ne.setContours(
+                  this.calculateContour(
+                    val,
+                    [this.x + this.width / 2, this.y + this.height / 2],
+                    [this.x + this.width, this.y + this.height / 2],
+                    [this.x + this.width, this.y],
+                    [this.x + this.width / 2, this.y]
+                  )
                 )
-              )
+              }
             }
           }
+
           break
         case 'nw':
           ;[bl, br, tr, tl] = [
@@ -311,10 +329,8 @@ class QuadTree {
             this.evalDefinition(this.x, this.y),
           ]
           val = this.valueFunction(bl, br, tr, tl)
-          if (val == 0 || val == 15) this.nw.setValue(val)
-          else {
-            if (this.depth <= this.maxDepth)
-              this.nw = new QuadTree({
+          if (this.depth <= this.minDepth) {
+this.nw = new QuadTree({
                 definition: this.definition,
                 x: this.x,
                 y: this.y,
@@ -323,18 +339,36 @@ class QuadTree {
                 depth: this.depth + 1,
                 evalDefinition: this.evalDefinition,
                 maxDepth: this.maxDepth,
+                minDepth: this.minDepth
               })
+          }
+          else {
+            if (val == 0 || val == 15) this.nw.setValue(val)
             else {
-              this.nw.setValue(val)
-              this.nw.setContours(
-                this.calculateContour(
-                  val,
-                  [this.x, this.y + this.height / 2],
-                  [this.x + this.width / 2, this.y + this.height / 2],
-                  [this.x + this.width / 2, this.y],
-                  [this.x, this.y]
+              if (this.depth <= this.maxDepth)
+                this.nw = new QuadTree({
+                  definition: this.definition,
+                  x: this.x,
+                  y: this.y,
+                  width: this.width / 2,
+                  height: this.height / 2,
+                  depth: this.depth + 1,
+                  evalDefinition: this.evalDefinition,
+                  maxDepth: this.maxDepth,
+                minDepth: this.minDepth
+                })
+              else {
+                this.nw.setValue(val)
+                this.nw.setContours(
+                  this.calculateContour(
+                    val,
+                    [this.x, this.y + this.height / 2],
+                    [this.x + this.width / 2, this.y + this.height / 2],
+                    [this.x + this.width / 2, this.y],
+                    [this.x, this.y]
+                  )
                 )
-              )
+              }
             }
           }
           break
@@ -349,30 +383,47 @@ class QuadTree {
             ),
           ]
           val = this.valueFunction(bl, br, tr, tl)
-          if (val == 0 || val == 15) this.se.setValue(val)
+          if (this.depth <= this.minDepth) {
+this.se = new QuadTree({
+                  definition: this.definition,
+                  x: this.x + this.width / 2,
+                  y: this.y + this.height / 2,
+                  width: this.width / 2,
+                  height: this.height / 2,
+                  depth: this.depth + 1,
+                  evalDefinition: this.evalDefinition,
+                  maxDepth: this.maxDepth,
+                  minDepth: this.minDepth
+                })
+          }
           else {
-            if (this.depth <= this.maxDepth)
-              this.se = new QuadTree({
-                definition: this.definition,
-                x: this.x + this.width / 2,
-                y: this.y + this.height / 2,
-                width: this.width / 2,
-                height: this.height / 2,
-                depth: this.depth + 1,
-                evalDefinition: this.evalDefinition,
-                maxDepth: this.maxDepth,
-              })
+
+            if (val == 0 || val == 15) this.se.setValue(val)
             else {
-              this.se.setValue(val)
-              this.se.setContours(
-                this.calculateContour(
-                  val,
-                  [this.x + this.width / 2, this.y + this.height],
-                  [this.x + this.width, this.y + this.height],
-                  [this.x + this.width, this.y + this.height / 2],
-                  [this.x + this.width / 2, this.y + this.height / 2]
+              if (this.depth <= this.maxDepth)
+                this.se = new QuadTree({
+                  definition: this.definition,
+                  x: this.x + this.width / 2,
+                  y: this.y + this.height / 2,
+                  width: this.width / 2,
+                  height: this.height / 2,
+                  depth: this.depth + 1,
+                  evalDefinition: this.evalDefinition,
+                  maxDepth: this.maxDepth,
+                  minDepth: this.minDepth
+                })
+              else {
+                this.se.setValue(val)
+                this.se.setContours(
+                  this.calculateContour(
+                    val,
+                    [this.x + this.width / 2, this.y + this.height],
+                    [this.x + this.width, this.y + this.height],
+                    [this.x + this.width, this.y + this.height / 2],
+                    [this.x + this.width / 2, this.y + this.height / 2]
+                  )
                 )
-              )
+              }
             }
           }
           break
@@ -387,30 +438,47 @@ class QuadTree {
             this.evalDefinition(this.x, this.y + this.height / 2),
           ]
           val = this.valueFunction(bl, br, tr, tl)
-          if (val == 0 || val == 15) this.sw.setValue(val)
+          if (this.depth <= this.minDepth) {
+this.sw = new QuadTree({
+                  definition: this.definition,
+                  x: this.x,
+                  y: this.y + this.height / 2,
+                  width: this.width / 2,
+                  height: this.height / 2,
+                  depth: this.depth + 1,
+                  evalDefinition: this.evalDefinition,
+                  maxDepth: this.maxDepth,
+                  minDepth: this.minDepth
+                })
+          }
           else {
-            if (this.depth <= this.maxDepth)
-              this.sw = new QuadTree({
-                definition: this.definition,
-                x: this.x,
-                y: this.y + this.height / 2,
-                width: this.width / 2,
-                height: this.height / 2,
-                depth: this.depth + 1,
-                evalDefinition: this.evalDefinition,
-                maxDepth: this.maxDepth,
-              })
+
+            if (val == 0 || val == 15) this.sw.setValue(val)
             else {
-              this.sw.setValue(val)
-              this.sw.setContours(
-                this.calculateContour(
-                  val,
-                  [this.x, this.y + this.height],
-                  [this.x + this.width / 2, this.y + this.height],
-                  [this.x + this.width / 2, this.y + this.height / 2],
-                  [this.x, this.y + this.height / 2]
+              if (this.depth <= this.maxDepth)
+                this.sw = new QuadTree({
+                  definition: this.definition,
+                  x: this.x,
+                  y: this.y + this.height / 2,
+                  width: this.width / 2,
+                  height: this.height / 2,
+                  depth: this.depth + 1,
+                  evalDefinition: this.evalDefinition,
+                  maxDepth: this.maxDepth,
+                  minDepth: this.minDepth
+                })
+              else {
+                this.sw.setValue(val)
+                this.sw.setContours(
+                  this.calculateContour(
+                    val,
+                    [this.x, this.y + this.height],
+                    [this.x + this.width / 2, this.y + this.height],
+                    [this.x + this.width / 2, this.y + this.height / 2],
+                    [this.x, this.y + this.height / 2]
+                  )
                 )
-              )
+              }
             }
           }
           break
@@ -430,6 +498,7 @@ self.onmessage = ({ data }) => {
     stepX,
     stepY,
     maxDepth,
+    minDepth
   } = data
 
   const node = parse(definition)
@@ -440,7 +509,7 @@ self.onmessage = ({ data }) => {
       x: (x - origin.x) / stepX,
       y: (origin.y - y) / stepY,
     }
-    
+
     let val = code.evaluate({
       x: (x - origin.x) / stepX,
       y: (origin.y - y) / stepY,
@@ -457,6 +526,7 @@ self.onmessage = ({ data }) => {
     depth,
     evalDefinition,
     maxDepth,
+    minDepth,
   })
   self.postMessage(JSON.stringify(quadTree))
   quadTree = undefined
@@ -470,5 +540,6 @@ self.onmessage = ({ data }) => {
   stepX = undefined
   stepY = undefined
   maxDepth = undefined
+  minDepth = undefined
   evalDefinition = undefined
 }
