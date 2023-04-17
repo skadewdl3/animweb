@@ -10,7 +10,6 @@ P.S - A function declared inside a class is called a method
 
 const p5 = window.p5
 
-import { createSketch } from './../p5-util/sketch'
 import AnimObject from './AnimObject'
 import Color from './helpers/Color'
 import Colors from './helpers/Colors'
@@ -21,6 +20,8 @@ import { TransitionQueueItem } from './Transition'
 import { basicSetup, EditorView } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import WebAnim from './../main'
+// @ts-ignore
+import { createSketch } from '../p5-util/sketch'
 
 const defaultDoc = `// code your animation here`
 
@@ -175,7 +176,7 @@ export default class Scene {
       }`
       codeError?.classList.remove('hidden')
     }
-    new p5(this.sketch)
+    new p5(this.sketch, document.body)
   }
 
   resetScene() {
@@ -234,8 +235,8 @@ export default class Scene {
   setup(p: any) {
     let id = uuidv4()
     p.frameRate(Constants.FrameRate)
-    let canvas = p.createCanvas(this.width, this.height)
-    canvas.id(id)
+    let canvas = p.createCanvas(this.width, this.height, p.SVG)
+    // canvas.id(id)
     p.background(this.backgroundColor.rgba)
     p.colorMode(p.RGB)
     let el = document.getElementById(id)
