@@ -49,8 +49,9 @@ export default class Curve extends AnimObject {
     range,
     thickness = 1,
     parentData,
+    scene,
   }: CurveProps) {
-    super()
+    super(scene)
     let temp = definition
     let parts = temp.split('=')
     if (parts.length == 1) this.y = definition
@@ -106,6 +107,7 @@ export default class Curve extends AnimObject {
           color: new Color(this.color.rgbaVals),
           thickness: this.thickness,
           parentData: this.parentData,
+          scene: this.scene,
         })
       )
     }

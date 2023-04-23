@@ -19,21 +19,13 @@ export enum Vectors {
   Free = 'Free',
 }
 
-interface CommonVectorProps extends AnimObjectProps {
+export interface VectorProps extends AnimObjectProps {
   form?: Vectors
+  x?: number
+  y?: number
+  head?: { x: number; y: number }
+  tail?: { x: number; y: number }
 }
-
-interface OriginCenteredVectorProps extends CommonVectorProps {
-  x: number
-  y: number
-}
-
-interface FreeVectorProps extends CommonVectorProps {
-  head: { x: number; y: number }
-  tail: { x: number; y: number }
-}
-
-export type VectorProps = OriginCenteredVectorProps | FreeVectorProps
 
 export default class Vector extends AnimObject {
   form: Vectors = Vectors.OriginCentered
@@ -60,8 +52,9 @@ export default class Vector extends AnimObject {
       stepX: 1,
       stepY: 1,
     },
-  }) {
-    super()
+    scene,
+  }: VectorProps) {
+    super(scene)
     this.form = form
     if (form == Vectors.OriginCentered) {
       this.head = { x, y }
@@ -112,7 +105,7 @@ export default class Vector extends AnimObject {
 
     this.transition = () => {
       if (!queued) {
-        this.queueTransition(transitionQueueItem)
+        this.scene.enqueueTransition(transitionQueueItem)
         queued = true
       }
       if (
@@ -122,7 +115,7 @@ export default class Vector extends AnimObject {
         roundOff(this.tail.y, 2) == roundOff(newTailY, 2)
       ) {
         this.transition = null
-        this.unqueueTransition(transitionQueueItem)
+        this.scene.dequeueTransition(transitionQueueItem)
         this.head.x = newHeadX
         this.head.y = newHeadY
         this.tail.x = newTailX

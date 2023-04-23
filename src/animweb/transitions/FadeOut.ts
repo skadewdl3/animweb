@@ -52,7 +52,7 @@ const fadeOutTransition = (
 
   return () => {
     if (!queued && transitionData.type == TransitionTypes.single) {
-      object.queueTransition(transitionQueueItem)
+      object.scene.enqueueTransition(transitionQueueItem)
       queued = true
     }
     if (
@@ -60,7 +60,7 @@ const fadeOutTransition = (
       transitionData.type == TransitionTypes.group &&
       transitionData.isFirst
     ) {
-      object.queueTransition(transitionQueueItem)
+      object.scene.enqueueTransition(transitionQueueItem)
       queued = true
     }
 
@@ -68,14 +68,14 @@ const fadeOutTransition = (
       object.color.setAlpha(0)
       object.transition = null
       if (transitionData.type == TransitionTypes.single) {
-        object.unqueueTransition(transitionQueueItem)
+        object.scene.dequeueTransition(transitionQueueItem)
       }
       if (
         !queued &&
         transitionData.type == TransitionTypes.group &&
         transitionData.isLast
       ) {
-        object.unqueueTransition(transitionQueueItem)
+        object.scene.dequeueTransition(transitionQueueItem)
         queued = true
       }
     } else {

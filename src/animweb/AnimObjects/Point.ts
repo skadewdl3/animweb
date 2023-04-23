@@ -26,8 +26,16 @@ class Point extends AnimObject {
   size: number
   definition: string = ''
 
-  constructor({ x, y, size = 5, color, definition, parentData }: PointProps) {
-    super()
+  constructor({
+    x,
+    y,
+    size = 5,
+    color,
+    definition,
+    parentData,
+    scene,
+  }: PointProps) {
+    super(scene)
     this.x = x
     this.y = y
     this.size = size
@@ -78,14 +86,14 @@ class Point extends AnimObject {
       let newY = this.parentData.origin.y - y * this.parentData.stepY
       let speed = rangePerFrame(Math.abs(this.x - newX), duration)
       this.transition = () => {
-        this.queueTransition(transitionQueueItem)
+        this.scene.enqueueTransition(transitionQueueItem)
         queued = true
         if (roundOff(this.x, 0) < roundOff(newX, 0)) {
           if (this.x + speed > newX) {
             this.setX(newX)
             this.setY(newY)
             this.transition = null
-            this.unqueueTransition(transitionQueueItem)
+            this.scene.dequeueTransition(transitionQueueItem)
             resolve()
           } else {
             this.setX(this.x + speed)
@@ -104,7 +112,7 @@ class Point extends AnimObject {
             this.setX(newX)
             this.setY(newY)
             this.transition = null
-            this.unqueueTransition(transitionQueueItem)
+            this.scene.dequeueTransition(transitionQueueItem)
             resolve()
           } else {
             this.setX(this.x - speed)
@@ -139,11 +147,11 @@ class Point extends AnimObject {
         (newX - this.x) ** 2 + (newY - this.y) ** 2
       )
       if (!queued) {
-        this.queueTransition(transitionQueueItem)
+        this.scene.enqueueTransition(transitionQueueItem)
         queued = true
       }
       if (roundOff(currentDistance, 2) == 0) {
-        this.unqueueTransition(transitionQueueItem)
+        this.scene.dequeueTransition(transitionQueueItem)
         this.x = newX
         this.y = newY
         this.transition = null

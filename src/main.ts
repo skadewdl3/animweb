@@ -40,17 +40,17 @@ let WebAnim = {
   wait: async (config: any) => scene.wait(config),
   show: (config: any) => scene.add(config),
   // AnimObjects
-  NumberPlane: (config: any) => new NumberPlane(config),
-  Line: (config: any) => new Line(config),
-  Point: (config: any) => new Point(config),
-  Curve: (config: any) => new Curve(config),
-  Text: (config: any) => new Text(config),
-  ImplicitCurve: (config: any) => new ImplicitCurve(config),
-  LaTeX: (config: any) => new LaTeX(config),
-  Latex: (config: any) => new LaTeX(config),
-  TeX: (config: any) => new LaTeX(config),
-  Tex: (config: any) => new LaTeX(config),
-  Vector: (config: any) => new Vector(config),
+  NumberPlane: (config: any) => new NumberPlane({ ...config, scene }),
+  Line: (config: any) => new Line({ ...config, scene }),
+  Point: (config: any) => new Point({ ...config, scene }),
+  Curve: (config: any) => new Curve({ ...config, scene }),
+  Text: (config: any) => new Text({ ...config, scene }),
+  ImplicitCurve: (config: any) => new ImplicitCurve({ ...config, scene }),
+  LaTeX: (config: any) => new LaTeX({ ...config, scene }),
+  Latex: (config: any) => new LaTeX({ ...config, scene }),
+  TeX: (config: any) => new LaTeX({ ...config, scene }),
+  Tex: (config: any) => new LaTeX({ ...config, scene }),
+  Vector: (config: any) => new Vector({ ...config, scene }),
   // transitions
   Create: (object: AnimObject, config: any) =>
     scene.add(Create(object, config)),
@@ -65,6 +65,7 @@ let WebAnim = {
   AnimObjects,
   Constants,
   Vectors,
+  Fonts: {},
 }
 
 window.WebAnim = WebAnim

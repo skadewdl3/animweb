@@ -24,7 +24,7 @@ export default class LaTeX extends AnimObject {
   position: { x: number; y: number } = { x: 0, y: 0 }
 
   constructor(config: LaTeXProps) {
-    super()
+    super(config.scene)
     this.latex = config.latex
     let temp = JSON.stringify(this.latex).split('')
     temp.splice(0, 1)
