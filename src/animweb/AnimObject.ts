@@ -11,9 +11,9 @@ import { v4 as uuidv4 } from 'uuid'
 import { Width, Height } from './helpers/Dimensions'
 import Color from './helpers/Color'
 import Colors from './helpers/Colors'
-import Transition, { Transitions } from './Transition'
-import { number } from 'mathjs'
+import { Transitions } from './Transition'
 import TransitionProps from './Transition'
+import Scene from './Scene'
 
 /*
 Defines what kind of properties/arguments/parameters (aka props)
@@ -33,6 +33,7 @@ export interface AnimObjectProps {
   size?: number
   transition?: Transitions
   transitionOptions?: TransitionProps
+  scene: Scene
 }
 
 /*
@@ -69,8 +70,6 @@ export interface Observer {
 }
 
 export default class AnimObject {
-  sceneHeight: number // This property provides access of the height of the scene to every AnimObject
-  sceneWidth: number // This property provides access of the height of the scene to every AnimObject
   id: string // A unique identifier created for every AnimObject. Used to identify which AnimObject to remove when Scene.remove is called
   color: Color = Colors.black // The fill color of the AnimObject. subclasses may or may not use this prop
   backgroundColor: Color = Colors.transparent // The fill bg color of the AnimObject. subclasses may or may not use this prop
@@ -78,9 +77,8 @@ export default class AnimObject {
   maxAlpha: number = 1
   observers: Array<Observer> = [] // An array containing the AnimObjects that are observing come property of this AnimObject
   iterables: Array<string> = []
-  queueTransition: Function = () => {}
-  unqueueTransition: Function = () => {}
-  waitBeforeTransition: Function = () => {}
+  scene: Scene
+
   remove?: Function
   parentData: {
     origin: { x: number; y: number }
@@ -144,45 +142,38 @@ export default class AnimObject {
   When it ends, the transition method sets itself to null and stop being called inside AnimObject.draw
   */
 
-  constructor() {
-    this.sceneWidth = Width.full // by default, sceneWidth is width of the full screen
-    this.sceneHeight = Height.full // by default, sceneHeight is height of the full screen
+  constructor(s: Scene) {
+    this.scene = s
     this.id = `webanimobject-${uuidv4()}`
   }
 
-  /*
-  When the AnimObject is added to any Scene, the Scene calls this method before drawing it.
-  This way, the same AnimObject can be used in different scenes.
+  // updateSceneDimensions(width: number, height: number) {
+  //   this.scene.height = height
+  //   this.scene.width = width
+  // }
 
-  The method itself updates the sceneWidth and sceneHeight properties for the AnimObject
-  */
-  updateSceneDimensions(width: number, height: number) {
-    this.sceneHeight = height
-    this.sceneWidth = width
-  }
+  // updateTransitionQueueFunctions(
+  //   queueTransition: Function,
+  //   unqueueTransition: Function,
+  //   waitBeforeTransition: Function
+  // ) {
+  //   this.scene.enqueueTransition = queueTransition
+  //   this.scene.dequeueTransition = unqueueTransition
+  //   this.waitBeforeTransition = waitBeforeTransition
 
-  updateTransitionQueueFunctions(
-    queueTransition: Function,
-    unqueueTransition: Function,
-    waitBeforeTransition: Function
-  ) {
-    this.queueTransition = queueTransition
-    this.unqueueTransition = unqueueTransition
-    this.waitBeforeTransition = waitBeforeTransition
-
-    if (this.iterables.length != 0) {
-      this.iterables.forEach((name: string) => {
-        // @ts-ignore
-        this[name].forEach((o: AnimObject) => {
-          o.updateTransitionQueueFunctions(
-            this.queueTransition,
-            this.unqueueTransition,
-            this.waitBeforeTransition
-          )
-        })
-      })
-    }
-  }
+  //   if (this.iterables.length != 0) {
+  //     this.iterables.forEach((name: string) => {
+  //       // @ts-ignore
+  //       this[name].forEach((o: AnimObject) => {
+  //         o.updateTransitionQueueFunctions(
+  //           this.scene.enqueueTransition,
+  //           this.scene.dequeueTransition,
+  //           this.waitBeforeTransition
+  //         )
+  //       })
+  //     })
+  //   }
+  // }
 
   setOpacity(opacity: number) {
     this.color.setAlpha(opacity)

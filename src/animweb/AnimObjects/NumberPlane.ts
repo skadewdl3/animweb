@@ -112,12 +112,13 @@ export default class NumberPlane extends AnimObject {
     grid = false,
     xGrid,
     yGrid,
-  }: NumberPlaneProps = {}) {
-    super()
+    scene,
+  }: NumberPlaneProps) {
+    super(scene)
     this.stepX = stepX ? stepX : step
     this.stepY = stepY ? stepY : step
-    this.width = width ? width : this.sceneWidth
-    this.height = height ? height : this.sceneHeight
+    this.width = width ? width : this.scene.width
+    this.height = height ? height : this.scene.height
     this.x = x ? x : 0
     this.y = y ? y : 0
     this.origin = origin
@@ -153,6 +154,7 @@ export default class NumberPlane extends AnimObject {
               stepY: this.stepY,
               origin: this.origin,
             },
+            scene: this.scene,
           })
         )
       }
@@ -169,6 +171,7 @@ export default class NumberPlane extends AnimObject {
               stepY: this.stepY,
               origin: this.origin,
             },
+            scene: this.scene,
           })
         )
       }
@@ -186,6 +189,7 @@ export default class NumberPlane extends AnimObject {
               stepY: this.stepY,
               origin: this.origin,
             },
+            scene: this.scene,
           })
         )
       }
@@ -203,6 +207,7 @@ export default class NumberPlane extends AnimObject {
               stepY: this.stepY,
               origin: this.origin,
             },
+            scene: this.scene,
           })
         )
       }
@@ -223,6 +228,7 @@ export default class NumberPlane extends AnimObject {
               stepY: this.stepY,
               origin: this.origin,
             },
+            scene: this.scene,
           })
         )
       }
@@ -240,6 +246,7 @@ export default class NumberPlane extends AnimObject {
               stepY: this.stepY,
               origin: this.origin,
             },
+            scene: this.scene,
           })
         )
       }
@@ -259,6 +266,7 @@ export default class NumberPlane extends AnimObject {
               stepY: this.stepY,
               origin: this.origin,
             },
+            scene: this.scene,
           })
         )
       }
@@ -276,6 +284,7 @@ export default class NumberPlane extends AnimObject {
               stepY: this.stepY,
               origin: this.origin,
             },
+            scene: this.scene,
           })
         )
       }
@@ -292,6 +301,7 @@ export default class NumberPlane extends AnimObject {
           stepX: this.stepX,
           stepY: this.stepY,
         },
+        scene: this.scene,
       })
     )
     this.axes.push(
@@ -305,6 +315,7 @@ export default class NumberPlane extends AnimObject {
           stepX: this.stepX,
           stepY: this.stepY,
         },
+        scene: this.scene,
       })
     )
   }
@@ -384,11 +395,6 @@ export default class NumberPlane extends AnimObject {
       }),
       transitionOptions
     )
-    curve.updateTransitionQueueFunctions(
-      this.queueTransition,
-      this.unqueueTransition,
-      this.waitBeforeTransition
-    )
     this.curves.push(curve)
     return curve
   }
@@ -412,11 +418,6 @@ export default class NumberPlane extends AnimObject {
         },
       }),
       transitionOptions
-    )
-    implicitCurve.updateTransitionQueueFunctions(
-      this.queueTransition,
-      this.unqueueTransition,
-      this.waitBeforeTransition
     )
     this.implicitCurves.push(implicitCurve)
     return implicitCurve

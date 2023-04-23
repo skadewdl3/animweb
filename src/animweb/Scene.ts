@@ -35,6 +35,9 @@ export default class Scene {
   stopLoop: any = null
   startLoop: any = null
   transitionQueue: Array<TransitionQueueItem> = []
+  fonts: {
+    [fontName: string]: any
+  } = {}
 
   constructor(width = 800, height = 800, backgroundColor = Colors.gray1) {
     this.width = width // default width of the Scene is 800
@@ -50,6 +53,7 @@ export default class Scene {
     this.sketch = createSketch({
       setup: this.setup.bind(this),
       draw: this.draw.bind(this),
+      preload: this.preload.bind(this),
     })
 
     document.body.insertAdjacentHTML(
@@ -112,6 +116,7 @@ export default class Scene {
       userScript.type = 'module'
 
       let defaultExports = ``
+
       for (let property in WebAnim) {
         defaultExports = defaultExports.concat(
           `var ${property} = window.WebAnim.${property}\n`
@@ -187,32 +192,22 @@ export default class Scene {
 
   updateSceneProps(obj: AnimObject) {
     if (obj.iterables.length != 0) {
-      obj.updateSceneDimensions(this.width, this.height)
-      obj.updateTransitionQueueFunctions(
-        this.queueTransition.bind(this),
-        this.unqueueTransition.bind(this),
-        this.wait.bind(this)
-      )
+      obj.scene = this
       obj.iterables.forEach((name) => {
         // @ts-ignore
         obj[name].forEach((o) => this.updateSceneProps(o))
       })
     } else {
-      obj.updateSceneDimensions(this.width, this.height)
-      obj.updateTransitionQueueFunctions(
-        this.queueTransition.bind(this),
-        this.unqueueTransition.bind(this),
-        this.wait.bind(this)
-      )
+      obj.scene = this
     }
   }
 
-  queueTransition(transition: TransitionQueueItem) {
+  enqueueTransition(transition: TransitionQueueItem) {
     this.transitionQueue.push(transition)
     // console.log('queued', [...this.transitionQueue])
   }
 
-  unqueueTransition(transition: TransitionQueueItem) {
+  dequeueTransition(transition: TransitionQueueItem) {
     // console.log(this.transitionQueue)
     this.transitionQueue = this.transitionQueue.filter(({ id }) => {
       return id != transition.id
@@ -236,7 +231,6 @@ export default class Scene {
     let id = uuidv4()
     p.frameRate(Constants.FrameRate)
     let canvas = p.createCanvas(this.width, this.height, p.SVG)
-    // canvas.id(id)
     p.background(this.backgroundColor.rgba)
     p.colorMode(p.RGB)
     let el = document.getElementById(id)
@@ -252,8 +246,13 @@ export default class Scene {
   Scene.draw just runs AnimObject.draw for every AnimObject in Scene.objects
   */
   draw(p: any) {
+    p.clear()
     p.background(this.backgroundColor.rgba)
     this.objects.forEach((obj) => obj.draw(p))
+  }
+
+  preload(p: any) {
+    this.fonts.Math = p.loadFont('/mathfont.otf')
   }
 
   async wait(timeout?: number): Promise<void> {

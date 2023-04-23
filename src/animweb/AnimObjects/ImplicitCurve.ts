@@ -26,7 +26,7 @@ export default class ImplicitCurve extends AnimObject {
   shouldRedraw: boolean = true
 
   constructor(config: ImplicitCurveProps) {
-    super()
+    super(config.scene)
     let temp = config.definition
     let parts = temp.split('=')
     if (parts.length == 1) this.definition = config.definition
@@ -56,8 +56,8 @@ export default class ImplicitCurve extends AnimObject {
       this.webWorker.postMessage({
         x: 0,
         y: 0,
-        width: this.sceneWidth,
-        height: this.sceneHeight,
+        width: this.scene.width,
+        height: this.scene.height,
         definition: this.definition,
         depth: 0,
         origin: this.parentData.origin,
@@ -99,7 +99,11 @@ export default class ImplicitCurve extends AnimObject {
   draw(p: p5) {
     if (this.transition) this.transition()
     if (!this.graphicsBuffer) {
-      this.graphicsBuffer = p.createGraphics(this.sceneWidth, this.sceneHeight)
+      this.graphicsBuffer = p.createGraphics(
+        this.scene.width,
+        this.scene.height
+      )
+      console.log(this.graphicsBuffer)
     }
     this.graphicsBuffer.stroke(this.color.rgba)
     this.graphicsBuffer.strokeWeight(this.thickness)

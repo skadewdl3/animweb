@@ -51,7 +51,7 @@ const fadeInTransition = (
   let speed = rangePerFrame(object.maxAlpha, duration)
   return () => {
     if (!queued && transitionData.type == TransitionTypes.single) {
-      object.queueTransition(transitionQueueItem)
+      object.scene.enqueueTransition(transitionQueueItem)
       queued = true
     }
     if (
@@ -59,21 +59,21 @@ const fadeInTransition = (
       transitionData.type == TransitionTypes.group &&
       transitionData.isFirst
     ) {
-      object.queueTransition(transitionQueueItem)
+      object.scene.enqueueTransition(transitionQueueItem)
       queued = true
     }
     if (roundOff(object.color.rgbaVals[3], 2) == object.maxAlpha) {
       object.transition = null
       object.color.setAlpha(object.maxAlpha)
       if (transitionData.type == TransitionTypes.single) {
-        object.unqueueTransition(transitionQueueItem)
+        object.scene.dequeueTransition(transitionQueueItem)
       }
       if (
         !queued &&
         transitionData.type == TransitionTypes.group &&
         transitionData.isLast
       ) {
-        object.unqueueTransition(transitionQueueItem)
+        object.scene.dequeueTransition(transitionQueueItem)
         queued = true
       }
     } else {

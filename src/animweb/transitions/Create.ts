@@ -65,7 +65,7 @@ const createLineTransition = (
 
   return () => {
     if (!queued && transitionData.type == TransitionTypes.single) {
-      object.queueTransition(transitionQueueItem)
+      object.scene.enqueueTransition(transitionQueueItem)
       queued = true
     }
     if (
@@ -73,7 +73,7 @@ const createLineTransition = (
       transitionData.type == TransitionTypes.group &&
       transitionData.isFirst
     ) {
-      object.queueTransition(transitionQueueItem)
+      object.scene.enqueueTransition(transitionQueueItem)
       queued = true
     }
     if (slope > 1 || slope < -1) {
@@ -81,14 +81,14 @@ const createLineTransition = (
         object.transition = null
         object.range = [lowerBound, upperBound]
         if (queued && transitionData.type == TransitionTypes.single) {
-          object.unqueueTransition(transitionQueueItem)
+          object.scene.dequeueTransition(transitionQueueItem)
         }
         if (
           !queued &&
           transitionData.type == TransitionTypes.group &&
           transitionData.isLast
         ) {
-          object.unqueueTransition(transitionQueueItem)
+          object.scene.dequeueTransition(transitionQueueItem)
           queued = true
         }
       } else {
@@ -100,14 +100,14 @@ const createLineTransition = (
         object.transition = null
         object.domain = [lowerBound, upperBound]
         if (queued && transitionData.type == TransitionTypes.single) {
-          object.unqueueTransition(transitionQueueItem)
+          object.scene.dequeueTransition(transitionQueueItem)
         }
         if (
           !queued &&
           transitionData.type == TransitionTypes.group &&
           transitionData.isLast
         ) {
-          object.unqueueTransition(transitionQueueItem)
+          object.scene.dequeueTransition(transitionQueueItem)
           queued = true
         }
       } else {
@@ -196,27 +196,27 @@ const createPointTransition = (
   let speed = rangePerFrame(size - 0, duration)
   object.size = 0
   if (transitionData.type == TransitionTypes.single && !queued) {
-    object.queueTransition(transitionQueueItem)
+    object.scene.enqueueTransition(transitionQueueItem)
   }
   if (
     transitionData.type == TransitionTypes.group &&
     transitionData.isFirst &&
     !queued
   ) {
-    object.unqueueTransition(transitionQueueItem)
+    object.scene.dequeueTransition(transitionQueueItem)
   }
   return () => {
     if (object.size >= size) {
       object.transition = null
       object.size = size
       if (transitionData.type == TransitionTypes.single) {
-        object.unqueueTransition(transitionQueueItem)
+        object.scene.dequeueTransition(transitionQueueItem)
       }
       if (
         transitionData.type == TransitionTypes.group &&
         transitionData.isLast
       ) {
-        object.unqueueTransition(transitionQueueItem)
+        object.scene.dequeueTransition(transitionQueueItem)
       }
     } else {
       object.size += speed

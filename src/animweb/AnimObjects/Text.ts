@@ -14,6 +14,7 @@ interface TextProps extends AnimObjectProps {
     y: number
   }
   style?: TextStyle
+  font?: any
 }
 
 export enum TextStyle {
@@ -33,14 +34,15 @@ export default class Text extends AnimObject {
     stepX: number
     stepY: number
   } = {
-    origin: { x: this.sceneWidth / 2, y: this.sceneHeight / 2 },
+    origin: { x: this.scene.width / 2, y: this.scene.height / 2 },
     stepX: 1,
     stepY: 1,
   }
   style: TextStyle = TextStyle.none
+  font: any = null
 
-  constructor(config: TextProps = {}) {
-    super()
+  constructor(config: TextProps) {
+    super(config.scene)
     if (config.text) this.text = config.text
     if (config.color) this.color = config.color
     if (config.size) this.size = config.size
@@ -59,6 +61,7 @@ export default class Text extends AnimObject {
       this.x += config.position.x * this.parentData.stepX
       this.y -= config.position.y * this.parentData.stepY
     }
+    if (config.font) this.font = config.font
   }
 
   link(object: AnimObject, prop: Observables, callback: Function) {
@@ -87,6 +90,9 @@ export default class Text extends AnimObject {
 
   draw(p: p5) {
     if (this.transition) this.transition()
+    if (this.font) {
+      p.textFont(this.font)
+    }
     p.fill(this.color.rgba)
     p.textSize(this.size)
     switch (this.style) {

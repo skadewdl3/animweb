@@ -4,13 +4,13 @@ import AnimObject, {
   Observer,
 } from '../AnimObject'
 import p5 from 'p5'
-import Colors from '../helpers/Colors'
-import { evaluate, derivative, matrix, multiply, round } from 'mathjs'
+import { evaluate, derivative } from 'mathjs'
 import Matrix from '../helpers/Matrix'
-import { radToDeg, rangePerFrame, roundOff } from '../helpers/miscellaneous'
+import { rangePerFrame, roundOff } from '../helpers/miscellaneous'
 import { v4 as uuid } from 'uuid'
 import Constants from '../helpers/Constants'
 import { LinearTransformProps } from './NumberPlane'
+import Scene from '../Scene'
 
 export enum Lines {
   DoublePoint,
@@ -85,13 +85,13 @@ export default class Line extends AnimObject {
     stepX: number
     stepY: number
   } = {
-    origin: { x: this.sceneWidth / 2, y: this.sceneHeight / 2 },
+    origin: { x: this.scene.width / 2, y: this.scene.height / 2 },
     stepX: 1,
     stepY: 1,
   }
   slope: number = 1
-  domain: [number, number] = [-this.sceneWidth / 2, this.sceneWidth / 2]
-  range: [number, number] = [-this.sceneHeight / 2, this.sceneHeight / 2]
+  domain: [number, number] = [-this.scene.width / 2, this.scene.width / 2]
+  range: [number, number] = [-this.scene.height / 2, this.scene.height / 2]
   thickness: number = 1
   definition: string = ''
   length: number = Infinity
@@ -100,7 +100,7 @@ export default class Line extends AnimObject {
   point2: { x: number; y: number } = { x: 0, y: 0 }
 
   constructor(config: LineProps) {
-    super()
+    super(config.scene)
     if (config.domain) {
       this.domain = this.getAbsoluteDomain(config.domain)
     }
@@ -367,7 +367,7 @@ export default class Line extends AnimObject {
     this.transition = () => {
       if (!queued) {
         queued = true
-        this.queueTransition(transitionQueueItem)
+        this.scene.enqueueTransition(transitionQueueItem)
       }
       if (
         roundOff(x1, 2) == roundOff(newX1, 2) &&
@@ -376,7 +376,7 @@ export default class Line extends AnimObject {
         roundOff(y2, 2) == roundOff(newY2, 2)
       ) {
         this.transition = null
-        this.unqueueTransition(transitionQueueItem)
+        this.scene.dequeueTransition(transitionQueueItem)
         this.point1 = { x: newX1, y: newY1 }
         this.point2 = { x: newX2, y: newY2 }
       } else {
@@ -398,12 +398,21 @@ export default class Line extends AnimObject {
     p.stroke(this.color.rgba)
     p.strokeWeight(this.thickness)
     p.translate(this.parentData.origin.x, this.parentData.origin.y)
-    p.line(
-      this.domain[0],
-      -this.y(this.domain[0]),
-      this.domain[1],
-      -this.y(this.domain[1])
-    )
+    if (this.slope == Constants.Infinity || this.slope == -Constants.Infinity) {
+      p.line(
+        this.x(this.range[0]),
+        -this.range[0],
+        this.x(this.range[1]),
+        -this.range[1]
+      )
+    } else {
+      p.line(
+        this.domain[0],
+        -this.y(this.domain[0]),
+        this.domain[1],
+        -this.y(this.domain[1])
+      )
+    }
 
     p.translate(-this.parentData.origin.x, -this.parentData.origin.y)
     p.noStroke()
