@@ -6,7 +6,7 @@ import Line, { Lines } from './Line'
 import Colors from '../helpers/Colors'
 import Color from '../helpers/Color'
 import TransitionProps, { Transition, Transitions } from '../Transition'
-import Constants from '../helpers/Constants'
+import Constants, { RenderingModes } from '../helpers/Constants'
 import ImplicitCurve from './ImplicitCurve'
 import { matrix } from 'mathjs'
 import Vector, { VectorProps } from './Vector'
@@ -123,6 +123,8 @@ export default class NumberPlane extends AnimObject {
     this.y = y ? y : 0
     this.origin = origin
       ? origin
+      : this.scene.mode == RenderingModes._3D
+      ? { x: 0, y: 0 }
       : { x: (this.x + this.width) / 2, y: (this.y + this.height) / 2 }
 
     this.showTicks = showTicks

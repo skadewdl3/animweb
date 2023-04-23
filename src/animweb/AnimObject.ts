@@ -13,7 +13,7 @@ import Color from './helpers/Color'
 import Colors from './helpers/Colors'
 import { Transitions } from './Transition'
 import TransitionProps from './Transition'
-import Scene from './Scene'
+import { Scene } from '../main'
 
 /*
 Defines what kind of properties/arguments/parameters (aka props)
