@@ -68,7 +68,6 @@ export default class Scene {
   }
 
   setupEventListeners() {
-    console.log('2d list set')
     // @ts-ignore
     document.querySelector('.btn-play').onclick = () => {
       document.querySelector('.code-error')?.classList.add('hidden')

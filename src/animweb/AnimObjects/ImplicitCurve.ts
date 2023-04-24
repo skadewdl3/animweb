@@ -36,7 +36,6 @@ export default class ImplicitCurve extends AnimObject {
         if (part == parts[0]) continue
         temp = `${temp} - (${part})`
       }
-      console.log(temp)
       this.definition = temp
     }
     if (config.parentData) {
@@ -103,7 +102,6 @@ export default class ImplicitCurve extends AnimObject {
         this.scene.width,
         this.scene.height
       )
-      console.log(this.graphicsBuffer)
     }
     this.graphicsBuffer.stroke(this.color.rgba)
     this.graphicsBuffer.strokeWeight(this.thickness)

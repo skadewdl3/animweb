@@ -30,13 +30,19 @@ export default class Scene3D {
   objects: Array<AnimObject>
   backgroundColor: Color
   canvasElement: HTMLElement | null = null
-  stopLoop: any = null
-  startLoop: any = null
+  stopLoop: Function = () => {}
+  startLoop: Function = () => {}
+  setupCamera: Function = () => {}
+  destroyCamera: Function = () => {}
+
   transitionQueue: Array<TransitionQueueItem> = []
   mode: RenderingModes = RenderingModes._3D
   id: string = uuid()
   hidden: boolean = false
   editor?: EditorView
+  rotate: boolean = true
+  rotateAngle: number = 0
+  camera: any = null
 
   fonts: {
     [fontName: string]: any
@@ -70,7 +76,6 @@ export default class Scene3D {
   }
 
   setupEventListeners() {
-    console.log('3d list set')
     // @ts-ignore
     document.querySelector('.btn-play').onclick = () => {
       document.querySelector('.code-error')?.classList.add('hidden')
@@ -202,11 +207,26 @@ export default class Scene3D {
   setup(p: any) {
     p.frameRate(Constants.FrameRate)
     let canvas = p.createCanvas(this.width, this.height, p.WEBGL)
+    p.setAttributes('antialias', true)
+    // document.oncontextmenu = function () {
+    //   return false
+    // }
+    // document.onmousedown = function () {
+    //   return false
+    // }
+    // let cam = p.createEasyCam({ distance: 400 })
+    // console.log(cam)
     this.canvasElement = canvas.elt
     p.background(this.backgroundColor.rgba)
     p.colorMode(p.RGB)
     this.stopLoop = () => p.noLoop()
     this.startLoop = () => p.loop()
+    this.setupCamera = () => {
+      this.camera = p.createEasyCam({ distance: 400 })
+    }
+    this.destroyCamera = () => {
+      this.camera = null
+    }
     this.stopLoop()
   }
   /*
@@ -215,14 +235,18 @@ export default class Scene3D {
   Scene.draw just runs AnimObject.draw for every AnimObject in Scene.objects
   */
   draw(p: any) {
+    p.push()
     p.clear()
-    p.background('#ccc')
+    p.lights()
+    p.background(this.backgroundColor.rgba)
     this.objects.forEach((obj) => obj.draw(p))
+    p.pop()
   }
 
   async hide() {
     if (this.stopLoop) this.stopLoop()
     this.hidden = true
+    this.destroyCamera()
     this.resetScene()
     while (!this.canvasElement) {
       await wait(100)
@@ -237,6 +261,7 @@ export default class Scene3D {
       await wait(100)
     }
     this.canvasElement.classList.remove('hidden')
+    this.setupCamera()
     this.startLoop()
   }
 

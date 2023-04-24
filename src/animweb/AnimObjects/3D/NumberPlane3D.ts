@@ -2,21 +2,21 @@ import p5 from 'p5'
 import AnimObject from '../../AnimObject'
 import Scene from '../../Scene3D'
 
-interface ThreeDPlaneProps {
+interface NumberPlane3DProps {
   scene: Scene
 }
 
-export default class ThreeDPlane extends AnimObject {
-  constructor(config: ThreeDPlaneProps) {
+export default class NumberPlane3D extends AnimObject {
+  constructor(config: NumberPlane3DProps) {
     super(config.scene)
   }
 
   draw(p: p5) {
-    console.log('this is running')
     p.push()
-    p.fill(255)
+    p.fill(0)
     p.noStroke()
-    p.plane(100, 100)
+    p.stroke(0)
+    p.box(100)
     p.pop()
   }
 }

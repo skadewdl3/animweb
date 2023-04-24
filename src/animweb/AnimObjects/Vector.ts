@@ -76,7 +76,6 @@ export default class Vector extends AnimObject {
 
   calculateArrowVertices() {
     let quadrant = getQuadrant(radToDeg(this.angle))
-    console.log(radToDeg(this.angle), quadrant)
     return quadrant
   }
 

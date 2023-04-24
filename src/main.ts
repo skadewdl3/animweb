@@ -17,7 +17,7 @@ import ImplicitCurve from './animweb/AnimObjects/ImplicitCurve'
 import LaTeX from './animweb/AnimObjects/LaTeX'
 import Matrix from './animweb/helpers/Matrix'
 import Vector, { Vectors } from './animweb/AnimObjects/Vector'
-import ThreeDPlane from './animweb/AnimObjects/3D/3DPlane'
+import NumberPlane3D from './animweb/AnimObjects/3D/NumberPlane3D'
 import Scene3D from './animweb/Scene3D'
 import { EditorView, basicSetup } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
@@ -28,6 +28,7 @@ declare global {
     P5Capture: any
     WebAnim: any
     BuildBridgedWorker: any
+    Dw: any
   }
 }
 
@@ -43,9 +44,11 @@ export type Scene = Scene2D | Scene3D
 let scene: Scene
 let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0, editor)
 let scene3D = new Scene3D(Width.full, Height.full, Colors.gray0, editor)
-scene3D.hide()
-scene2D.show()
-scene = scene2D
+// scene3D.hide()
+// scene2D.show()
+scene2D.hide()
+scene3D.show()
+scene = scene3D
 
 let WebAnim = {
   // Basic classes/functions
@@ -70,7 +73,7 @@ let WebAnim = {
   },
   // AnimObjects
   NumberPlane: (config: any) => new NumberPlane({ ...config, scene }),
-  ThreeDPlane: (config: any) => new ThreeDPlane({ ...config, scene }),
+  NumberPlane3D: (config: any) => new NumberPlane3D({ ...config, scene }),
   Line: (config: any) => new Line({ ...config, scene }),
   Point: (config: any) => new Point({ ...config, scene }),
   Curve: (config: any) => new Curve({ ...config, scene }),
