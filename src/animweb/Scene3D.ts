@@ -1,39 +1,39 @@
 /*
-The Scene Class acts as the root of all other AnimObjects.
-An AnimObject is a special class (see AnimObject.ts) on which we add transitions
+The Scene Class acts as the root of all other AnimObject3Ds.
+An AnimObject3D is a special class (see AnimObject3D.ts) on which we add transitions
 and functions to draw shapes.
 
-The Scene itself cannot be animated, but every AnimObject can be animated.
+The Scene itself cannot be animated, but every AnimObject3D can be animated.
 
 P.S - A function declared inside a class is called a method
 */
 
 const p5 = window.p5
 
-import AnimObject from './AnimObject'
+import * as THREE from 'three'
+import AnimObject3D from './AnimObject3D'
 import Color from './helpers/Color'
 import Colors from './helpers/Colors'
-import Constants from './helpers/Constants'
 import { v4 as uuid } from 'uuid'
 import { wait } from './helpers/miscellaneous'
 import { TransitionQueueItem } from './Transition'
 import { RenderingModes } from './helpers/Constants'
 import WebAnim from '../main'
 // @ts-ignore
-import { createSketch } from '../p5-util/sketch'
+// import { createSketch } from '../p5-util/sketch'
 import { EditorView } from 'codemirror'
+import Camera from './AnimObjects/3D/Camera3D'
 
 export default class Scene3D {
   height: number
   width: number
   sketch: any
-  objects: Array<AnimObject>
+  objects: Array<AnimObject3D>
   backgroundColor: Color
-  canvasElement: HTMLElement | null = null
-  stopLoop: Function = () => {}
-  startLoop: Function = () => {}
-  setupCamera: Function = () => {}
-  destroyCamera: Function = () => {}
+  rendererElement: HTMLElement | null = null
+  scene: THREE.Scene
+  camera: Camera
+  renderer: THREE.WebGLRenderer
 
   transitionQueue: Array<TransitionQueueItem> = []
   mode: RenderingModes = RenderingModes._3D
@@ -41,8 +41,7 @@ export default class Scene3D {
   hidden: boolean = false
   editor?: EditorView
   rotate: boolean = true
-  rotateAngle: number = 0
-  camera: any = null
+  rotateAngle: number = 0.01
 
   fonts: {
     [fontName: string]: any
@@ -57,22 +56,23 @@ export default class Scene3D {
     this.width = width // default width of the Scene is 800
     this.height = height // default height of the Scene is 800
     this.editor = editor
-    this.objects = [] // the objects property will be an Array containing AnimObject instances
+    this.objects = [] // the objects property will be an Array containing AnimObject3D instances
     this.backgroundColor = backgroundColor // default background color is gray
 
-    /*
-    Creates a p5js sketch by specifying setup and draw methods
-    setup() runs once when scene is initialised
-    draw() runs every frame
-    */
-    this.sketch = createSketch({
-      setup: this.setup.bind(this),
-      draw: this.draw.bind(this),
-      preload: this.preload.bind(this),
-    })
+    // do three js shit here
+
+    this.scene = new THREE.Scene()
+    this.camera = new Camera(
+      this.width, this.height
+    )
+    this.renderer = new THREE.WebGLRenderer()
+    this.renderer.setSize(this.width, this.height)
+    document.body.appendChild(this.renderer.domElement)
+    this.rendererElement = this.renderer.domElement
 
     this.setupEventListeners()
-    new p5(this.sketch, document.body)
+    this.setup()
+    this.draw()
   }
 
   setupEventListeners() {
@@ -110,7 +110,6 @@ export default class Scene3D {
       )
       userScript.appendChild(inlineCode)
       document.body.appendChild(userScript)
-      this.startLoop()
     }
 
     // @ts-ignore
@@ -163,11 +162,13 @@ export default class Scene3D {
 
   resetScene() {
     for (let object of this.objects) if (object.remove) object.remove()
+    this.scene.remove.apply(this.scene, this.scene.children)
+    this.camera.reset()
     this.objects = []
     this.transitionQueue = []
   }
 
-  updateSceneProps(obj: AnimObject) {
+  updateSceneProps(obj: AnimObject3D) {
     if (obj.iterables.length != 0) {
       obj.scene = this
       obj.iterables.forEach((name) => {
@@ -192,77 +193,75 @@ export default class Scene3D {
     // console.log('unqueued', [...this.transitionQueue])
   }
 
-  // adds an AnimObject to be rendered onto the canvas
-  add(obj: AnimObject): AnimObject {
-    // updates the sceneHeight anf sceneWidth properties of the AnimObject
+  // adds an AnimObject3D to be rendered onto the canvas
+  add(obj: AnimObject3D): AnimObject3D {
+    // updates the sceneHeight anf sceneWidth properties of the AnimObject3D
     // obj.updateSceneDimensions(this.width, this.height)
     this.updateSceneProps(obj)
 
-    // adds the AnimObject to the array of objects to be rendered
+    // adds the AnimObject3D to the array of objects to be rendered
     this.objects.push(obj)
+    this.scene.add(obj.mesh)
     return obj
   }
 
   // sets up some initial values i.e. witdth, height, background color, etc.
-  setup(p: any) {
-    p.frameRate(Constants.FrameRate)
-    let canvas = p.createCanvas(this.width, this.height, p.WEBGL)
-    p.setAttributes('antialias', true)
-    // document.oncontextmenu = function () {
-    //   return false
-    // }
-    // document.onmousedown = function () {
-    //   return false
-    // }
-    // let cam = p.createEasyCam({ distance: 400 })
-    // console.log(cam)
-    this.canvasElement = canvas.elt
-    p.background(this.backgroundColor.rgba)
-    p.colorMode(p.RGB)
-    this.stopLoop = () => p.noLoop()
-    this.startLoop = () => p.loop()
-    this.setupCamera = () => {
-      this.camera = p.createEasyCam({ distance: 400 })
-    }
-    this.destroyCamera = () => {
-      this.camera = null
-    }
-    this.stopLoop()
+  setup() {
+    this.renderer.setClearColor(parseInt(this.backgroundColor.hex.replace('#', ''), 16))
   }
+
+
+  rotation: boolean = true
+  startRotation () {
+    this.rotation = true 
+  }
+
+  stopRotation () {
+    this.rotation = false
+  }
+
   /*
-  draws each AnimObject onto the canvas
-  the actual draw code is included inside the AnimObject.draw method
-  Scene.draw just runs AnimObject.draw for every AnimObject in Scene.objects
+  draws each AnimObject3D onto the canvas
+  the actual draw code is included inside the AnimObject3D.draw method
+  Scene.draw just runs AnimObject3D.draw for every AnimObject3D in Scene.objects
   */
-  draw(p: any) {
-    p.push()
-    p.clear()
-    p.lights()
-    p.background(this.backgroundColor.rgba)
-    this.objects.forEach((obj) => obj.draw(p))
-    p.pop()
+
+  angle: number = 0
+  draw() {
+    requestAnimationFrame(this.draw.bind(this))
+
+    this.objects.forEach(obj => {
+      obj.draw()
+    })
+    
+    this.camera.transform()
+
+    this.renderer.render(this.scene, this.camera.camera)
   }
 
   async hide() {
-    if (this.stopLoop) this.stopLoop()
     this.hidden = true
-    this.destroyCamera()
     this.resetScene()
-    while (!this.canvasElement) {
+
+    while (!this.rendererElement) {
       await wait(100)
     }
-    this.canvasElement.classList.add('hidden')
+    this.rendererElement.setAttribute(
+      'style',
+      `display: none; width: ${this.width}px; height: ${this.height}px;`
+    )
   }
 
   async show() {
     this.setupEventListeners()
     this.hidden = false
-    while (!this.canvasElement) {
+    while (!this.rendererElement) {
       await wait(100)
     }
-    this.canvasElement.classList.remove('hidden')
-    this.setupCamera()
-    this.startLoop()
+    this.rendererElement.setAttribute(
+      'style',
+      `display: block; width: ${this.width}px; height: ${this.height}px;`
+    )
   }
 
   preload(p: any) {
@@ -285,10 +284,10 @@ export default class Scene3D {
 
   /*
   opposite of Scene.add
-  removes the given AnimObject from the canvas
-  this is done by remove the AnimObject from Scene.objects
+  removes the given AnimObject3D from the canvas
+  this is done by remove the AnimObject3D from Scene.objects
   */
-  remove(obj: AnimObject) {
+  remove(obj: AnimObject3D) {
     this.objects = this.objects.filter((o) => o.id != obj.id)
   }
 }

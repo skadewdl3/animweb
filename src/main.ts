@@ -17,10 +17,11 @@ import ImplicitCurve from './animweb/AnimObjects/ImplicitCurve'
 import LaTeX from './animweb/AnimObjects/LaTeX'
 import Matrix from './animweb/helpers/Matrix'
 import Vector, { Vectors } from './animweb/AnimObjects/Vector'
-import NumberPlane3D from './animweb/AnimObjects/3D/NumberPlane3D'
 import Scene3D from './animweb/Scene3D'
 import { EditorView, basicSetup } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
+import Cube from './animweb/AnimObjects/3D/Cube'
+import Line3D from './animweb/AnimObjects/3D/Line3D'
 
 declare global {
   interface Window {
@@ -28,7 +29,6 @@ declare global {
     P5Capture: any
     WebAnim: any
     BuildBridgedWorker: any
-    Dw: any
   }
 }
 
@@ -46,9 +46,9 @@ let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0, editor)
 let scene3D = new Scene3D(Width.full, Height.full, Colors.gray0, editor)
 // scene3D.hide()
 // scene2D.show()
-scene2D.hide()
-scene3D.show()
-scene = scene3D
+scene2D.show()
+scene3D.hide()
+scene = scene2D
 
 let WebAnim = {
   // Basic classes/functions
@@ -73,7 +73,6 @@ let WebAnim = {
   },
   // AnimObjects
   NumberPlane: (config: any) => new NumberPlane({ ...config, scene }),
-  NumberPlane3D: (config: any) => new NumberPlane3D({ ...config, scene }),
   Line: (config: any) => new Line({ ...config, scene }),
   Point: (config: any) => new Point({ ...config, scene }),
   Curve: (config: any) => new Curve({ ...config, scene }),
@@ -85,11 +84,28 @@ let WebAnim = {
   Tex: (config: any) => new LaTeX({ ...config, scene }),
   Vector: (config: any) => new Vector({ ...config, scene }),
   // transitions
-  Create: (object: AnimObject, config: any) =>
-    scene.add(Create(object, config)),
-  FadeIn: (object: AnimObject, config: any) =>
-    scene.add(FadeIn(object, config)),
+  Create: (object: AnimObject, config: any) => {
+    if (scene instanceof Scene2D) {
+      scene.add(Create(object, config))
+    }
+  },
+  FadeIn: (object: AnimObject, config: any) => {
+    if (scene instanceof Scene2D) {
+      scene.add(FadeIn(object, config))
+    }
+  },
+
+  // AnimObject3D
+  Cube: (config: any) => new Cube({ ...config, scene }),
+  Line3D: (config: any) => new Line3D({ ...config, scene }),
   FadeOut,
+  startRotation() {
+    scene3D.startRotation()
+  },
+  stopRotation() {
+    scene3D.stopRotation()
+  },
+  camera: scene3D.camera,
   // enums
   Transitions,
   Observables,
