@@ -1,5 +1,8 @@
 import NumberPlane from './animweb/AnimObjects/NumberPlane'
-import NumberPlane3D from './animweb/AnimObjects/3D/NumberPlane3D'
+import NumberPlane3D, {
+  NumberPlanes,
+  Octants,
+} from './animweb/AnimObjects/3D/NumberPlane3D'
 import Scene2D from './animweb/Scene2D'
 import Point from './animweb/AnimObjects/Point'
 import Line, { Lines } from './animweb/AnimObjects/Line'
@@ -124,6 +127,8 @@ let WebAnim = {
   AnimObjects,
   Constants,
   Vectors,
+  NumberPlanes,
+  Octants,
   Fonts: {},
 }
 
