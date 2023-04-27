@@ -61,7 +61,6 @@ export default class Curve extends AnimObject {
         if (part == parts[0]) continue
         temp = `${temp} - (${part})`
       }
-      console.log(temp)
       this.y = temp
     }
     this.sampleRate = sampleRate
@@ -165,7 +164,6 @@ export default class Curve extends AnimObject {
   }
 
   transform(lt: any) {
-    console.log(lt)
   }
 
   draw(p: p5) {

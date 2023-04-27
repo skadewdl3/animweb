@@ -7,6 +7,7 @@
     <script src="/p5.js"></script>
     <!-- <script src="/p5.svg.js"></script> -->
     <!-- <script src="/p5.capture.umd.min.js"></script> -->
+    <script src="/p5.camera.min.js"></script>
     <title>AnimWeb - Create Beautiful Math Animations, Anywhere</title>
     <script type="module" async defer src="/src/main.ts"></script>
   </head>
@@ -14,7 +15,26 @@
     <div style="overflow: hidden; height: 0">
       <div id="measure-vh" style="position: fixed; height: 100vh"></div>
     </div>
-    <div id="app"></div>
+    <div id="app">
+      <div class="user-controls"
+        style="position: absolute; top: 2rem; right: 1rem; min-width: 40%; max-width: 40%; min-height: 95vh">
+        <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 1rem">
+          <p style="font-family: sans-serif; font-size:3rem" class="code-title">Code</p>
+          <div style="display: flex; align-items: center; justify-content: center">
+            <button class="btn btn-play">Play</button>
+            <button class="btn btn-clear">Clear</button>
+            <button class="btn btn-hide-code">Hide Code</button>
+            <button class="btn btn-show-code hidden">Show Code</button>
+          </div>
+        </div>
+        <div class="code-error hidden">
+          <div class="code-error-message"></div>
+          <div class="code-error-line"></div>
+        </div>
+        <div class="codemirror-editor-container">
+        </div>
+      </div>
+    </div>
     <script>
     </script>
     <script class="user-script"></script>
@@ -58,6 +78,25 @@
       .hidden-text {
         visibility: hidden;
       }
+      .btn-play {
+      display: block;
+    }
+    .btn-hidden {
+      display: none;
+    }
+    .code-error {
+      font-size: 1.6rem;
+      color: #ff0000;
+      padding: 1rem 1rem;
+      background: #fff;
+      border-top-right-radius: 1rem;
+      border-top-left-radius: 1rem;
+      border: solid 0.2rem rgba(183, 21, 64,0.5);
+    }
+    .code-error-message {
+      font-weight: bold;  
+      margin-bottom: 0.5rem;
+    }
     </style>
   </body>
 </html>

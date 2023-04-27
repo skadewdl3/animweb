@@ -10,7 +10,6 @@ import { rangePerFrame, roundOff } from '../helpers/miscellaneous'
 import { v4 as uuid } from 'uuid'
 import Constants from '../helpers/Constants'
 import { LinearTransformProps } from './NumberPlane'
-import Scene from '../Scene'
 
 export enum Lines {
   DoublePoint,

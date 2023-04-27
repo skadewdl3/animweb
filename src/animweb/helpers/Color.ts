@@ -94,7 +94,9 @@ export default class Color {
   rgb: string = '' // RGB string - 'rgb(255, 0, 0)'
   rgba: string = '' // RGBA string - 'rgba(255, 0, 0, 0.5)'
   id: string = uuid() // A unique id to identify the color (like AnimObject.id)
+  hexNumber: number = 0 // Hex color code as a number - 0xff0000
   rgbaVals: [number, number, number, number] = [0, 0, 0, 0] // Store separate R, G, B, A values
+  opacity: number = 1 // Opacity of the color (0 - 1)
 
   // Color can be initialised with the following formats
   constructor(
@@ -112,25 +114,32 @@ export default class Color {
         this.rgb = RGBToRGBString(color)
         this.rgba = RGBToRGBAString(color)
         this.hex = RGBToHex(color)
+        this.hexNumber = parseInt(this.hex.replace('#', '0x'))
         this.rgbaVals = [color[0], color[1], color[2], 1]
+        this.opacity = 1
       }
       if (color.length == 4) {
         this.rgb = RGBAToRGBString(color)
         this.rgba = RGBAToRGBAString(color)
         this.hex = RGBToHex([color[0], color[1], color[2]])
+        this.hexNumber = parseInt(this.hex.replace('#', '0x'))
         this.rgbaVals = [color[0], color[1], color[2], color[3]]
+        this.opacity = color[3]
       }
     } else if (typeof color == 'object') {
       this.rgb = RGBToRGBString([color.r, color.g, color.b])
       this.rgba = RGBAToRGBAString([color.r, color.g, color.b, 1])
       this.hex = RGBToHex([color.r, color.g, color.b])
+      this.hexNumber = parseInt(this.hex.replace('#', '0x'))
       this.rgbaVals = [color.r, color.g, color.b, 1]
+      this.opacity = 1
     } else if (typeof color == 'string' && !color.includes('r')) {
       this.hex = color
-
+      this.hexNumber = parseInt(this.hex.replace('#', '0x'))
       this.rgbaVals = [...hexToRGB(color), 1]
       this.rgb = RGBAToRGBString(this.rgbaVals)
       this.rgba = RGBAToRGBAString(this.rgbaVals)
+      this.opacity = 1
     }
 
     Object.defineProperties(this, {
@@ -157,6 +166,7 @@ export default class Color {
     this.hex = RGBAToHex(this.rgbaVals)
     this.rgb = RGBAToRGBString(this.rgbaVals)
     this.rgba = RGBAToRGBAString(this.rgbaVals)
+    this.hexNumber = parseInt(this.hex.replace('#', '0x'))
   }
 
   setRed(red: number) {

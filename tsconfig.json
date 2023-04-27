@@ -14,7 +14,6 @@
     "skipLibCheck": true,
     "allowJs": true
   },
-  "include": ["src", 
- // "src/animweb/helpers/QuadTree.worker.jsree.worker.js"
+  "include": ["src", "src/animweb/.Scene3D.ts", 
 ],
 }
