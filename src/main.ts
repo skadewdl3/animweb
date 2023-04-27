@@ -1,4 +1,5 @@
 import NumberPlane from './animweb/AnimObjects/NumberPlane'
+import NumberPlane3D from './animweb/AnimObjects/3D/NumberPlane3D'
 import Scene2D from './animweb/Scene2D'
 import Point from './animweb/AnimObjects/Point'
 import Line, { Lines } from './animweb/AnimObjects/Line'
@@ -22,6 +23,7 @@ import { EditorView, basicSetup } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import Cube from './animweb/AnimObjects/3D/Cube'
 import Line3D from './animweb/AnimObjects/3D/Line3D'
+import Point3D from './animweb/AnimObjects/3D/Point3D'
 
 declare global {
   interface Window {
@@ -72,9 +74,18 @@ let WebAnim = {
     }
   },
   // AnimObjects
-  NumberPlane: (config: any) => new NumberPlane({ ...config, scene }),
-  Line: (config: any) => new Line({ ...config, scene }),
-  Point: (config: any) => new Point({ ...config, scene }),
+  NumberPlane: (config: any) =>
+    scene == scene2D
+      ? new NumberPlane({ ...config, scene })
+      : new NumberPlane3D({ ...config, scene }),
+  Line: (config: any) =>
+    scene == scene2D
+      ? new Line({ ...config, scene })
+      : new Line3D({ ...config, scene }),
+  Point: (config: any) =>
+    scene == scene2D
+      ? new Point({ ...config, scene })
+      : new Point3D({ ...config, scene }),
   Curve: (config: any) => new Curve({ ...config, scene }),
   Text: (config: any) => new Text({ ...config, scene }),
   ImplicitCurve: (config: any) => new ImplicitCurve({ ...config, scene }),
@@ -97,7 +108,6 @@ let WebAnim = {
 
   // AnimObject3D
   Cube: (config: any) => new Cube({ ...config, scene }),
-  Line3D: (config: any) => new Line3D({ ...config, scene }),
   FadeOut,
   startRotation() {
     scene3D.startRotation()

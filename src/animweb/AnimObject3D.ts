@@ -81,6 +81,7 @@ export default class AnimObject3D {
   iterables: Array<string> = []
   scene: Scene3D
   mesh: any = new THREE.Mesh()
+  meshes: Array<any> = []
 
   remove?: Function
   parentData: {

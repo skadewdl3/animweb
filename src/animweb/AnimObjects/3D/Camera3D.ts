@@ -113,7 +113,7 @@ export default class Camera {
     }
   }
 
-  rotate() {
+  rotate(rotationAngle: number = 0.01) {
     let radius = Math.sqrt(
       this.camera.position.z ** 2 + this.camera.position.x ** 2
     )
@@ -122,7 +122,7 @@ export default class Camera {
     this.rotationTransition.originalY = this.camera.position.y
     this.rotationTransition.originalZ = this.camera.position.z
     this.rotationTransition.rotation = () => {
-      angle += 0.1
+      angle += rotationAngle
       this.camera.position.x = radius * Math.cos(angle)
       this.camera.position.z = radius * Math.sin(angle)
       this.lookAtWithoutTransition(this.origin.x, this.origin.y, this.origin.z)

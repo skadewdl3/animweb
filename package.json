@@ -20,6 +20,7 @@
     "@types/uuid": "^9.0.1",
     "animejs": "^3.2.1",
     "codemirror": "^6.0.1",
+    "isosurface": "^1.0.0",
     "mathjax-full": "^3.2.2",
     "mathjs": "^11.7.0",
     "p5": "^1.6.0",
