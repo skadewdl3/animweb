@@ -16,6 +16,7 @@ interface TriangleProps {
   p2?: { x: number; y: number; z: number }
   p3?: { x: number; y: number; z: number }
   vertexData?: Float32Array
+  filled?: boolean
 }
 
 export default class Triangle extends AnimObject3D {
@@ -46,12 +47,13 @@ export default class Triangle extends AnimObject3D {
       const material = new THREE.MeshBasicMaterial({
         color: this.color.hexNumber,
       })
+      const triangle = new THREE.Mesh(geometry, material)
       const edges = new THREE.EdgesGeometry(geometry)
-      const line = new THREE.LineSegments(
+      const lines = new THREE.LineSegments(
         edges,
         new THREE.LineBasicMaterial({ color: this.color.hexNumber })
       )
-      this.mesh = line
+      this.mesh = config.filled ? triangle : lines
     }
   }
 }

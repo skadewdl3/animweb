@@ -1,7 +1,6 @@
 import AnimObject3D from '../../AnimObject3D'
 import Scene3D from '../../Scene3D'
 import Color from '../../helpers/Color'
-import Colors from '../../helpers/Colors'
 import Line3D from './Line3D'
 import Point3D from './Point3D'
 // @ts-ignore
@@ -43,6 +42,7 @@ interface SurfacePlotProps {
   definition: string
   sampleRate?: number
   color?: Color
+  filled?: boolean
 }
 
 export default class NumberPlane3D extends AnimObject3D {
@@ -188,8 +188,21 @@ export default class NumberPlane3D extends AnimObject3D {
   }
 
   plot(config: SurfacePlotProps) {
+    let definition = config.definition
+
+    if (definition.includes('=')) {
+      let parts = definition.split('=')
+      console.log(parts)
+      definition = parts[0]
+      for (let i = 1; i < parts.length; i++) {
+        definition = definition.concat(`-(${parts[i]})`)
+      }
+    }
+
+    console.log(definition)
+
     let meshData = {
-      definition: config.definition,
+      definition,
       detail: config.sampleRate || 800,
       lowerLimit: [-5, -5, -5],
       upperLimit: [5, 5, 5],
@@ -204,6 +217,7 @@ export default class NumberPlane3D extends AnimObject3D {
           form: Triangles.VertexData,
           vertexData,
           color: config.color || this.color,
+          filled: config.filled || false,
         })
         this.scene.add(triangle)
       }
