@@ -198,7 +198,7 @@ export default class AnimObject3D {
   When some class extends AnimObject3D, we overload this method by defining draw method inside that class
   However, before any drawing happens, the modified draw method *must* call the transition method.
   */
-  draw() {}
+  update() {}
 
   /*
   A placeholder method like draw. This method takes in an Observer and adds it to the observers

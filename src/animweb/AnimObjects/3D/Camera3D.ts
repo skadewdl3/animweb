@@ -11,6 +11,9 @@ export enum CameraAxes {
 export default class Camera {
   camera: THREE.PerspectiveCamera
   transitions: Array<{ id: string; function: Function }> = []
+  x: number = 0
+  y: number = 0
+  z: number = 5
   origin: { x: number; y: number; z: number }
   rotationStopCondition: Function = () => false
   rotationTransition: {
@@ -44,7 +47,7 @@ export default class Camera {
 
   constructor(width: number, height: number) {
     this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
-    this.camera.position.z = 5
+    this.updatePosition({ x: 0, y: 0, z: 5 })
     this.origin = {
       x: 0,
       y: 0,
@@ -60,6 +63,21 @@ export default class Camera {
     return {
       id: uuid(),
       function: () => {},
+    }
+  }
+
+  updatePosition(config: { x?: number; y?: number; z?: number }) {
+    if (config.x) {
+      this.x = config.x
+      this.camera.position.x = config.x
+    }
+    if (config.y) {
+      this.y = config.y
+      this.camera.position.y = config.y
+    }
+    if (config.z) {
+      this.z = config.z
+      this.camera.position.z = config.z
     }
   }
 
@@ -123,8 +141,10 @@ export default class Camera {
     this.rotationTransition.originalZ = this.camera.position.z
     this.rotationTransition.rotation = () => {
       angle += rotationAngle
-      this.camera.position.x = radius * Math.cos(angle)
-      this.camera.position.z = radius * Math.sin(angle)
+      this.updatePosition({
+        x: radius * Math.cos(angle),
+        z: radius * Math.sin(angle),
+      })
       this.lookAtWithoutTransition(this.origin.x, this.origin.y, this.origin.z)
     }
     this.startRotation()
@@ -162,7 +182,7 @@ export default class Camera {
   //   this.startRotation()
   // }
 
-  moveTo(x: number, y: number, z: number, duration: number = 1) {
+  moveTo(x: number, z: number, y: number, duration: number = 1) {
     let moveToTransition = this.createTransition()
     let xSpeed = rangePerFrame(x - this.camera.position.x, duration)
     let ySpeed = rangePerFrame(y - this.camera.position.y, duration)
@@ -176,14 +196,14 @@ export default class Camera {
         this.transitions = this.transitions.filter(
           (transition) => transition.id != moveToTransition.id
         )
-        this.camera.position.x = x
-        this.camera.position.y = y
-        this.camera.position.z = z
+        this.updatePosition({ x, y, z })
         return
       } else {
-        this.camera.position.x += xSpeed
-        this.camera.position.y += ySpeed
-        this.camera.position.z += zSpeed
+        this.updatePosition({
+          x: this.x + xSpeed,
+          y: this.y + ySpeed,
+          z: this.z + zSpeed,
+        })
         this.lookAtWithoutTransition(
           this.origin.x,
           this.origin.y,
@@ -203,14 +223,16 @@ export default class Camera {
     }
   }
 
-  transform() {
+  update() {
     this.transitions.forEach((transition) => transition.function())
   }
 
   reset() {
-    this.camera.position.x = 0
-    this.camera.position.y = 0
-    this.camera.position.z = 5
+    this.updatePosition({
+      x: 0,
+      y: 0,
+      z: 5,
+    })
     this.rotationTransition = {
       ...this.rotationTransition,
       id: uuid(),

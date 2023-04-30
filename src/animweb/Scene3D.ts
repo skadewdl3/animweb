@@ -161,7 +161,7 @@ export default class Scene3D {
   resetScene() {
     for (let object of this.objects) if (object.remove) object.remove()
     this.scene.remove.apply(this.scene, this.scene.children)
-    this.camera.reset()
+    this.camera = new Camera(this.width, this.height)
     this.objects = []
     this.transitionQueue = []
   }
@@ -232,7 +232,8 @@ export default class Scene3D {
   draw() {
     requestAnimationFrame(this.draw.bind(this))
 
-    this.camera.transform()
+    this.objects.forEach((o: AnimObject3D) => o.update())
+    this.camera.update()
 
     this.renderer.render(this.scene, this.camera.camera)
   }
