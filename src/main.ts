@@ -58,7 +58,7 @@ scene3D.hide()
 scene = scene2D
 
 let WebAnim = {
-  // Basic classes/functions
+  // Helper classes/objects
   scene,
   Color,
   Colors,
@@ -67,9 +67,31 @@ let WebAnim = {
   Width,
   Height,
 
-  // A bunch of helper methods
+  // A bunch of helper functions
   wait: async (config: any) => scene.wait(config),
-  println: (config: any) => console.log(config),
+  println: (...configItems: any) => {
+    for (let config of configItems) {
+      if (config instanceof Complex) {
+        console.log(
+          `${config.re} ${config.im >= 0 ? '+' : '-'} ${
+            config.im < 0 ? -config.im : config.im
+          }i`
+        )
+      } else if (config instanceof Matrix) {
+        let obj = {}
+        // @ts-ignore
+        for (let [index, row] of Object.entries(config.matrix._data)) {
+          // @ts-ignore
+          obj[`row-${index}`] = row
+        }
+        console.table(obj)
+      } else if (config instanceof Array) {
+        console.table(config)
+      } else if (config instanceof Object) {
+        console.dir(config)
+      }
+    }
+  },
   show: (config: any) => scene.add(config),
   render: (mode: '3D' | '2D' = '2D') => {
     if (mode == '3D') {
@@ -147,6 +169,7 @@ Object.defineProperty(window, 'camera', {
     return scene == scene2D ? undefined : scene3D.camera
   },
 })
+
 
 
 window.WebAnim = WebAnim
