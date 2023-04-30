@@ -66,7 +66,10 @@ let WebAnim = {
   Complex,
   Width,
   Height,
+
+  // A bunch of helper methods
   wait: async (config: any) => scene.wait(config),
+  println: (config: any) => console.log(config),
   show: (config: any) => scene.add(config),
   render: (mode: '3D' | '2D' = '2D') => {
     if (mode == '3D') {
@@ -79,6 +82,13 @@ let WebAnim = {
       scene = scene2D
     }
   },
+  startRotation() {
+    scene3D.startRotation()
+  },
+  stopRotation() {
+    scene3D.stopRotation()
+  },
+
   // AnimObjects
   NumberPlane: (config: any) =>
     scene == scene2D
@@ -97,12 +107,15 @@ let WebAnim = {
     scene == scene2D
       ? new Text({ ...config, scene })
       : new Text3D({ ...config, scene }),
+  Cube: (config: any) => new Cube({ ...config, scene }),
+
   ImplicitCurve: (config: any) => new ImplicitCurve({ ...config, scene }),
   LaTeX: (config: any) => new LaTeX({ ...config, scene }),
   Latex: (config: any) => new LaTeX({ ...config, scene }),
   TeX: (config: any) => new LaTeX({ ...config, scene }),
   Tex: (config: any) => new LaTeX({ ...config, scene }),
   Vector: (config: any) => new Vector({ ...config, scene }),
+
   // transitions
   Create: (object: AnimObject, config: any) => {
     if (scene instanceof Scene2D) {
@@ -114,16 +127,8 @@ let WebAnim = {
       scene.add(FadeIn(object, config))
     }
   },
-
-  // AnimObject3D
-  Cube: (config: any) => new Cube({ ...config, scene }),
   FadeOut,
-  startRotation() {
-    scene3D.startRotation()
-  },
-  stopRotation() {
-    scene3D.stopRotation()
-  },
+
   // enums
   Transitions,
   Observables,
@@ -142,6 +147,7 @@ Object.defineProperty(window, 'camera', {
     return scene == scene2D ? undefined : scene3D.camera
   },
 })
+
 
 window.WebAnim = WebAnim
 export default WebAnim
