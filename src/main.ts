@@ -28,7 +28,7 @@ import Cube from './animweb/AnimObjects/3D/Cube'
 import Line3D from './animweb/AnimObjects/3D/Line3D'
 import Point3D from './animweb/AnimObjects/3D/Point3D'
 import Text3D from './animweb/AnimObjects/3D/Text3D'
-import Camera from './animweb/AnimObjects/3D/Camera3D'
+import Complex from './animweb/helpers/Complex'
 
 declare global {
   interface Window {
@@ -63,6 +63,7 @@ let WebAnim = {
   Color,
   Colors,
   Matrix,
+  Complex,
   Width,
   Height,
   wait: async (config: any) => scene.wait(config),
