@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { v4 as uuid } from 'uuid'
 import { rangePerFrame, roundOff } from '../../helpers/miscellaneous'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 export enum CameraAxes {
   X = 'X',
@@ -45,8 +46,11 @@ export default class Camera {
     originalZ: 0,
   }
 
-  constructor(width: number, height: number) {
+  controls: OrbitControls
+
+  constructor(width: number, height: number, renderer: THREE.WebGLRenderer) {
     this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+    this.controls = new OrbitControls(this.camera, renderer.domElement)
     this.updatePosition({ x: 0, y: 0, z: 5 })
     this.origin = {
       x: 0,
@@ -56,7 +60,9 @@ export default class Camera {
     this.rotationTransition.originalX = this.camera.position.x
     this.rotationTransition.originalY = this.camera.position.y
     this.rotationTransition.originalZ = this.camera.position.z
+    this.updatePosition({ x: 0, y: 0, z: 0 })
     this.lookAtWithoutTransition(this.origin.x, this.origin.y, this.origin.z)
+    this.controls.update()
   }
 
   createTransition() {
@@ -225,6 +231,7 @@ export default class Camera {
 
   update() {
     this.transitions.forEach((transition) => transition.function())
+    this.controls.update()
   }
 
   reset() {

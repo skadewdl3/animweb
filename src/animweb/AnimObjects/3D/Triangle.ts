@@ -28,14 +28,14 @@ export default class Triangle extends AnimObject3D {
       if (config.p1 && config.p2 && config.p3)
         vertices = new Float32Array([
           config.p1.x,
-          config.p1.y,
           config.p1.z,
+          config.p1.y,
           config.p2.x,
-          config.p2.y,
           config.p2.z,
+          config.p2.y,
           config.p3.x,
-          config.p3.y,
           config.p3.z,
+          config.p3.y,
         ])
     } else if (config.form == Triangles.VertexData) {
       if (config.vertexData) vertices = config.vertexData
@@ -44,17 +44,28 @@ export default class Triangle extends AnimObject3D {
     if (vertices) {
       const geometry = new THREE.BufferGeometry()
       geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3))
+      geometry.computeVertexNormals()
       if (config.filled) {
+        let [r, g, b] = [
+          Math.round(Math.random() * 255).toString(16),
+          Math.round(Math.random() * 255).toString(16),
+          Math.round(Math.random() * 255).toString(16),
+        ]
+        console.log(`${r}, ${g}, ${b}`)
         const material = new THREE.MeshBasicMaterial({
-          color: this.color.hexNumber,
+          color: parseInt(`${r}${g}${b}`, 16),
         })
+
         const triangle = new THREE.Mesh(geometry, material)
         this.mesh = triangle
       } else {
         const edges = new THREE.EdgesGeometry(geometry)
+
         const lines = new THREE.LineSegments(
           edges,
-          new THREE.LineBasicMaterial({ color: this.color.hexNumber })
+          new THREE.LineBasicMaterial({
+            color: this.color.hexNumber,
+          })
         )
         this.mesh = lines
       }

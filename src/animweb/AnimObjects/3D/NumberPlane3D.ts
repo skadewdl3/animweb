@@ -215,6 +215,7 @@ export default class NumberPlane3D extends AnimObject3D {
     this.webWorker.postMessage(meshData)
 
     this.webWorker.onmessage = ({ data: mesh }) => {
+      console.log(mesh)
       for (let vertexData of mesh.triangles) {
         let triangle = new Triangle({
           scene: this.scene,

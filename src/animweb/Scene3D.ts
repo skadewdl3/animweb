@@ -60,10 +60,8 @@ export default class Scene3D {
     // do three js shit here
 
     this.scene = new THREE.Scene()
-    this.camera = new Camera(
-      this.width, this.height
-    )
     this.renderer = new THREE.WebGLRenderer()
+    this.camera = new Camera(this.width, this.height, this.renderer)
     this.renderer.setSize(this.width, this.height)
     document.body.appendChild(this.renderer.domElement)
     this.rendererElement = this.renderer.domElement
@@ -161,7 +159,7 @@ export default class Scene3D {
   resetScene() {
     for (let object of this.objects) if (object.remove) object.remove()
     this.scene.remove.apply(this.scene, this.scene.children)
-    this.camera = new Camera(this.width, this.height)
+    this.camera = new Camera(this.width, this.height, this.renderer)
     this.objects = []
     this.transitionQueue = []
   }

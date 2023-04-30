@@ -10,9 +10,7 @@ self.onmessage = ({ data }) => {
   console.log(data.constraints)
     let mesh = isosurface.surfaceNets(
       [data.detail / 10, data.detail / 10, data.detail / 10],
-      (x, y, z) => code.evaluate({
-        x, y, z: 10,
-      }),
+      (x, y, z) => code.evaluate({ x, y, z }),
       [
         data.lowerLimit,
         data.upperLimit,
@@ -47,7 +45,6 @@ self.onmessage = ({ data }) => {
     ]))
     
     }
-    mesh.vertices = []
 
     self.postMessage(mesh)
 }
