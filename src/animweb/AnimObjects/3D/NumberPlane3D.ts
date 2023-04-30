@@ -43,6 +43,11 @@ interface SurfacePlotProps {
   sampleRate?: number
   color?: Color
   filled?: boolean
+  constraints?: {
+    x?: number
+    y?: number
+    z?: number
+  }
 }
 
 export default class NumberPlane3D extends AnimObject3D {
@@ -199,13 +204,12 @@ export default class NumberPlane3D extends AnimObject3D {
       }
     }
 
-    console.log(definition)
-
     let meshData = {
       definition,
-      detail: config.sampleRate || 800,
+      detail: config.sampleRate || 200,
       lowerLimit: [-5, -5, -5],
       upperLimit: [5, 5, 5],
+      constraints: config.constraints || {},
     }
 
     this.webWorker.postMessage(meshData)

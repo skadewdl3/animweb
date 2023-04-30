@@ -8,8 +8,6 @@ The Scene itself cannot be animated, but every AnimObject3D can be animated.
 P.S - A function declared inside a class is called a method
 */
 
-const p5 = window.p5
-
 import * as THREE from 'three'
 import AnimObject3D from './AnimObject3D'
 import Color from './helpers/Color'

@@ -7,11 +7,11 @@ self.onmessage = ({ data }) => {
 
    const node = parse(data.definition)
     const code = node.compile()
-
+  console.log(data.constraints)
     let mesh = isosurface.surfaceNets(
       [data.detail / 10, data.detail / 10, data.detail / 10],
       (x, y, z) => code.evaluate({
-        x, y, z
+        x, y, z: 10,
       }),
       [
         data.lowerLimit,

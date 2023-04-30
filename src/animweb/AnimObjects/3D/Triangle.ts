@@ -44,16 +44,20 @@ export default class Triangle extends AnimObject3D {
     if (vertices) {
       const geometry = new THREE.BufferGeometry()
       geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3))
-      const material = new THREE.MeshBasicMaterial({
-        color: this.color.hexNumber,
-      })
-      const triangle = new THREE.Mesh(geometry, material)
-      const edges = new THREE.EdgesGeometry(geometry)
-      const lines = new THREE.LineSegments(
-        edges,
-        new THREE.LineBasicMaterial({ color: this.color.hexNumber })
-      )
-      this.mesh = config.filled ? triangle : lines
+      if (config.filled) {
+        const material = new THREE.MeshBasicMaterial({
+          color: this.color.hexNumber,
+        })
+        const triangle = new THREE.Mesh(geometry, material)
+        this.mesh = triangle
+      } else {
+        const edges = new THREE.EdgesGeometry(geometry)
+        const lines = new THREE.LineSegments(
+          edges,
+          new THREE.LineBasicMaterial({ color: this.color.hexNumber })
+        )
+        this.mesh = lines
+      }
     }
   }
 }

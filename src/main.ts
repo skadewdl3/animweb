@@ -27,6 +27,8 @@ import { javascript } from '@codemirror/lang-javascript'
 import Cube from './animweb/AnimObjects/3D/Cube'
 import Line3D from './animweb/AnimObjects/3D/Line3D'
 import Point3D from './animweb/AnimObjects/3D/Point3D'
+import Text3D from './animweb/AnimObjects/3D/Text3D'
+import Camera from './animweb/AnimObjects/3D/Camera3D'
 
 declare global {
   interface Window {
@@ -90,7 +92,10 @@ let WebAnim = {
       ? new Point({ ...config, scene })
       : new Point3D({ ...config, scene }),
   Curve: (config: any) => new Curve({ ...config, scene }),
-  Text: (config: any) => new Text({ ...config, scene }),
+  Text: (config: any) =>
+    scene == scene2D
+      ? new Text({ ...config, scene })
+      : new Text3D({ ...config, scene }),
   ImplicitCurve: (config: any) => new ImplicitCurve({ ...config, scene }),
   LaTeX: (config: any) => new LaTeX({ ...config, scene }),
   Latex: (config: any) => new LaTeX({ ...config, scene }),
@@ -118,7 +123,6 @@ let WebAnim = {
   stopRotation() {
     scene3D.stopRotation()
   },
-  camera: scene3D.camera,
   // enums
   Transitions,
   Observables,
@@ -131,6 +135,12 @@ let WebAnim = {
   Octants,
   Fonts: {},
 }
+
+Object.defineProperty(window, 'camera', {
+  get() {
+    return scene == scene2D ? undefined : scene3D.camera
+  },
+})
 
 window.WebAnim = WebAnim
 export default WebAnim
