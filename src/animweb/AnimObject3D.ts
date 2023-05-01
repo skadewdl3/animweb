@@ -81,7 +81,7 @@ export default class AnimObject3D {
   iterables: Array<string> = []
   scene: Scene3D
   mesh: any = new THREE.Mesh()
-  meshes: Array<any> = []
+  meshes: Array<AnimObject3D> = []
 
   remove?: Function
   parentData: {
@@ -151,34 +151,6 @@ export default class AnimObject3D {
     this.id = `webAnimObject3D-${uuidv4()}`
   }
 
-  // updateSceneDimensions(width: number, height: number) {
-  //   this.scene.height = height
-  //   this.scene.width = width
-  // }
-
-  // updateTransitionQueueFunctions(
-  //   queueTransition: Function,
-  //   unqueueTransition: Function,
-  //   waitBeforeTransition: Function
-  // ) {
-  //   this.scene.enqueueTransition = queueTransition
-  //   this.scene.dequeueTransition = unqueueTransition
-  //   this.waitBeforeTransition = waitBeforeTransition
-
-  //   if (this.iterables.length != 0) {
-  //     this.iterables.forEach((name: string) => {
-  //       // @ts-ignore
-  //       this[name].forEach((o: AnimObject3D) => {
-  //         o.updateTransitionQueueFunctions(
-  //           this.scene.enqueueTransition,
-  //           this.scene.dequeueTransition,
-  //           this.waitBeforeTransition
-  //         )
-  //       })
-  //     })
-  //   }
-  // }
-
   setOpacity(opacity: number) {
     this.color.setAlpha(opacity)
     if (this.iterables.length != 0) {
@@ -198,6 +170,16 @@ export default class AnimObject3D {
   When some class extends AnimObject3D, we overload this method by defining draw method inside that class
   However, before any drawing happens, the modified draw method *must* call the transition method.
   */
+
+  renderMeshes() {
+    if (this.meshes.length != 0) {
+      while (this.meshes.length != 0) {
+        let obj = this.meshes.pop()
+        obj && this.scene.add(obj)
+      }
+    }
+  }
+
   update() {}
 
   /*

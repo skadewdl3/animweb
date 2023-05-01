@@ -1,10 +1,10 @@
 import AnimObject3D from '../../AnimObject3D'
 import Scene3D from '../../Scene3D'
 import Color from '../../helpers/Color'
+import Constants from '../../helpers/Constants'
 import Line3D from './Line3D'
 import Point3D from './Point3D'
-// @ts-ignore
-import Triangle, { Triangles } from './Triangle'
+import Surface, { MeshData } from './Surface'
 
 export enum NumberPlanes {
   upper = 'Upper',
@@ -54,7 +54,7 @@ export default class NumberPlane3D extends AnimObject3D {
   form: NumberPlanes = NumberPlanes.upper
   axes: Array<Line3D> = []
   points: Array<Point3D> = []
-  meshes: Array<any> = ['axes', 'points']
+  surfaces: Array<Surface> = []
   webWorker: Worker = new Worker(
     new URL('./../../helpers/Isosurface.worker.js', import.meta.url),
     { type: 'module' }
@@ -76,13 +76,13 @@ export default class NumberPlane3D extends AnimObject3D {
           config.octants?.includes(Octants.IV) ||
           config.octants?.includes(Octants.VIII)))
     ) {
-      this.axes.push(
-        new Line3D({
-          point: { x: 0, y: 0, z: 5 },
-          scene: this.scene,
-          color: this.color,
-        })
-      )
+      let line = new Line3D({
+        point: { x: 0, y: 0, z: 5 },
+        scene: this.scene,
+        color: this.color,
+      })
+      this.axes.push(line)
+      this.meshes.push(line)
     }
 
     // -y axis
@@ -96,13 +96,14 @@ export default class NumberPlane3D extends AnimObject3D {
           config.octants?.includes(Octants.VII) ||
           config.octants?.includes(Octants.III)))
     ) {
-      this.axes.push(
-        new Line3D({
-          point: { x: 0, y: 0, z: -5 },
-          scene: this.scene,
-          color: this.color,
-        })
-      )
+      let line = new Line3D({
+        point: { x: 0, y: 0, z: -5 },
+        scene: this.scene,
+        color: this.color,
+      })
+
+      this.axes.push(line)
+      this.meshes.push(line)
     }
 
     // +x axis
@@ -116,13 +117,14 @@ export default class NumberPlane3D extends AnimObject3D {
           config.octants?.includes(Octants.VI) ||
           config.octants?.includes(Octants.V)))
     ) {
-      this.axes.push(
-        new Line3D({
-          point: { x: 5, y: 0, z: 0 },
-          scene: this.scene,
-          color: this.color,
-        })
-      )
+      let line = new Line3D({
+        point: { x: 5, y: 0, z: 0 },
+        scene: this.scene,
+        color: this.color,
+      })
+
+      this.axes.push(line)
+      this.meshes.push(line)
     }
 
     // -x axis
@@ -136,13 +138,14 @@ export default class NumberPlane3D extends AnimObject3D {
           config.octants?.includes(Octants.VII) ||
           config.octants?.includes(Octants.VIII)))
     ) {
-      this.axes.push(
-        new Line3D({
-          point: { x: -5, y: 0, z: 0 },
-          scene: this.scene,
-          color: this.color,
-        })
-      )
+      let line = new Line3D({
+        point: { x: -5, y: 0, z: 0 },
+        scene: this.scene,
+        color: this.color,
+      })
+
+      this.axes.push(line)
+      this.meshes.push(line)
     }
 
     // +z axis
@@ -155,13 +158,14 @@ export default class NumberPlane3D extends AnimObject3D {
           config.octants?.includes(Octants.III) ||
           config.octants?.includes(Octants.IV)))
     ) {
-      this.axes.push(
-        new Line3D({
-          point: { x: 0, y: 5, z: 0 },
-          scene: this.scene,
-          color: this.color,
-        })
-      )
+      let line = new Line3D({
+        point: { x: 0, y: 5, z: 0 },
+        scene: this.scene,
+        color: this.color,
+      })
+
+      this.axes.push(line)
+      this.meshes.push(line)
     }
 
     // -z axis
@@ -174,13 +178,14 @@ export default class NumberPlane3D extends AnimObject3D {
           config.octants?.includes(Octants.VII) ||
           config.octants?.includes(Octants.VIII)))
     ) {
-      this.axes.push(
-        new Line3D({
-          point: { x: 0, y: -5, z: 0 },
-          scene: this.scene,
-          color: this.color,
-        })
-      )
+      let line = new Line3D({
+        point: { x: 0, y: -5, z: 0 },
+        scene: this.scene,
+        color: this.color,
+      })
+
+      this.axes.push(line)
+      this.meshes.push(line)
     }
   }
 
@@ -188,8 +193,8 @@ export default class NumberPlane3D extends AnimObject3D {
 
   point(config: PointPlotProps) {
     let point = new Point3D({ ...config, scene: this.scene })
-    console.log(point)
-    this.scene.add(point)
+    this.points.push(point)
+    this.meshes.push(point)
   }
 
   plot(config: SurfacePlotProps) {
@@ -206,7 +211,7 @@ export default class NumberPlane3D extends AnimObject3D {
 
     let meshData = {
       definition,
-      detail: config.sampleRate || 200,
+      detail: config.sampleRate || Constants.defaultSurfaceSampleRate,
       lowerLimit: [-5, -5, -5],
       upperLimit: [5, 5, 5],
       constraints: config.constraints || {},
@@ -214,18 +219,16 @@ export default class NumberPlane3D extends AnimObject3D {
 
     this.webWorker.postMessage(meshData)
 
-    this.webWorker.onmessage = ({ data: mesh }) => {
-      console.log(mesh)
-      for (let vertexData of mesh.triangles) {
-        let triangle = new Triangle({
-          scene: this.scene,
-          form: Triangles.VertexData,
-          vertexData,
-          color: config.color || this.color,
-          filled: config.filled || false,
-        })
-        this.scene.add(triangle)
-      }
+    this.webWorker.onmessage = ({ data: meshData }: { data: MeshData }) => {
+      console.log(meshData)
+      let surface = new Surface({
+        scene: this.scene,
+        meshData,
+        color: config.color || this.color,
+        filled: config.filled || false,
+      })
+      this.surfaces.push(surface)
+      this.meshes.push(surface)
     }
   }
 }

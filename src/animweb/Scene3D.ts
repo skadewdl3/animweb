@@ -198,10 +198,7 @@ export default class Scene3D {
     // adds the AnimObject3D to the array of objects to be rendered
     this.objects.push(obj)
     obj.mesh && this.scene.add(obj.mesh)
-    obj.meshes.forEach((meshName) => {
-      // @ts-ignore
-      obj[meshName].forEach((obj: AnimObject3D) => this.scene.add(obj.mesh))
-    })
+    
     return obj
   }
 
@@ -230,6 +227,7 @@ export default class Scene3D {
   draw() {
     requestAnimationFrame(this.draw.bind(this))
 
+    this.objects.forEach((o: AnimObject3D) => o.renderMeshes())
     this.objects.forEach((o: AnimObject3D) => o.update())
     this.camera.update()
 
