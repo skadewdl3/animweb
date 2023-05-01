@@ -1,3 +1,4 @@
+import * as math from 'mathjs'
 import NumberPlane from './animweb/AnimObjects/NumberPlane'
 import NumberPlane3D, {
   NumberPlanes,
@@ -29,6 +30,7 @@ import Line3D from './animweb/AnimObjects/3D/Line3D'
 import Point3D from './animweb/AnimObjects/3D/Point3D'
 import Text3D from './animweb/AnimObjects/3D/Text3D'
 import Complex from './animweb/helpers/Complex'
+import ComplexPlane3D from './animweb/AnimObjects/3D/ComplexPlane3D'
 
 declare global {
   interface Window {
@@ -51,8 +53,6 @@ export type Scene = Scene2D | Scene3D
 let scene: Scene
 let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0, editor)
 let scene3D = new Scene3D(Width.full, Height.full, Colors.gray0, editor)
-// scene3D.hide()
-// scene2D.show()
 scene2D.show()
 scene3D.hide()
 scene = scene2D
@@ -89,6 +89,8 @@ let WebAnim = {
         console.table(config)
       } else if (config instanceof Object) {
         console.dir(config)
+      } else {
+        console.log(config)
       }
     }
   },
@@ -116,6 +118,8 @@ let WebAnim = {
     scene == scene2D
       ? new NumberPlane({ ...config, scene })
       : new NumberPlane3D({ ...config, scene }),
+  ComplexPlane: (config: any) =>
+    scene == scene2D ? undefined : new ComplexPlane3D({ ...config, scene }),
   Line: (config: any) =>
     scene == scene2D
       ? new Line({ ...config, scene })
@@ -169,8 +173,6 @@ Object.defineProperty(window, 'camera', {
     return scene == scene2D ? undefined : scene3D.camera
   },
 })
-
-
 
 window.WebAnim = WebAnim
 export default WebAnim

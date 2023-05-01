@@ -46,14 +46,9 @@ export default class Triangle extends AnimObject3D {
       geometry.setAttribute('position', new THREE.BufferAttribute(vertices, 3))
       geometry.computeVertexNormals()
       if (config.filled) {
-        let [r, g, b] = [
-          Math.round(Math.random() * 255).toString(16),
-          Math.round(Math.random() * 255).toString(16),
-          Math.round(Math.random() * 255).toString(16),
-        ]
-        console.log(`${r}, ${g}, ${b}`)
         const material = new THREE.MeshBasicMaterial({
-          color: parseInt(`${r}${g}${b}`, 16),
+          color: this.color.hexNumber,
+          side: THREE.DoubleSide,
         })
 
         const triangle = new THREE.Mesh(geometry, material)
