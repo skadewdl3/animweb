@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { v4 as uuid } from 'uuid'
 import { rangePerFrame, roundOff } from '../../helpers/miscellaneous'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls'
 
 export enum CameraAxes {
   X = 'X',
@@ -46,11 +47,18 @@ export default class Camera {
     originalZ: 0,
   }
 
-  controls: OrbitControls
+  orbitControls: OrbitControls
+  // pointerLockControls: PointerLockControls
+  clock: THREE.Clock
 
   constructor(width: number, height: number, renderer: THREE.WebGLRenderer) {
     this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
-    this.controls = new OrbitControls(this.camera, renderer.domElement)
+    this.orbitControls = new OrbitControls(this.camera, renderer.domElement)
+    // this.pointerLockControls = new PointerLockControls(
+    //   this.camera,
+    //   renderer.domElement
+    // )
+    this.clock = new THREE.Clock()
     this.updatePosition({ x: 0, y: 0, z: 5 })
     this.origin = {
       x: 0,
@@ -62,7 +70,8 @@ export default class Camera {
     this.rotationTransition.originalZ = this.camera.position.z
     this.updatePosition({ x: 0, y: 0, z: 0 })
     this.lookAtWithoutTransition(this.origin.x, this.origin.y, this.origin.z)
-    this.controls.update()
+    // this.orbitControls.update()
+    // this.pointerLockControls.update(this.clock.getDelta())
   }
 
   createTransition() {
@@ -231,7 +240,8 @@ export default class Camera {
 
   update() {
     this.transitions.forEach((transition) => transition.function())
-    this.controls.update()
+    this.orbitControls.update()
+    // this.pointerLockControls.update(this.clock.getDelta())
   }
 
   reset() {

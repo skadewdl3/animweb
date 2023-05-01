@@ -31,6 +31,7 @@ import Point3D from './animweb/AnimObjects/3D/Point3D'
 import Text3D from './animweb/AnimObjects/3D/Text3D'
 import Complex from './animweb/helpers/Complex'
 import ComplexPlane3D from './animweb/AnimObjects/3D/ComplexPlane3D'
+import Surface from './animweb/AnimObjects/3D/Surface'
 
 declare global {
   interface Window {
@@ -134,7 +135,7 @@ let WebAnim = {
       ? new Text({ ...config, scene })
       : new Text3D({ ...config, scene }),
   Cube: (config: any) => new Cube({ ...config, scene }),
-
+  Surface: (config: any) => new Surface({ ...config, scene }),
   ImplicitCurve: (config: any) => new ImplicitCurve({ ...config, scene }),
   LaTeX: (config: any) => new LaTeX({ ...config, scene }),
   Latex: (config: any) => new LaTeX({ ...config, scene }),
