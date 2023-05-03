@@ -251,7 +251,11 @@ const enums = {
 window.WebAnim = {
   use: async (...config: Array<any>) => {
     for (let name of config) {
-      if (!(name in aos)) console.log('not present')
+      if (!(name in aos))
+        error.show(
+          'ImportError',
+          `AnimObject '${name}' not found. Please check your spelling.`
+        )
       // @ts-ignore
       let arr = aos[name]
       let imported: Array<any> = []

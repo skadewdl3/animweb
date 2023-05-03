@@ -37,7 +37,8 @@
         <div class="code-error-message">
           {{ error.type }}: {{ error.message }}
         </div>
-        <div class="code-error-line">at line {{ error.lineNumber }}</div>
+        <div class="code-error-line">{{!isNaN(error.lineNumber) ? 'at line' : ''}} {{ !isNaN(error.lineNumber) ?
+          error.lineNumber : '' }}</div>
         </div>
       <div :class="{hidden: code.hidden}" class="codemirror-editor-container"></div>
       <div class="logger">
