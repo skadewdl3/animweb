@@ -8,8 +8,6 @@ The Scene itself cannot be animated, but every AnimObject3D can be animated.
 P.S - A function declared inside a class is called a method
 */
 
-const p5 = window.p5
-
 import * as THREE from 'three'
 import AnimObject3D from './AnimObject3D'
 import Color from './helpers/Color'
@@ -62,10 +60,8 @@ export default class Scene3D {
     // do three js shit here
 
     this.scene = new THREE.Scene()
-    this.camera = new Camera(
-      this.width, this.height
-    )
     this.renderer = new THREE.WebGLRenderer()
+    this.camera = new Camera(this.width, this.height, this.renderer)
     this.renderer.setSize(this.width, this.height)
     document.body.appendChild(this.renderer.domElement)
     this.rendererElement = this.renderer.domElement
@@ -163,7 +159,7 @@ export default class Scene3D {
   resetScene() {
     for (let object of this.objects) if (object.remove) object.remove()
     this.scene.remove.apply(this.scene, this.scene.children)
-    this.camera.reset()
+    this.camera = new Camera(this.width, this.height, this.renderer)
     this.objects = []
     this.transitionQueue = []
   }
@@ -202,10 +198,7 @@ export default class Scene3D {
     // adds the AnimObject3D to the array of objects to be rendered
     this.objects.push(obj)
     obj.mesh && this.scene.add(obj.mesh)
-    obj.meshes.forEach((meshName) => {
-      // @ts-ignore
-      obj[meshName].forEach((obj: AnimObject3D) => this.scene.add(obj.mesh))
-    })
+    
     return obj
   }
 
@@ -234,7 +227,9 @@ export default class Scene3D {
   draw() {
     requestAnimationFrame(this.draw.bind(this))
 
-    this.camera.transform()
+    this.objects.forEach((o: AnimObject3D) => o.renderMeshes())
+    this.objects.forEach((o: AnimObject3D) => o.update())
+    this.camera.update()
 
     this.renderer.render(this.scene, this.camera.camera)
   }

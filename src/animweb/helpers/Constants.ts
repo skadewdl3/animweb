@@ -8,6 +8,7 @@ const Constants = {
   fadeInNumberPlaneDuration: 10,
   curveSampleRate: 250,
   Infinity: 5000,
+  defaultSurfaceSampleRate: 400,
 }
 
 export enum RenderingModes {

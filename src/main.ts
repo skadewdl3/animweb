@@ -1,5 +1,9 @@
+import * as math from 'mathjs'
 import NumberPlane from './animweb/AnimObjects/NumberPlane'
-import NumberPlane3D from './animweb/AnimObjects/3D/NumberPlane3D'
+import NumberPlane3D, {
+  NumberPlanes,
+  Octants,
+} from './animweb/AnimObjects/3D/NumberPlane3D'
 import Scene2D from './animweb/Scene2D'
 import Point from './animweb/AnimObjects/Point'
 import Line, { Lines } from './animweb/AnimObjects/Line'
@@ -24,6 +28,10 @@ import { javascript } from '@codemirror/lang-javascript'
 import Cube from './animweb/AnimObjects/3D/Cube'
 import Line3D from './animweb/AnimObjects/3D/Line3D'
 import Point3D from './animweb/AnimObjects/3D/Point3D'
+import Text3D from './animweb/AnimObjects/3D/Text3D'
+import Complex from './animweb/helpers/Complex'
+import ComplexPlane3D from './animweb/AnimObjects/3D/ComplexPlane3D'
+import Surface from './animweb/AnimObjects/3D/Surface'
 
 declare global {
   interface Window {
@@ -46,21 +54,47 @@ export type Scene = Scene2D | Scene3D
 let scene: Scene
 let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0, editor)
 let scene3D = new Scene3D(Width.full, Height.full, Colors.gray0, editor)
-// scene3D.hide()
-// scene2D.show()
 scene2D.show()
 scene3D.hide()
 scene = scene2D
 
 let WebAnim = {
-  // Basic classes/functions
+  // Helper classes/objects
   scene,
   Color,
   Colors,
   Matrix,
+  Complex,
   Width,
   Height,
+
+  // A bunch of helper functions
   wait: async (config: any) => scene.wait(config),
+  println: (...configItems: any) => {
+    for (let config of configItems) {
+      if (config instanceof Complex) {
+        console.log(
+          `${config.re} ${config.im >= 0 ? '+' : '-'} ${
+            config.im < 0 ? -config.im : config.im
+          }i`
+        )
+      } else if (config instanceof Matrix) {
+        let obj = {}
+        // @ts-ignore
+        for (let [index, row] of Object.entries(config.matrix._data)) {
+          // @ts-ignore
+          obj[`row-${index}`] = row
+        }
+        console.table(obj)
+      } else if (config instanceof Array) {
+        console.table(config)
+      } else if (config instanceof Object) {
+        console.dir(config)
+      } else {
+        console.log(config)
+      }
+    }
+  },
   show: (config: any) => scene.add(config),
   render: (mode: '3D' | '2D' = '2D') => {
     if (mode == '3D') {
@@ -73,11 +107,20 @@ let WebAnim = {
       scene = scene2D
     }
   },
+  startRotation() {
+    scene3D.startRotation()
+  },
+  stopRotation() {
+    scene3D.stopRotation()
+  },
+
   // AnimObjects
   NumberPlane: (config: any) =>
     scene == scene2D
       ? new NumberPlane({ ...config, scene })
       : new NumberPlane3D({ ...config, scene }),
+  ComplexPlane: (config: any) =>
+    scene == scene2D ? undefined : new ComplexPlane3D({ ...config, scene }),
   Line: (config: any) =>
     scene == scene2D
       ? new Line({ ...config, scene })
@@ -87,13 +130,19 @@ let WebAnim = {
       ? new Point({ ...config, scene })
       : new Point3D({ ...config, scene }),
   Curve: (config: any) => new Curve({ ...config, scene }),
-  Text: (config: any) => new Text({ ...config, scene }),
+  Text: (config: any) =>
+    scene == scene2D
+      ? new Text({ ...config, scene })
+      : new Text3D({ ...config, scene }),
+  Cube: (config: any) => new Cube({ ...config, scene }),
+  Surface: (config: any) => new Surface({ ...config, scene }),
   ImplicitCurve: (config: any) => new ImplicitCurve({ ...config, scene }),
   LaTeX: (config: any) => new LaTeX({ ...config, scene }),
   Latex: (config: any) => new LaTeX({ ...config, scene }),
   TeX: (config: any) => new LaTeX({ ...config, scene }),
   Tex: (config: any) => new LaTeX({ ...config, scene }),
   Vector: (config: any) => new Vector({ ...config, scene }),
+
   // transitions
   Create: (object: AnimObject, config: any) => {
     if (scene instanceof Scene2D) {
@@ -105,17 +154,8 @@ let WebAnim = {
       scene.add(FadeIn(object, config))
     }
   },
-
-  // AnimObject3D
-  Cube: (config: any) => new Cube({ ...config, scene }),
   FadeOut,
-  startRotation() {
-    scene3D.startRotation()
-  },
-  stopRotation() {
-    scene3D.stopRotation()
-  },
-  camera: scene3D.camera,
+
   // enums
   Transitions,
   Observables,
@@ -124,8 +164,16 @@ let WebAnim = {
   AnimObjects,
   Constants,
   Vectors,
+  NumberPlanes,
+  Octants,
   Fonts: {},
 }
+
+Object.defineProperty(window, 'camera', {
+  get() {
+    return scene == scene2D ? undefined : scene3D.camera
+  },
+})
 
 window.WebAnim = WebAnim
 export default WebAnim

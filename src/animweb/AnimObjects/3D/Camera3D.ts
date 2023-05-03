@@ -1,6 +1,8 @@
 import * as THREE from 'three'
 import { v4 as uuid } from 'uuid'
 import { rangePerFrame, roundOff } from '../../helpers/miscellaneous'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls'
 
 export enum CameraAxes {
   X = 'X',
@@ -11,6 +13,9 @@ export enum CameraAxes {
 export default class Camera {
   camera: THREE.PerspectiveCamera
   transitions: Array<{ id: string; function: Function }> = []
+  x: number = 0
+  y: number = 0
+  z: number = 5
   origin: { x: number; y: number; z: number }
   rotationStopCondition: Function = () => false
   rotationTransition: {
@@ -42,9 +47,19 @@ export default class Camera {
     originalZ: 0,
   }
 
-  constructor(width: number, height: number) {
+  orbitControls: OrbitControls
+  // pointerLockControls: PointerLockControls
+  clock: THREE.Clock
+
+  constructor(width: number, height: number, renderer: THREE.WebGLRenderer) {
     this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
-    this.camera.position.z = 5
+    this.orbitControls = new OrbitControls(this.camera, renderer.domElement)
+    // this.pointerLockControls = new PointerLockControls(
+    //   this.camera,
+    //   renderer.domElement
+    // )
+    this.clock = new THREE.Clock()
+    this.updatePosition({ x: 0, y: 0, z: 5 })
     this.origin = {
       x: 0,
       y: 0,
@@ -53,13 +68,31 @@ export default class Camera {
     this.rotationTransition.originalX = this.camera.position.x
     this.rotationTransition.originalY = this.camera.position.y
     this.rotationTransition.originalZ = this.camera.position.z
+    this.updatePosition({ x: 0, y: 0, z: 0 })
     this.lookAtWithoutTransition(this.origin.x, this.origin.y, this.origin.z)
+    // this.orbitControls.update()
+    // this.pointerLockControls.update(this.clock.getDelta())
   }
 
   createTransition() {
     return {
       id: uuid(),
       function: () => {},
+    }
+  }
+
+  updatePosition(config: { x?: number; y?: number; z?: number }) {
+    if (config.x) {
+      this.x = config.x
+      this.camera.position.x = config.x
+    }
+    if (config.y) {
+      this.y = config.y
+      this.camera.position.y = config.y
+    }
+    if (config.z) {
+      this.z = config.z
+      this.camera.position.z = config.z
     }
   }
 
@@ -123,8 +156,10 @@ export default class Camera {
     this.rotationTransition.originalZ = this.camera.position.z
     this.rotationTransition.rotation = () => {
       angle += rotationAngle
-      this.camera.position.x = radius * Math.cos(angle)
-      this.camera.position.z = radius * Math.sin(angle)
+      this.updatePosition({
+        x: radius * Math.cos(angle),
+        z: radius * Math.sin(angle),
+      })
       this.lookAtWithoutTransition(this.origin.x, this.origin.y, this.origin.z)
     }
     this.startRotation()
@@ -162,7 +197,7 @@ export default class Camera {
   //   this.startRotation()
   // }
 
-  moveTo(x: number, y: number, z: number, duration: number = 1) {
+  moveTo(x: number, z: number, y: number, duration: number = 1) {
     let moveToTransition = this.createTransition()
     let xSpeed = rangePerFrame(x - this.camera.position.x, duration)
     let ySpeed = rangePerFrame(y - this.camera.position.y, duration)
@@ -176,14 +211,14 @@ export default class Camera {
         this.transitions = this.transitions.filter(
           (transition) => transition.id != moveToTransition.id
         )
-        this.camera.position.x = x
-        this.camera.position.y = y
-        this.camera.position.z = z
+        this.updatePosition({ x, y, z })
         return
       } else {
-        this.camera.position.x += xSpeed
-        this.camera.position.y += ySpeed
-        this.camera.position.z += zSpeed
+        this.updatePosition({
+          x: this.x + xSpeed,
+          y: this.y + ySpeed,
+          z: this.z + zSpeed,
+        })
         this.lookAtWithoutTransition(
           this.origin.x,
           this.origin.y,
@@ -203,14 +238,18 @@ export default class Camera {
     }
   }
 
-  transform() {
+  update() {
     this.transitions.forEach((transition) => transition.function())
+    this.orbitControls.update()
+    // this.pointerLockControls.update(this.clock.getDelta())
   }
 
   reset() {
-    this.camera.position.x = 0
-    this.camera.position.y = 0
-    this.camera.position.z = 5
+    this.updatePosition({
+      x: 0,
+      y: 0,
+      z: 5,
+    })
     this.rotationTransition = {
       ...this.rotationTransition,
       id: uuid(),

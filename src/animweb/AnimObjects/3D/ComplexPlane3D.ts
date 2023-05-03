@@ -6,7 +6,7 @@ import Line3D from './Line3D'
 import Point3D from './Point3D'
 import Surface, { MeshData } from './Surface'
 
-export enum NumberPlanes {
+export enum ComplexPlanes {
   upper = 'Upper',
   full = 'Full',
   lower = 'Lower',
@@ -24,10 +24,10 @@ export enum Octants {
   VIII = 'VIII',
 }
 
-interface NumberPlane3DProps {
+interface ComplexPlane3DProps {
   scene: Scene3D
   color?: Color
-  form?: NumberPlanes
+  form?: ComplexPlanes
   octants?: Array<Octants>
 }
 
@@ -50,27 +50,27 @@ interface SurfacePlotProps {
   }
 }
 
-export default class NumberPlane3D extends AnimObject3D {
-  form: NumberPlanes = NumberPlanes.upper
+export default class ComplexPlane3D extends AnimObject3D {
+  form: ComplexPlanes = ComplexPlanes.upper
   axes: Array<Line3D> = []
   points: Array<Point3D> = []
   surfaces: Array<Surface> = []
   webWorker: Worker = new Worker(
-    new URL('./../../helpers/Isosurface.worker.js', import.meta.url),
+    new URL('./../../helpers/Complex.worker.js', import.meta.url),
     { type: 'module' }
   )
 
-  constructor(config: NumberPlane3DProps) {
+  constructor(config: ComplexPlane3DProps) {
     super(config.scene)
     config.color && (this.color = config.color)
     config.form && (this.form = config.form)
 
     // +y axis
     if (
-      this.form == NumberPlanes.full ||
-      this.form == NumberPlanes.upper ||
-      this.form == NumberPlanes.lower ||
-      (this.form == NumberPlanes.octants &&
+      this.form == ComplexPlanes.full ||
+      this.form == ComplexPlanes.upper ||
+      this.form == ComplexPlanes.lower ||
+      (this.form == ComplexPlanes.octants &&
         (config.octants?.includes(Octants.I) ||
           config.octants?.includes(Octants.V) ||
           config.octants?.includes(Octants.IV) ||
@@ -87,10 +87,10 @@ export default class NumberPlane3D extends AnimObject3D {
 
     // -y axis
     if (
-      this.form == NumberPlanes.full ||
-      this.form == NumberPlanes.upper ||
-      this.form == NumberPlanes.lower ||
-      (this.form == NumberPlanes.octants &&
+      this.form == ComplexPlanes.full ||
+      this.form == ComplexPlanes.upper ||
+      this.form == ComplexPlanes.lower ||
+      (this.form == ComplexPlanes.octants &&
         (config.octants?.includes(Octants.II) ||
           config.octants?.includes(Octants.VI) ||
           config.octants?.includes(Octants.VII) ||
@@ -108,10 +108,10 @@ export default class NumberPlane3D extends AnimObject3D {
 
     // +x axis
     if (
-      this.form == NumberPlanes.full ||
-      this.form == NumberPlanes.upper ||
-      this.form == NumberPlanes.lower ||
-      (this.form == NumberPlanes.octants &&
+      this.form == ComplexPlanes.full ||
+      this.form == ComplexPlanes.upper ||
+      this.form == ComplexPlanes.lower ||
+      (this.form == ComplexPlanes.octants &&
         (config.octants?.includes(Octants.I) ||
           config.octants?.includes(Octants.II) ||
           config.octants?.includes(Octants.VI) ||
@@ -129,10 +129,10 @@ export default class NumberPlane3D extends AnimObject3D {
 
     // -x axis
     if (
-      this.form == NumberPlanes.full ||
-      this.form == NumberPlanes.upper ||
-      this.form == NumberPlanes.lower ||
-      (this.form == NumberPlanes.octants &&
+      this.form == ComplexPlanes.full ||
+      this.form == ComplexPlanes.upper ||
+      this.form == ComplexPlanes.lower ||
+      (this.form == ComplexPlanes.octants &&
         (config.octants?.includes(Octants.III) ||
           config.octants?.includes(Octants.IV) ||
           config.octants?.includes(Octants.VII) ||
@@ -150,9 +150,9 @@ export default class NumberPlane3D extends AnimObject3D {
 
     // +z axis
     if (
-      this.form == NumberPlanes.full ||
-      this.form == NumberPlanes.upper ||
-      (this.form == NumberPlanes.octants &&
+      this.form == ComplexPlanes.full ||
+      this.form == ComplexPlanes.upper ||
+      (this.form == ComplexPlanes.octants &&
         (config.octants?.includes(Octants.I) ||
           config.octants?.includes(Octants.II) ||
           config.octants?.includes(Octants.III) ||
@@ -170,9 +170,9 @@ export default class NumberPlane3D extends AnimObject3D {
 
     // -z axis
     if (
-      this.form == NumberPlanes.full ||
-      this.form == NumberPlanes.lower ||
-      (this.form == NumberPlanes.octants &&
+      this.form == ComplexPlanes.full ||
+      this.form == ComplexPlanes.lower ||
+      (this.form == ComplexPlanes.octants &&
         (config.octants?.includes(Octants.V) ||
           config.octants?.includes(Octants.VI) ||
           config.octants?.includes(Octants.VII) ||
@@ -219,11 +219,11 @@ export default class NumberPlane3D extends AnimObject3D {
 
     this.webWorker.postMessage(meshData)
 
-    this.webWorker.onmessage = ({ data: meshData }: { data: MeshData }) => {
+    this.webWorker.onmessage = ({ data }: { data: MeshData }) => {
       console.log(meshData)
       let surface = new Surface({
         scene: this.scene,
-        meshData,
+        meshData: data,
         color: config.color || this.color,
         filled: config.filled || false,
       })
