@@ -1,5 +1,6 @@
 import { defineConfig } from "vite";
 import topLevelAwait from "vite-plugin-top-level-await";
+import dynamicImport from 'vite-plugin-dynamic-import'
 
 export default defineConfig({
   plugins: [
@@ -8,6 +9,7 @@ export default defineConfig({
       promiseExportName: "__tla",
       // The function to generate import names of top-level await promise in each chunk module
       promiseImportName: i => `__tla_${i}`
-    })
+    }),
+    dynamicImport()
   ]
 });

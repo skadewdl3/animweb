@@ -154,7 +154,7 @@ window.WebAnim = {
       let imported: Array<any> = []
       if (arr.length > 1) {
         for (let i = 0; i < arr.length; i++) {
-          let obj = await import(arr[i])
+          let obj = await import(`./${arr[i]}`)
           imported.push(obj.default)
         }
         window.WebAnim[name] = (config: any) => {
@@ -163,8 +163,8 @@ window.WebAnim = {
             : new imported[1]({ ...config, scene })
         }
       } else {
-        let obj = await import(arr[0])
-        window.WebAnim[`${name}`] = obj.default
+        let obj = await import(`./${arr[0]}`)
+        window.WebAnim[name] = obj.default
       }
       let importScript = document.createElement('script')
       let text = document.createTextNode(`var ${name} = window.WebAnim.${name}`)
