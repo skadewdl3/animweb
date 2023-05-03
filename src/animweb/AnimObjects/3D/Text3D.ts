@@ -2,7 +2,6 @@ import AnimObject3D from '../../AnimObject3D'
 import Scene3D from '../../Scene3D'
 // @ts-ignore
 import { Text } from 'troika-three-text'
-import * as THREE from 'three'
 
 interface Text3DProps {
   scene: Scene3D

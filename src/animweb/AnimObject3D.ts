@@ -15,7 +15,7 @@ import { Transitions } from './Transition'
 import TransitionProps from './Transition'
 import { Scene } from '../main'
 import Scene3D from './Scene3D'
-import * as THREE from 'three'
+import { Mesh as ThreeMesh } from 'three'
 
 /*
 Defines what kind of properties/arguments/parameters (aka props)
@@ -80,7 +80,7 @@ export default class AnimObject3D {
   observers: Array<Observer> = [] // An array containing the AnimObject3Ds that are observing come property of this AnimObject3D
   iterables: Array<string> = []
   scene: Scene3D
-  mesh: any = new THREE.Mesh()
+  mesh: any = new ThreeMesh()
   meshes: Array<AnimObject3D> = []
 
   remove?: Function

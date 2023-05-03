@@ -8,7 +8,7 @@ The Scene itself cannot be animated, but every AnimObject3D can be animated.
 P.S - A function declared inside a class is called a method
 */
 
-import * as THREE from 'three'
+import { Scene as ThreeScene, WebGLRenderer as ThreeWebGLRenderer } from 'three'
 import AnimObject3D from './AnimObject3D'
 import Color from './helpers/Color'
 import Colors from './helpers/Colors'
@@ -28,9 +28,9 @@ export default class Scene3D {
   objects: Array<AnimObject3D>
   backgroundColor: Color
   rendererElement: HTMLElement | null = null
-  scene: THREE.Scene
+  scene: ThreeScene
   camera: Camera
-  renderer: THREE.WebGLRenderer
+  renderer: ThreeWebGLRenderer
 
   transitionQueue: Array<TransitionQueueItem> = []
   mode: RenderingModes = RenderingModes._3D
@@ -58,8 +58,8 @@ export default class Scene3D {
 
     // do three js shit here
 
-    this.scene = new THREE.Scene()
-    this.renderer = new THREE.WebGLRenderer()
+    this.scene = new ThreeScene()
+    this.renderer = new ThreeWebGLRenderer()
     this.camera = new Camera(this.width, this.height, this.renderer)
     this.renderer.setSize(this.width, this.height)
     document.body.appendChild(this.renderer.domElement)

@@ -1,6 +1,11 @@
 import AnimObject3D from '../../AnimObject3D'
 import Scene3D from '../../Scene3D'
-import * as THREE from 'three'
+import {
+  LineBasicMaterial as ThreeLineBasicMaterial,
+  Vector3 as ThreeVector3,
+  BufferGeometry as ThreeBufferGeometry,
+  Line as ThreeLine,
+} from 'three'
 import Color from '../../helpers/Color'
 
 interface Line3DProps {
@@ -16,7 +21,7 @@ export default class Line3D extends AnimObject3D {
     super(config.scene)
     config.color && (this.color = config.color)
 
-    const material = new THREE.LineBasicMaterial({
+    const material = new ThreeLineBasicMaterial({
       color: this.color.hexNumber,
     })
 
@@ -29,18 +34,18 @@ export default class Line3D extends AnimObject3D {
 
     if (config.point1 && config.point2) {
       points = [
-        new THREE.Vector3(config.point1.x, config.point1.y, config.point1.z),
-        new THREE.Vector3(config.point2.x, config.point2.y, config.point2.z),
+        new ThreeVector3(config.point1.x, config.point1.y, config.point1.z),
+        new ThreeVector3(config.point2.x, config.point2.y, config.point2.z),
       ]
     } else if (config.point) {
       points = [
-        new THREE.Vector3(0, 0, 0),
-        new THREE.Vector3(config.point.x, config.point.y, config.point.z),
+        new ThreeVector3(0, 0, 0),
+        new ThreeVector3(config.point.x, config.point.y, config.point.z),
       ]
     }
 
-    const geometry = new THREE.BufferGeometry().setFromPoints(points)
-    const line = new THREE.Line(geometry, material)
+    const geometry = new ThreeBufferGeometry().setFromPoints(points)
+    const line = new ThreeLine(geometry, material)
     this.mesh = line
   }
 

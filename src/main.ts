@@ -266,3 +266,20 @@ getElement('.btn-play')?.addEventListener('click', () => {
   scene3D.resetScene()
   document.body.appendChild(script)
 })
+
+getElement('.btn-clear')?.addEventListener('click', () => {
+  scene2D.resetScene()
+  scene3D.resetScene()
+})
+
+getElement('.btn-hide-code')?.addEventListener('click', () => {
+  getElement('.codemirror-editor-container')?.classList.add('hidden')
+  getElement('.btn-hide-code')?.classList.add('hidden')
+  getElement('.btn-show-code')?.classList.remove('hidden')
+})
+
+getElement('.btn-show-code')?.addEventListener('click', () => {
+  getElement('.codemirror-editor-container')?.classList.remove('hidden')
+  getElement('.btn-show-code')?.classList.add('hidden')
+  getElement('.btn-hide-code')?.classList.remove('hidden')
+})
