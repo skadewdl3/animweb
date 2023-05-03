@@ -35,22 +35,15 @@ export default class Scene {
   mode: RenderingModes = RenderingModes._2D
   id: string = uuid()
   hidden: boolean = false
-  editor?: EditorView
   fonts: {
     [fontName: string]: any
   } = {}
 
-  constructor(
-    width = 800,
-    height = 800,
-    backgroundColor = Colors.gray1,
-    editor: EditorView
-  ) {
+  constructor(width = 800, height = 800, backgroundColor = Colors.gray1) {
     this.width = width // default width of the Scene is 800
     this.height = height // default height of the Scene is 800
     this.objects = [] // the objects property will be an Array containing AnimObject instances
     this.backgroundColor = backgroundColor // default background color is gray
-    this.editor = editor
     /*
     Creates a p5js sketch by specifying setup and draw methods
     setup() runs once when scene is initialised

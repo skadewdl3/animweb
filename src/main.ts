@@ -17,6 +17,7 @@ import Scene3D from './animweb/Scene3D'
 import { EditorView, basicSetup } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import Complex from './animweb/helpers/Complex'
+import { createApp, reactive } from 'petite-vue'
 
 declare global {
   interface Window {
@@ -31,18 +32,10 @@ const getElement = (selector: string) => {
   return document.querySelector(selector)
 }
 
-let defaultCode = `// import AnimObjects here\nawait use()\n\n//... and code your animation here\n`
-let editor = new EditorView({
-  //@ts-ignore
-  parent: document.querySelector('.codemirror-editor-container'),
-  doc: defaultCode,
-  extensions: [basicSetup, javascript(), EditorView.lineWrapping],
-})
-
 export type Scene = Scene2D | Scene3D
 let scene: Scene
-let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0, editor)
-let scene3D = new Scene3D(Width.full, Height.full, Colors.gray0, editor)
+let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0)
+let scene3D = new Scene3D(Width.full, Height.full, Colors.gray0)
 scene2D.show()
 scene3D.hide()
 scene = scene2D
@@ -96,29 +89,6 @@ const helpers = {
   Width,
   Height,
 }
-
-// const animObjects = {
-//   Point: [
-//     './animweb/AnimObjects/Point.ts',
-//     './animweb/AnimObjects/3D/Point3D.ts',
-//   ],
-//   Line: ['./animweb/AnimObjects/Line.ts', './animweb/AnimObjects/3D/Line3D.ts'],
-//   NumberPlane: [
-//     './animweb/AnimObjects/NumberPlane.ts',
-//     './animweb/AnimObjects/3D/NumberPlane3D.ts',
-//   ],
-//   Text: ['./animweb/AnimObjects/Text.ts', './animweb/AnimObjects/3D/Text3D.ts'],
-//   Curve: ['./animweb/AnimObjects/Curve.ts'],
-//   ImplicitCurve: ['./animweb/AnimObjects/ImplicitCurve.ts'],
-//   Surface: ['./animweb/AnimObjects/3D/Surface.ts'],
-//   ComplexPlane: ['./animweb/AnimObjects/3D/ComplexPlane3D.ts'],
-//   Cube: ['./animweb/AnimObjects/3D/Cube.ts'],
-//   LaTeX: ['./animweb/AnimObjects/LaTeX.ts'],
-//   Latex: ['./animweb/AnimObjects/LaTeX.ts'],
-//   TeX: ['./animweb/AnimObjects/LaTeX.ts'],
-//   Tex: ['./animweb/AnimObjects/LaTeX.ts'],
-//   Vector: ['./animweb/AnimObjects/Vector.ts'],
-// }
 
 const aos = {
   Point: [
@@ -222,24 +192,18 @@ const showError = (
   errMessage: string,
   errLineNumber: number
 ) => {
-  let codeError = document.querySelector('.code-error')
-  // @ts-ignore
-  document.querySelector(
-    '.code-error-message'
-  ).textContent = `${errType}: ${errMessage}`
-  // @ts-ignore
-  document.querySelector(
-    '.code-error-line'
-  ).textContent = `at line ${errLineNumber}`
-  codeError?.classList.remove('hidden')
+  error.show(errType, errMessage, errLineNumber)
 }
+
 Object.defineProperty(window, 'showError', {
   get() {
     return showError
   },
 })
 
-getElement('.btn-play')?.addEventListener('click', () => {
+// Creating the UI using petite-vue
+
+const getInlineCode = (codeEditor: EditorView) => {
   let defaultExports = ''
   for (let name in window.WebAnim) {
     defaultExports = defaultExports.concat(
@@ -247,39 +211,80 @@ getElement('.btn-play')?.addEventListener('click', () => {
     )
   }
   let inlineCode = document.createTextNode(
-    `try {\n${defaultExports}${editor.state.doc.toString()}\n}\ncatch (err) {
-          let [errLineNumber, errLineColumn] = err.stack.split(':').slice(-2).map((i) => parseInt(i))
-          let errType = err.stack.split(':')[0]
-          showError(errType, err.message, parseInt(errLineNumber - ${
-            defaultExports.split('\n').length
-          }))
-      }`
+    `try {\n${defaultExports}${codeEditor.state.doc.toString()}\n}\ncatch (err) {
+            let [errLineNumber, errLineColumn] = err.stack.split(':').slice(-2).map((i) => parseInt(i))
+            let errType = err.stack.split(':')[0]
+            showError(errType, err.message, parseInt(errLineNumber - ${
+              defaultExports.split('\n').length
+            }))
+        }`
   )
+  return inlineCode
+}
 
-  let script = document.createElement('script')
-  script.type = 'module'
-  script.className = 'user-script'
-  script.appendChild(inlineCode)
-  let prevScript = getElement('.user-script')
-  if (prevScript) document.body.removeChild(prevScript)
-  scene2D.resetScene()
-  scene3D.resetScene()
-  document.body.appendChild(script)
+const editor = reactive({
+  editor: null,
+  create() {
+    console.log('this ran')
+    let defaultCode = `// import AnimObjects here\nawait use()\n\n//... and code your animation here\n`
+    this.editor = new EditorView({
+      //@ts-ignore
+      parent: document.querySelector('.codemirror-editor-container'),
+      doc: defaultCode,
+      extensions: [basicSetup, javascript(), EditorView.lineWrapping],
+    })
+  },
+  run() {
+    error.hide()
+    scene2D.resetScene()
+    scene3D.resetScene()
+    let inlineCode = getInlineCode(this.editor)
+    let script = document.createElement('script')
+    script.type = 'module'
+    script.className = 'user-script'
+    script.appendChild(inlineCode)
+    let prevScript = getElement('.user-script')
+    if (prevScript) document.body.removeChild(prevScript)
+    scene2D.resetScene()
+    scene3D.resetScene()
+    document.body.appendChild(script)
+  },
+  clear() {
+    scene2D.resetScene()
+    scene3D.resetScene()
+  },
 })
 
-getElement('.btn-clear')?.addEventListener('click', () => {
-  scene2D.resetScene()
-  scene3D.resetScene()
+const code = reactive({
+  hidden: false,
+  show() {
+    this.hidden = false
+  },
+  hide() {
+    this.hidden = true
+  },
 })
 
-getElement('.btn-hide-code')?.addEventListener('click', () => {
-  getElement('.codemirror-editor-container')?.classList.add('hidden')
-  getElement('.btn-hide-code')?.classList.add('hidden')
-  getElement('.btn-show-code')?.classList.remove('hidden')
+const error = reactive({
+  hidden: true,
+  message: '',
+  lineNumber: 0,
+  type: '',
+  show(errType: string, errMessage: string, errLineNumber: number) {
+    this.message = errMessage
+    this.lineNumber = errLineNumber
+    this.type = errType
+    this.hidden = false
+  },
+  hide() {
+    this.hidden = true
+  },
 })
 
-getElement('.btn-show-code')?.addEventListener('click', () => {
-  getElement('.codemirror-editor-container')?.classList.remove('hidden')
-  getElement('.btn-show-code')?.classList.add('hidden')
-  getElement('.btn-hide-code')?.classList.remove('hidden')
-})
+const UserControls = () => {
+  return {
+    $template: '#user-controls',
+  }
+}
+
+createApp({ UserControls, editor, code, error }).mount()

@@ -36,7 +36,6 @@ export default class Scene3D {
   mode: RenderingModes = RenderingModes._3D
   id: string = uuid()
   hidden: boolean = false
-  editor?: EditorView
   rotate: boolean = true
   rotateAngle: number = 0.01
 
@@ -44,15 +43,9 @@ export default class Scene3D {
     [fontName: string]: any
   } = {}
 
-  constructor(
-    width = 800,
-    height = 800,
-    backgroundColor = Colors.gray1,
-    editor: EditorView
-  ) {
+  constructor(width = 800, height = 800, backgroundColor = Colors.gray1) {
     this.width = width // default width of the Scene is 800
     this.height = height // default height of the Scene is 800
-    this.editor = editor
     this.objects = [] // the objects property will be an Array containing AnimObject3D instances
     this.backgroundColor = backgroundColor // default background color is gray
 
