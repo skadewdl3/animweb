@@ -40,30 +40,129 @@ scene2D.show()
 scene3D.hide()
 scene = scene2D
 
+
+const getInlineCode = (codeEditor: EditorView) => {
+  let defaultExports = ''
+  for (let name in window.WebAnim) {
+    defaultExports = defaultExports.concat(
+      `var ${name} = window.WebAnim.${name}\n`
+    )
+  }
+  let inlineCode = document.createTextNode(
+    `try {\n${defaultExports}${codeEditor.state.doc.toString()}\n}\ncatch (err) {
+            let [errLineNumber, errLineColumn] = err.stack.split(':').slice(-2).map((i) => parseInt(i))
+            let errType = err.stack.split(':')[0]
+            showError(errType, err.message, parseInt(errLineNumber - ${
+              defaultExports.split('\n').length
+            }))
+        }`
+  )
+  return inlineCode
+}
+
+const editor = reactive({
+  editor: null,
+  create() {
+    console.log('this ran')
+    let defaultCode = `// import AnimObjects here\nawait use()\n\n//... and code your animation here\n`
+    this.editor = new EditorView({
+      //@ts-ignore
+      parent: document.querySelector('.codemirror-editor-container'),
+      doc: defaultCode,
+      extensions: [basicSetup, javascript(), EditorView.lineWrapping],
+    })
+  },
+  run() {
+    error.hide()
+    scene2D.resetScene()
+    scene3D.resetScene()
+    let inlineCode = getInlineCode(this.editor)
+    let script = document.createElement('script')
+    script.type = 'module'
+    script.className = 'user-script'
+    script.appendChild(inlineCode)
+    let prevScript = getElement('.user-script')
+    if (prevScript) document.body.removeChild(prevScript)
+    scene2D.resetScene()
+    scene3D.resetScene()
+    document.body.appendChild(script)
+  },
+  clear() {
+    scene2D.resetScene()
+    scene3D.resetScene()
+  },
+})
+
+const code = reactive({
+  hidden: false,
+  show() {
+    this.hidden = false
+  },
+  hide() {
+    this.hidden = true
+  },
+})
+
+const error = reactive({
+  hidden: true,
+  message: '',
+  lineNumber: 0,
+  type: '',
+  show(errType: string, errMessage: string, errLineNumber: number) {
+    this.message = errMessage
+    this.lineNumber = errLineNumber
+    this.type = errType
+    this.hidden = false
+  },
+  hide() {
+    this.hidden = true
+  },
+})
+
+const logger = reactive({
+  logs: [],
+  logComplex(complex: Complex) {
+    this.logs.push({
+      title: 'Complex Number',
+      re: complex.re,
+      im: complex.im,
+      type: 'complex',
+    })
+  },
+  logMatrix() {},
+  logColor(color: Color) {
+    this.logs.push({
+      type: 'color',
+      title: 'Color',
+      rgba: color.rgba,
+      r: color.rgbaVals[0],
+      g: color.rgbaVals[1],
+      b: color.rgbaVals[2],
+      a: color.rgbaVals[3],
+      hex: color.hex,
+    })
+  },
+  logArray() {},
+  logObject() {},
+  log() {},
+})
+
 const functions = {
   wait: async (config: any) => scene.wait(config),
   println: (...configItems: any) => {
     for (let config of configItems) {
       if (config instanceof Complex) {
-        console.log(
-          `${config.re} ${config.im >= 0 ? '+' : '-'} ${
-            config.im < 0 ? -config.im : config.im
-          }i`
-        )
+        logger.logComplex(config)
+      } else if (config instanceof Color) {
+        logger.logColor(config)
       } else if (config instanceof Matrix) {
-        let obj = {}
-        // @ts-ignore
-        for (let [index, row] of Object.entries(config.matrix._data)) {
-          // @ts-ignore
-          obj[`row-${index}`] = row
-        }
-        console.table(obj)
+        logger.logMatrix(config)
       } else if (config instanceof Array) {
-        console.table(config)
+        logger.logArray(config)
       } else if (config instanceof Object) {
-        console.dir(config)
+        logger.logObject(config)
       } else {
-        console.log(config)
+        logger.log(config, typeof config)
       }
     }
   },
@@ -187,104 +286,17 @@ Object.defineProperty(window, 'camera', {
   },
 })
 
-const showError = (
-  errType: string,
-  errMessage: string,
-  errLineNumber: number
-) => {
-  error.show(errType, errMessage, errLineNumber)
-}
-
 Object.defineProperty(window, 'showError', {
   get() {
-    return showError
+    return error.show
   },
 })
 
 // Creating the UI using petite-vue
-
-const getInlineCode = (codeEditor: EditorView) => {
-  let defaultExports = ''
-  for (let name in window.WebAnim) {
-    defaultExports = defaultExports.concat(
-      `var ${name} = window.WebAnim.${name}\n`
-    )
-  }
-  let inlineCode = document.createTextNode(
-    `try {\n${defaultExports}${codeEditor.state.doc.toString()}\n}\ncatch (err) {
-            let [errLineNumber, errLineColumn] = err.stack.split(':').slice(-2).map((i) => parseInt(i))
-            let errType = err.stack.split(':')[0]
-            showError(errType, err.message, parseInt(errLineNumber - ${
-              defaultExports.split('\n').length
-            }))
-        }`
-  )
-  return inlineCode
-}
-
-const editor = reactive({
-  editor: null,
-  create() {
-    console.log('this ran')
-    let defaultCode = `// import AnimObjects here\nawait use()\n\n//... and code your animation here\n`
-    this.editor = new EditorView({
-      //@ts-ignore
-      parent: document.querySelector('.codemirror-editor-container'),
-      doc: defaultCode,
-      extensions: [basicSetup, javascript(), EditorView.lineWrapping],
-    })
-  },
-  run() {
-    error.hide()
-    scene2D.resetScene()
-    scene3D.resetScene()
-    let inlineCode = getInlineCode(this.editor)
-    let script = document.createElement('script')
-    script.type = 'module'
-    script.className = 'user-script'
-    script.appendChild(inlineCode)
-    let prevScript = getElement('.user-script')
-    if (prevScript) document.body.removeChild(prevScript)
-    scene2D.resetScene()
-    scene3D.resetScene()
-    document.body.appendChild(script)
-  },
-  clear() {
-    scene2D.resetScene()
-    scene3D.resetScene()
-  },
-})
-
-const code = reactive({
-  hidden: false,
-  show() {
-    this.hidden = false
-  },
-  hide() {
-    this.hidden = true
-  },
-})
-
-const error = reactive({
-  hidden: true,
-  message: '',
-  lineNumber: 0,
-  type: '',
-  show(errType: string, errMessage: string, errLineNumber: number) {
-    this.message = errMessage
-    this.lineNumber = errLineNumber
-    this.type = errType
-    this.hidden = false
-  },
-  hide() {
-    this.hidden = true
-  },
-})
-
 const UserControls = () => {
   return {
     $template: '#user-controls',
   }
 }
 
-createApp({ UserControls, editor, code, error }).mount()
+createApp({ UserControls, editor, code, error, logger }).mount()
