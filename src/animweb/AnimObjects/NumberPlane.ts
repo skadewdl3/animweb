@@ -350,6 +350,7 @@ export default class NumberPlane extends AnimObject {
           stepY: this.stepY,
           origin: this.origin,
         },
+        scene: this.scene
       }),
       transitionOptions
     )
@@ -394,6 +395,7 @@ export default class NumberPlane extends AnimObject {
           stepY: this.stepY,
           origin: this.origin,
         },
+        scene: this.scene
       }),
       transitionOptions
     )
@@ -418,6 +420,7 @@ export default class NumberPlane extends AnimObject {
           stepY: this.stepY,
           origin: this.origin,
         },
+        scene: this.scene
       }),
       transitionOptions
     )
@@ -434,6 +437,7 @@ export default class NumberPlane extends AnimObject {
         stepY: this.stepY,
         origin: this.origin,
       },
+      scene: this.scene
     })
     this.vectors.push(vec)
     return vec

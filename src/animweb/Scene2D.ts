@@ -18,7 +18,6 @@ import { v4 as uuid } from 'uuid'
 import { wait } from './helpers/miscellaneous'
 import { TransitionQueueItem } from './Transition'
 import { RenderingModes } from './helpers/Constants'
-import WebAnim from '../main'
 // @ts-ignore
 import { createSketch } from '../p5-util/sketch'
 import { EditorView } from 'codemirror'
@@ -67,92 +66,93 @@ export default class Scene {
     new p5(this.sketch, document.body)
   }
 
-  setupEventListeners() {
-    // @ts-ignore
-    document.querySelector('.btn-play').onclick = () => {
-      document.querySelector('.code-error')?.classList.add('hidden')
-      this.resetScene()
+  // setupEventListeners() {
+  //   // @ts-ignore
+  //   document.querySelector('.btn-play').onclick = () => {
+  //     document.querySelector('.code-error')?.classList.add('hidden')
+  //     this.resetScene()
 
-      document.querySelector('.user-script')?.remove()
-      let userScript = document.createElement('script')
-      userScript.className = 'user-script'
-      userScript.type = 'module'
+  //     document.querySelector('.user-script')?.remove()
+  //     let userScript = document.createElement('script')
+  //     userScript.className = 'user-script'
+  //     userScript.type = 'module'
 
-      let defaultExports = ``
+  //     let defaultExports = ``
 
-      for (let property in WebAnim) {
-        defaultExports = defaultExports.concat(
-          `var ${property} = window.WebAnim.${property}\n`
-        )
-      }
+  //     for (let property in WebAnim) {
+  //       defaultExports = defaultExports.concat(
+  //         `var ${property} = window.WebAnim.${property}\n`
+  //       )
+  //     }
 
-      defaultExports = defaultExports.concat(`render('2D')\n`)
-      // @ts-ignore
+  //     defaultExports = defaultExports.concat(`render('2D')\n`)
+  //     // @ts-ignore
 
-      let inlineCode = document.createTextNode(
-        `try {\n${defaultExports}${this.editor?.state.doc.toString()}\n}\ncatch (err) {
-          let [errLineNumber, errLineColumn] = err.stack.split(':').slice(-2).map((i) => parseInt(i))
-          let errType = err.stack.split(':')[0]
-          let codeError = document.querySelector('.code-error') 
-          document.querySelector('.code-error-message').textContent = errType + ': ' + err.message
-          document.querySelector('.code-error-line').textContent = 'at line ' + parseInt(errLineNumber - ${
-            defaultExports.split('\n').length
-          })
-          codeError.classList.remove('hidden')
-      }`
-      )
-      userScript.appendChild(inlineCode)
-      document.body.appendChild(userScript)
-      this.startLoop()
-    }
+  //     let inlineCode = document.createTextNode(
+  //       `try {\n${defaultExports}${this.editor?.state.doc.toString()}\n}\ncatch (err) {
+  //         let [errLineNumber, errLineColumn] = err.stack.split(':').slice(-2).map((i) => parseInt(i))
+  //         let errType = err.stack.split(':')[0]
+  //         let codeError = document.querySelector('.code-error')
+  //         document.querySelector('.code-error-message').textContent = errType + ': ' + err.message
+  //         document.querySelector('.code-error-line').textContent = 'at line ' + parseInt(errLineNumber - ${
+  //           defaultExports.split('\n').length
+  //         })
+  //         codeError.classList.remove('hidden')
+  //     }`
+  //     )
+  //     userScript.appendChild(inlineCode)
+  //     document.body.appendChild(userScript)
+  //     this.startLoop()
+  //   }
 
-    // @ts-ignore
-    document.querySelector('.btn-clear').onclick = () => {
-      document.querySelector('.code-error')?.classList.add('hidden')
-      this.objects = []
-      this.resetScene()
-    }
+  //   // @ts-ignore
+  //   document.querySelector('.btn-clear').onclick = () => {
+  //     document.querySelector('.code-error')?.classList.add('hidden')
+  //     this.objects = []
+  //     this.resetScene()
+  //   }
 
-    // @ts-ignore
-    document.querySelector('.btn-hide-code').onclick = () => {
-      document.querySelector('.code-error')?.classList.add('hidden')
-      document.querySelector('.btn-hide-code')?.classList.add('hidden')
-      document.querySelector('.btn-show-code')?.classList.remove('hidden')
-      document
-        .querySelector('.codemirror-editor-container')
-        ?.classList.add('hidden')
-      document.querySelector('.code-title')?.classList.add('hidden-text')
-    }
+  //   // @ts-ignore
+  //   document.querySelector('.btn-hide-code').onclick = () => {
+  //     document.querySelector('.code-error')?.classList.add('hidden')
+  //     document.querySelector('.btn-hide-code')?.classList.add('hidden')
+  //     document.querySelector('.btn-show-code')?.classList.remove('hidden')
+  //     document
+  //       .querySelector('.codemirror-editor-container')
+  //       ?.classList.add('hidden')
+  //     document.querySelector('.code-title')?.classList.add('hidden-text')
+  //   }
 
-    // @ts-ignore
-    document.querySelector('.btn-show-code').onclick = () => {
-      document.querySelector('.code-error')?.classList.remove('hidden')
-      document.querySelector('.btn-hide-code')?.classList.remove('hidden')
-      document.querySelector('.btn-show-code')?.classList.add('hidden')
-      document
-        .querySelector('.codemirror-editor-container')
-        ?.classList.remove('hidden')
-      document.querySelector('.code-title')?.classList.remove('hidden-text')
-    }
+  //   // @ts-ignore
+  //   document.querySelector('.btn-show-code').onclick = () => {
+  //     document.querySelector('.code-error')?.classList.remove('hidden')
+  //     document.querySelector('.btn-hide-code')?.classList.remove('hidden')
+  //     document.querySelector('.btn-show-code')?.classList.add('hidden')
+  //     document
+  //       .querySelector('.codemirror-editor-container')
+  //       ?.classList.remove('hidden')
+  //     document.querySelector('.code-title')?.classList.remove('hidden-text')
+  //   }
 
-    // @ts-ignore
-    window.onerror = (message: string, _, line: number) => {
-      let defaultExports = ``
-      for (let property in WebAnim) {
-        defaultExports = defaultExports.concat(
-          `var ${property} = window.WebAnim.${property}\n`
-        )
-      }
-      let codeError = document.querySelector('.code-error')
-      // @ts-ignore
-      document.querySelector('.code-error-message').textContent = message
-      // @ts-ignore
-      document.querySelector('.code-error-line').textContent = `at line ${
-        line - defaultExports.split('\n').length
-      }`
-      codeError?.classList.remove('hidden')
-    }
-  }
+  //   // @ts-ignore
+  //   window.onerror = (message: string, _, line: number) => {
+  //     let defaultExports = ``
+  //     for (let property in WebAnim) {
+  //       defaultExports = defaultExports.concat(
+  //         `var ${property} = window.WebAnim.${property}\n`
+  //       )
+  //     }
+  //     let codeError = document.querySelector('.code-error')
+  //     // @ts-ignore
+  //     document.querySelector('.code-error-message').textContent = message
+  //     // @ts-ignore
+  //     document.querySelector('.code-error-line').textContent = `at line ${
+  //       line - defaultExports.split('\n').length
+  //     }`
+  //     codeError?.classList.remove('hidden')
+  //   }
+  // }
+  setupEventListeners() {}
 
   resetScene() {
     for (let object of this.objects) if (object.remove) object.remove()
@@ -244,7 +244,6 @@ export default class Scene {
   }
 
   async wait(timeout?: number): Promise<void> {
-    console.log(this.transitionQueue)
     return new Promise(async (resolve, reject) => {
       setTimeout(async () => {
         while (this.transitionQueue.length != 0) {

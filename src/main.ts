@@ -1,37 +1,22 @@
-import * as math from 'mathjs'
-import NumberPlane from './animweb/AnimObjects/NumberPlane'
-import NumberPlane3D, {
-  NumberPlanes,
-  Octants,
-} from './animweb/AnimObjects/3D/NumberPlane3D'
+import { NumberPlanes, Octants } from './animweb/AnimObjects/3D/NumberPlane3D'
 import Scene2D from './animweb/Scene2D'
-import Point from './animweb/AnimObjects/Point'
-import Line, { Lines } from './animweb/AnimObjects/Line'
+import { Lines } from './animweb/AnimObjects/Line'
 import { Width, Height } from './animweb/helpers/Dimensions'
 import Colors from './animweb/helpers/Colors'
 import FadeIn from './animweb/transitions/FadeIn'
 import FadeOut from './animweb/transitions/FadeOut'
 import Create from './animweb/transitions/Create'
-import Curve from './animweb/AnimObjects/Curve'
 import Color from './animweb/helpers/Color'
 import { Transitions } from './animweb/Transition'
-import Text, { TextStyle } from './animweb/AnimObjects/Text'
-import AnimObject, { Observables, AnimObjects } from './animweb/AnimObject'
-import Constants, { RenderingModes } from './animweb/helpers/Constants'
-import ImplicitCurve from './animweb/AnimObjects/ImplicitCurve'
-import LaTeX from './animweb/AnimObjects/LaTeX'
+import { TextStyle } from './animweb/AnimObjects/Text'
+import AnimObject, { Observables } from './animweb/AnimObject'
+import Constants from './animweb/helpers/Constants'
 import Matrix from './animweb/helpers/Matrix'
-import Vector, { Vectors } from './animweb/AnimObjects/Vector'
+import { Vectors } from './animweb/AnimObjects/Vector'
 import Scene3D from './animweb/Scene3D'
 import { EditorView, basicSetup } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
-import Cube from './animweb/AnimObjects/3D/Cube'
-import Line3D from './animweb/AnimObjects/3D/Line3D'
-import Point3D from './animweb/AnimObjects/3D/Point3D'
-import Text3D from './animweb/AnimObjects/3D/Text3D'
 import Complex from './animweb/helpers/Complex'
-import ComplexPlane3D from './animweb/AnimObjects/3D/ComplexPlane3D'
-import Surface from './animweb/AnimObjects/3D/Surface'
 
 declare global {
   interface Window {
@@ -42,7 +27,11 @@ declare global {
   }
 }
 
-let defaultCode = `// code your animation here`
+const getElement = (selector: string) => {
+  return document.querySelector(selector)
+}
+
+let defaultCode = `// import AnimObjects here\nawait use()\n\n//... and code your animation here\n`
 let editor = new EditorView({
   //@ts-ignore
   parent: document.querySelector('.codemirror-editor-container'),
@@ -58,17 +47,7 @@ scene2D.show()
 scene3D.hide()
 scene = scene2D
 
-let WebAnim = {
-  // Helper classes/objects
-  scene,
-  Color,
-  Colors,
-  Matrix,
-  Complex,
-  Width,
-  Height,
-
-  // A bunch of helper functions
+const functions = {
   wait: async (config: any) => scene.wait(config),
   println: (...configItems: any) => {
     for (let config of configItems) {
@@ -107,43 +86,41 @@ let WebAnim = {
       scene = scene2D
     }
   },
-  startRotation() {
-    scene3D.startRotation()
-  },
-  stopRotation() {
-    scene3D.stopRotation()
-  },
+}
 
-  // AnimObjects
-  NumberPlane: (config: any) =>
-    scene == scene2D
-      ? new NumberPlane({ ...config, scene })
-      : new NumberPlane3D({ ...config, scene }),
-  ComplexPlane: (config: any) =>
-    scene == scene2D ? undefined : new ComplexPlane3D({ ...config, scene }),
-  Line: (config: any) =>
-    scene == scene2D
-      ? new Line({ ...config, scene })
-      : new Line3D({ ...config, scene }),
-  Point: (config: any) =>
-    scene == scene2D
-      ? new Point({ ...config, scene })
-      : new Point3D({ ...config, scene }),
-  Curve: (config: any) => new Curve({ ...config, scene }),
-  Text: (config: any) =>
-    scene == scene2D
-      ? new Text({ ...config, scene })
-      : new Text3D({ ...config, scene }),
-  Cube: (config: any) => new Cube({ ...config, scene }),
-  Surface: (config: any) => new Surface({ ...config, scene }),
-  ImplicitCurve: (config: any) => new ImplicitCurve({ ...config, scene }),
-  LaTeX: (config: any) => new LaTeX({ ...config, scene }),
-  Latex: (config: any) => new LaTeX({ ...config, scene }),
-  TeX: (config: any) => new LaTeX({ ...config, scene }),
-  Tex: (config: any) => new LaTeX({ ...config, scene }),
-  Vector: (config: any) => new Vector({ ...config, scene }),
+const helpers = {
+  Color,
+  Colors,
+  Matrix,
+  Complex,
+  Width,
+  Height,
+}
 
-  // transitions
+const animObjects = {
+  Point: [
+    './animweb/AnimObjects/Point.ts',
+    './animweb/AnimObjects/3D/Point3D.ts',
+  ],
+  Line: ['./animweb/AnimObjects/Line.ts', './animweb/AnimObjects/3D/Line3D.ts'],
+  NumberPlane: [
+    './animweb/AnimObjects/NumberPlane.ts',
+    './animweb/AnimObjects/3D/NumberPlane3D.ts',
+  ],
+  Text: ['./animweb/AnimObjects/Text.ts', './animweb/AnimObjects/3D/Text3D.ts'],
+  Curve: ['./animweb/AnimObjects/Curve.ts'],
+  ImplicitCurve: ['./animweb/AnimObjects/ImplicitCurve.ts'],
+  Surface: ['./animweb/AnimObjects/3D/Surface.ts'],
+  ComplexPlane: ['./animweb/AnimObjects/3D/ComplexPlane3D.ts'],
+  Cube: ['./animweb/AnimObjects/3D/Cube.ts'],
+  LaTeX: ['./animweb/AnimObjects/LaTeX.ts'],
+  Latex: ['./animweb/AnimObjects/LaTeX.ts'],
+  TeX: ['./animweb/AnimObjects/LaTeX.ts'],
+  Tex: ['./animweb/AnimObjects/LaTeX.ts'],
+  Vector: ['./animweb/AnimObjects/Vector.ts'],
+}
+
+const transitions = {
   Create: (object: AnimObject, config: any) => {
     if (scene instanceof Scene2D) {
       scene.add(Create(object, config))
@@ -155,18 +132,50 @@ let WebAnim = {
     }
   },
   FadeOut,
+}
 
-  // enums
+const enums = {
   Transitions,
   Observables,
   Lines,
   TextStyle,
-  AnimObjects,
   Constants,
   Vectors,
   NumberPlanes,
   Octants,
   Fonts: {},
+}
+
+window.WebAnim = {
+  use: async (...config: Array<any>) => {
+    for (let name of config) {
+      // @ts-ignore
+      let arr = animObjects[name]
+      let imported: Array<any> = []
+      if (arr.length > 1) {
+        for (let i = 0; i < arr.length; i++) {
+          let obj = await import(arr[i])
+          imported.push(obj.default)
+        }
+        window.WebAnim[name] = (config: any) => {
+          return scene == scene2D
+            ? new imported[0]({ ...config, scene })
+            : new imported[1]({ ...config, scene })
+        }
+      } else {
+        let obj = await import(arr[0])
+        window.WebAnim[`${name}`] = obj.default
+      }
+      let importScript = document.createElement('script')
+      let text = document.createTextNode(`var ${name} = window.WebAnim.${name}`)
+      importScript.appendChild(text)
+      getElement('.user-imports')?.appendChild(importScript)
+    }
+  },
+  ...functions,
+  ...transitions,
+  ...enums,
+  ...helpers,
 }
 
 Object.defineProperty(window, 'camera', {
@@ -175,5 +184,52 @@ Object.defineProperty(window, 'camera', {
   },
 })
 
-window.WebAnim = WebAnim
-export default WebAnim
+const showError = (
+  errType: string,
+  errMessage: string,
+  errLineNumber: number
+) => {
+  let codeError = document.querySelector('.code-error')
+  // @ts-ignore
+  document.querySelector(
+    '.code-error-message'
+  ).textContent = `${errType}: ${errMessage}`
+  // @ts-ignore
+  document.querySelector(
+    '.code-error-line'
+  ).textContent = `at line ${errLineNumber}`
+  codeError?.classList.remove('hidden')
+}
+Object.defineProperty(window, 'showError', {
+  get() {
+    return showError
+  },
+})
+
+getElement('.btn-play')?.addEventListener('click', () => {
+  let defaultExports = ''
+  for (let name in window.WebAnim) {
+    defaultExports = defaultExports.concat(
+      `var ${name} = window.WebAnim.${name}\n`
+    )
+  }
+  let inlineCode = document.createTextNode(
+    `try {\n${defaultExports}${editor.state.doc.toString()}\n}\ncatch (err) {
+          let [errLineNumber, errLineColumn] = err.stack.split(':').slice(-2).map((i) => parseInt(i))
+          let errType = err.stack.split(':')[0]
+          showError(errType, err.message, parseInt(errLineNumber - ${
+            defaultExports.split('\n').length
+          }))
+      }`
+  )
+
+  let script = document.createElement('script')
+  script.type = 'module'
+  script.className = 'user-script'
+  script.appendChild(inlineCode)
+  let prevScript = getElement('.user-script')
+  if (prevScript) document.body.removeChild(prevScript)
+  scene2D.resetScene()
+  scene3D.resetScene()
+  document.body.appendChild(script)
+})
