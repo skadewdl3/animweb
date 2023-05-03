@@ -251,6 +251,7 @@ const enums = {
 window.WebAnim = {
   use: async (...config: Array<any>) => {
     for (let name of config) {
+      if (!(name in aos)) console.log('not present')
       // @ts-ignore
       let arr = aos[name]
       let imported: Array<any> = []
@@ -265,8 +266,9 @@ window.WebAnim = {
             : new imported[1]({ ...config, scene })
         }
       } else {
-        let obj = await import(`./${arr[0]}`)
-        window.WebAnim[name] = obj.default
+        let obj = await arr[0]()
+        window.WebAnim[name] = (config: any) =>
+          new obj.default({ ...config, scene })
       }
       let importScript = document.createElement('script')
       let text = document.createTextNode(`var ${name} = window.WebAnim.${name}`)
