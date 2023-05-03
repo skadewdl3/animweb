@@ -97,27 +97,60 @@ const helpers = {
   Height,
 }
 
-const animObjects = {
+// const animObjects = {
+//   Point: [
+//     './animweb/AnimObjects/Point.ts',
+//     './animweb/AnimObjects/3D/Point3D.ts',
+//   ],
+//   Line: ['./animweb/AnimObjects/Line.ts', './animweb/AnimObjects/3D/Line3D.ts'],
+//   NumberPlane: [
+//     './animweb/AnimObjects/NumberPlane.ts',
+//     './animweb/AnimObjects/3D/NumberPlane3D.ts',
+//   ],
+//   Text: ['./animweb/AnimObjects/Text.ts', './animweb/AnimObjects/3D/Text3D.ts'],
+//   Curve: ['./animweb/AnimObjects/Curve.ts'],
+//   ImplicitCurve: ['./animweb/AnimObjects/ImplicitCurve.ts'],
+//   Surface: ['./animweb/AnimObjects/3D/Surface.ts'],
+//   ComplexPlane: ['./animweb/AnimObjects/3D/ComplexPlane3D.ts'],
+//   Cube: ['./animweb/AnimObjects/3D/Cube.ts'],
+//   LaTeX: ['./animweb/AnimObjects/LaTeX.ts'],
+//   Latex: ['./animweb/AnimObjects/LaTeX.ts'],
+//   TeX: ['./animweb/AnimObjects/LaTeX.ts'],
+//   Tex: ['./animweb/AnimObjects/LaTeX.ts'],
+//   Vector: ['./animweb/AnimObjects/Vector.ts'],
+// }
+
+const aos = {
   Point: [
-    './animweb/AnimObjects/Point.ts',
-    './animweb/AnimObjects/3D/Point3D.ts',
+    async () => await import('./animweb/AnimObjects/Point.ts'),
+    async () => await import('./animweb/AnimObjects/3D/Point3D.ts'),
   ],
-  Line: ['./animweb/AnimObjects/Line.ts', './animweb/AnimObjects/3D/Line3D.ts'],
+  Line: [
+    async () => await import('./animweb/AnimObjects/Line.ts'),
+    async () => await import('./animweb/AnimObjects/3D/Line3D.ts'),
+  ],
   NumberPlane: [
-    './animweb/AnimObjects/NumberPlane.ts',
-    './animweb/AnimObjects/3D/NumberPlane3D.ts',
+    async () => await import('./animweb/AnimObjects/NumberPlane.ts'),
+    async () => await import('./animweb/AnimObjects/3D/NumberPlane3D.ts'),
   ],
-  Text: ['./animweb/AnimObjects/Text.ts', './animweb/AnimObjects/3D/Text3D.ts'],
-  Curve: ['./animweb/AnimObjects/Curve.ts'],
-  ImplicitCurve: ['./animweb/AnimObjects/ImplicitCurve.ts'],
-  Surface: ['./animweb/AnimObjects/3D/Surface.ts'],
-  ComplexPlane: ['./animweb/AnimObjects/3D/ComplexPlane3D.ts'],
-  Cube: ['./animweb/AnimObjects/3D/Cube.ts'],
-  LaTeX: ['./animweb/AnimObjects/LaTeX.ts'],
-  Latex: ['./animweb/AnimObjects/LaTeX.ts'],
-  TeX: ['./animweb/AnimObjects/LaTeX.ts'],
-  Tex: ['./animweb/AnimObjects/LaTeX.ts'],
-  Vector: ['./animweb/AnimObjects/Vector.ts'],
+  Text: [
+    async () => await import('./animweb/AnimObjects/Text.ts'),
+    async () => await import('./animweb/AnimObjects/3D/Text3D.ts'),
+  ],
+  Curve: [async () => await import('./animweb/AnimObjects/Curve.ts')],
+  ImplicitCurve: [
+    async () => await import('./animweb/AnimObjects/ImplicitCurve.ts'),
+  ],
+  Surface: [async () => await import('./animweb/AnimObjects/3D/Surface.ts')],
+  ComplexPlane: [
+    async () => await import('./animweb/AnimObjects/3D/ComplexPlane3D.ts'),
+  ],
+  Cube: [async () => await import('./animweb/AnimObjects/3D/Cube.ts')],
+  LaTeX: [async () => await import('./animweb/AnimObjects/LaTeX.ts')],
+  Latex: [async () => await import('./animweb/AnimObjects/LaTeX.ts')],
+  TeX: [async () => await import('./animweb/AnimObjects/LaTeX.ts')],
+  Tex: [async () => await import('./animweb/AnimObjects/LaTeX.ts')],
+  Vector: [async () => await import('./animweb/AnimObjects/Vector.ts')],
 }
 
 const transitions = {
@@ -150,11 +183,11 @@ window.WebAnim = {
   use: async (...config: Array<any>) => {
     for (let name of config) {
       // @ts-ignore
-      let arr = animObjects[name]
+      let arr = aos[name]
       let imported: Array<any> = []
       if (arr.length > 1) {
         for (let i = 0; i < arr.length; i++) {
-          let obj = await import(`./${arr[i]}`)
+          let obj = await arr[i]()
           imported.push(obj.default)
         }
         window.WebAnim[name] = (config: any) => {
