@@ -42,12 +42,16 @@
         </div>
       <div :class="{hidden: code.hidden}" class="codemirror-editor-container"></div>
       <div class="logger">
-        <div v-for="log in logger.logs" class="log">
-          <div class="logger-title">{{ log.title }}</div>
-          <div class="logger-complex-content" v-if="log.type === 'complex'">{{ log.content.re }} {{ log.content.im >= 0 ? '+'
-            : '-' }} {{ Math.abs(log.content.im) }}</div>
+        <div v-for="log in logger.logs" class="log"
+          style="border-radius: 0.5rem; overflow: hidden; font-size: 1.6rem; margin: 0.5rem 0;">
+          <!-- <div class="logger-title">{{ log.title }}</div> -->
+          <div class="logger-complex-content" v-if="log.type === 'complex'">{{ log.re }} {{ log.im >= 0 ? '+'
+            : '-' }} {{ Math.abs(log.im) }}i</div>
           <div class="logger-color-content" v-if="log.type === 'color'">
-            <div class="logger-color-patch" :style="{background: log.rgba}" style="width: 10px; height: 10px;"></div>
+            <div class="logger-color-name" :style="{background: log.rgba}" style="width: 100%; padding: 0.5rem 1rem;">{{ log.title
+              }} - {{ log.rgba }}
+            </div>
+            <!-- <div class="logger-color-patch" :style="{background: log.rgba}" style="width: 10px; height: 10px;"></div> -->
           </div>
           <div class="logger-matrix-content" v-if="log.type === 'matrix'"></div>
           <div class="logger-array-content" v-if="log.type === 'array'"> {{ JSON.stringify(log.content) }}</div>

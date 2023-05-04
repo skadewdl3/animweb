@@ -74,6 +74,7 @@ const editor = reactive({
   },
   run() {
     error.hide()
+    logger.clear()
     scene2D.resetScene()
     scene3D.resetScene()
     let inlineCode = getInlineCode(this.editor)
@@ -145,27 +146,13 @@ const logger = reactive({
   logArray() {},
   logObject() {},
   log() {},
+  clear() {
+    this.logs = []
+  },
 })
 
 const functions = {
   wait: async (config: any) => scene.wait(config),
-  println: (...configItems: any) => {
-    for (let config of configItems) {
-      if (config instanceof Complex) {
-        logger.logComplex(config)
-      } else if (config instanceof Color) {
-        logger.logColor(config)
-      } else if (config instanceof Matrix) {
-        logger.logMatrix(config)
-      } else if (config instanceof Array) {
-        logger.logArray(config)
-      } else if (config instanceof Object) {
-        logger.logObject(config)
-      } else {
-        logger.log(config, typeof config)
-      }
-    }
-  },
   show: (config: any) => scene.add(config),
   render: (mode: '3D' | '2D' = '2D') => {
     if (mode == '3D') {
@@ -252,10 +239,12 @@ window.WebAnim = {
   use: async (...config: Array<any>) => {
     for (let name of config) {
       if (!(name in aos))
-        error.show(
+        return error.show(
           'ImportError',
           `AnimObject '${name}' not found. Please check your spelling.`
         )
+      if (name in window.WebAnim) return
+      console.log('importing')
       // @ts-ignore
       let arr = aos[name]
       let imported: Array<any> = []
@@ -295,6 +284,28 @@ Object.defineProperty(window, 'camera', {
 Object.defineProperty(window, 'showError', {
   get() {
     return error.show
+  },
+})
+
+Object.defineProperty(window, 'print', {
+  get() {
+    return (...configItems: any) => {
+      for (let config of configItems) {
+        if (config instanceof Complex) {
+          logger.logComplex(config)
+        } else if (config instanceof Color) {
+          logger.logColor(config)
+        } else if (config instanceof Matrix) {
+          logger.logMatrix(config)
+        } else if (config instanceof Array) {
+          logger.logArray(config)
+        } else if (config instanceof Object) {
+          logger.logObject(config)
+        } else {
+          logger.log(config, typeof config)
+        }
+      }
+    }
   },
 })
 
