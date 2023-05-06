@@ -226,6 +226,7 @@ export default class ComplexPlane3D extends AnimObject3D {
         meshData: data,
         color: config.color || this.color,
         filled: config.filled || false,
+        equation: definition,
       })
       this.surfaces.push(surface)
       this.meshes.push(surface)

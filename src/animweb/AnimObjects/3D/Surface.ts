@@ -22,6 +22,7 @@ export interface MeshData {
 interface SurfaceProps {
   scene: Scene3D
   meshData: MeshData
+  equation: string
   filled?: boolean
   color?: Color
 }
@@ -35,10 +36,12 @@ export interface MeshData {
 export default class Surface extends AnimObject3D {
   filled: boolean = false
   meshData: MeshData
+  equation: string
 
   constructor(config: SurfaceProps) {
     super(config.scene)
     this.meshData = config.meshData
+    this.equation = config.equation
     config.filled && (this.filled = config.filled)
     config.color && (this.color = config.color)
 
@@ -56,6 +59,13 @@ export default class Surface extends AnimObject3D {
       geometry.setAttribute('position', new ThreeBufferAttribute(triangle, 3))
       geometries.push(geometry)
     }
+    if (geometries.length == 0) {
+      window.WebAnim.error.show(
+        'PlotError',
+        `${this.equation} cannot be plot in 3 dimensions. Please check the equation or report this error.`
+      )
+      return
+    }
     const geometry = mergeBufferGeometries(geometries, true)
     const material = new ThreeMeshBasicMaterial({
       color: this.color.hexNumber,
@@ -70,6 +80,13 @@ export default class Surface extends AnimObject3D {
       const geometry = new ThreeBufferGeometry()
       geometry.setAttribute('position', new ThreeBufferAttribute(triangle, 3))
       geometries.push(geometry)
+    }
+    if (geometries.length == 0) {
+      window.WebAnim.error.show(
+        'PlotError',
+        `${this.equation} cannot be plot in 3 dimensions. Please check the equation or report this error.`
+      )
+      return
     }
     const geometry = mergeBufferGeometries(geometries, true)
     const material = new ThreeLineBasicMaterial({

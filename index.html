@@ -14,11 +14,12 @@
     </div>
     <template id="user-controls" class="user-controls">
       <div @vue:mounted="editor.create()" style="
-                                                                                              display: flex;
-                                                                                              align-items: center;
-                                                                                              justify-content: space-between;
-                                                                                              padding-bottom: 1rem;
-                                                                                            ">
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding-bottom: 1rem;
+        "
+      >
         <p style="font-family: sans-serif; font-size: 3rem" class="code-title">
           Code
         </p>
@@ -31,40 +32,59 @@
           <button v-if="code.hidden" class="btn btn-show-code" @click="code.show()">
             Show Code
           </button>
-          </div>
-          </div>
-          <div class="code-error" :class="{hidden: error.hidden}">
+        </div>
+        </div>
+        <div class="code-error" :class="{hidden: error.hidden}">
         <div class="code-error-message">
           {{ error.type }}: {{ error.message }}
         </div>
-        <div class="code-error-line">{{!isNaN(error.lineNumber) ? 'at line' : ''}} {{ !isNaN(error.lineNumber) ?
-          error.lineNumber : '' }}</div>
+        <div class="code-error-line">
+          {{!isNaN(error.lineNumber) ? 'at line' : ''}} {{
+          !isNaN(error.lineNumber) ? error.lineNumber : '' }}
+        </div>
         </div>
       <div :class="{hidden: code.hidden}" class="codemirror-editor-container"></div>
       <div class="logger">
-        <div v-for="log in logger.logs" class="log"
-          style="border-radius: 0.5rem; overflow: hidden; font-size: 1.6rem; margin: 0.5rem 0;">
-          <!-- <div class="logger-title">{{ log.title }}</div> -->
-          <div class="logger-complex-content" v-if="log.type === 'complex'">{{ log.re }} {{ log.im >= 0 ? '+'
-            : '-' }} {{ Math.abs(log.im) }}i</div>
-          <div class="logger-color-content" v-if="log.type === 'color'">
-            <div class="logger-color-name" :style="{background: log.rgba}" style="width: 100%; padding: 0.5rem 1rem;">{{ log.title
-              }} - {{ log.rgba }}
+        <div v-for="log in logger.logs" class="log" style="
+                                    border-radius: 0.5rem;
+                                    overflow: hidden;
+                                    font-size: 1.6rem;
+                                    margin: 0.5rem 0;
+                                    width: 100%;
+                                  ">
+          <div class="logger-complex-content" v-if="log.type === 'complex'" style="padding: 0.5rem 1rem">
+            {{ log.string }}
+          </div>
+          <div class="logger-color-content" v-if="log.type === 'color'" :style="{background: log.rgba}"
+            style="padding: 0.5rem 1rem">
+            <div class="logger-color-name">
+              {{ log.title }} - {{ log.rgba }}
             </div>
             <!-- <div class="logger-color-patch" :style="{background: log.rgba}" style="width: 10px; height: 10px;"></div> -->
           </div>
           <div class="logger-matrix-content" v-if="log.type === 'matrix'"></div>
-          <div class="logger-array-content" v-if="log.type === 'array'"> {{ JSON.stringify(log.content) }}</div>
-          <div class="logger-object-content" v-if="log.type === 'string'">{{ log.content }}</div>
-          <div class="logger-object-content" v-if="log.type === 'number'">{{ log.content }}</div>
-          <div class="logger-object-content" v-if="log.type === 'object'"> {{ JSON.stringify(log.content) }} </div>
-      
-      
+          <div class="logger-array-content" v-if="log.type === 'array'">
+            {{ JSON.stringify(log.content) }}
+          </div>
+          <div class="logger-object-content" v-if="log.type === 'string'">
+            {{ log.content }}
+          </div>
+          <div class="logger-object-content" v-if="log.type === 'number'">
+            {{ log.content }}
+          </div>
+          <div class="logger-object-content" v-if="log.type === 'object'">
+            {{ JSON.stringify(log.content) }}
+          </div>
         </div>
       </div>
     </template>
-    <div id="app" style="position: absolute; top: 2rem; right: 1rem; min-width: 40%; max-width: 40%;"
-      v-scope="UserControls()"></div>
+    <div id="app" style="
+                    position: absolute;
+                    top: 2rem;
+                    right: 1rem;
+                    min-width: 40%;
+                    max-width: 40%;
+                  " v-scope="UserControls()"></div>
     <div class="user-imports"></div>
     <style>
       * {

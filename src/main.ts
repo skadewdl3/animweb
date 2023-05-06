@@ -18,6 +18,7 @@ import { EditorView, basicSetup } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import Complex from './animweb/helpers/Complex'
 import { createApp, reactive } from 'petite-vue'
+import { evaluate } from './animweb/helpers/miscellaneous.ts'
 
 declare global {
   interface Window {
@@ -25,6 +26,7 @@ declare global {
     P5Capture: any
     WebAnim: any
     BuildBridgedWorker: any
+    showError: Function
   }
 }
 
@@ -39,7 +41,6 @@ let scene3D = new Scene3D(Width.full, Height.full, Colors.gray0)
 scene2D.show()
 scene3D.hide()
 scene = scene2D
-
 
 const getInlineCode = (codeEditor: EditorView) => {
   let defaultExports = ''
@@ -63,7 +64,6 @@ const getInlineCode = (codeEditor: EditorView) => {
 const editor = reactive({
   editor: null,
   create() {
-    console.log('this ran')
     let defaultCode = `// import AnimObjects here\nawait use()\n\n//... and code your animation here\n`
     this.editor = new EditorView({
       //@ts-ignore
@@ -110,6 +110,7 @@ const error = reactive({
   lineNumber: 0,
   type: '',
   show(errType: string, errMessage: string, errLineNumber: number) {
+    console.log(arguments)
     this.message = errMessage
     this.lineNumber = errLineNumber
     this.type = errType
@@ -125,8 +126,7 @@ const logger = reactive({
   logComplex(complex: Complex) {
     this.logs.push({
       title: 'Complex Number',
-      re: complex.re,
-      im: complex.im,
+      string: complex.toString(),
       type: 'complex',
     })
   },
@@ -273,6 +273,7 @@ window.WebAnim = {
   ...transitions,
   ...enums,
   ...helpers,
+  error,
 }
 
 Object.defineProperty(window, 'camera', {
@@ -317,3 +318,5 @@ const UserControls = () => {
 }
 
 createApp({ UserControls, editor, code, error, logger }).mount()
+
+console.log(evaluate('4 - sigma(n, 1, 10)'))
