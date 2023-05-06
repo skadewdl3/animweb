@@ -85,6 +85,7 @@ const sigma = (args, math, userScope) => {
   }
   let sum = 0
 
+
   for (
     let i = parseInt(math.evaluate(lower, userScope));
     i <= parseInt(roundOff(parseFloat(math.evaluate(higher, userScope)), 6));
@@ -95,7 +96,6 @@ const sigma = (args, math, userScope) => {
       ...scope,
     })
   }
-  console.log(scope.x, sum)
   return sum
 }
 sigma.rawArgs = true

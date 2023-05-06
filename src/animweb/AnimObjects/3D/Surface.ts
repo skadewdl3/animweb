@@ -12,6 +12,7 @@ import {
   EdgesGeometry as ThreeEdgesGeometry,
   Mesh as ThreeMesh,
 } from 'three'
+import { error } from '../../../ui/elements'
 
 export interface MeshData {
   positions: Array<[number, number, number]>
@@ -82,7 +83,7 @@ export default class Surface extends AnimObject3D {
       geometries.push(geometry)
     }
     if (geometries.length == 0) {
-      window.WebAnim.error.show(
+      error.show(
         'PlotError',
         `${this.equation} cannot be plot in 3 dimensions. Please check the equation or report this error.`
       )

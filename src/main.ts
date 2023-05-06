@@ -19,6 +19,7 @@ import { javascript } from '@codemirror/lang-javascript'
 import Complex from './animweb/helpers/Complex'
 import { createApp, reactive } from 'petite-vue'
 import { evaluate } from './animweb/helpers/miscellaneous.ts'
+import { code, error, logger } from './ui/elements.ts'
 
 declare global {
   interface Window {
@@ -26,7 +27,6 @@ declare global {
     P5Capture: any
     WebAnim: any
     BuildBridgedWorker: any
-    showError: Function
   }
 }
 
@@ -91,63 +91,6 @@ const editor = reactive({
   clear() {
     scene2D.resetScene()
     scene3D.resetScene()
-  },
-})
-
-const code = reactive({
-  hidden: false,
-  show() {
-    this.hidden = false
-  },
-  hide() {
-    this.hidden = true
-  },
-})
-
-const error = reactive({
-  hidden: true,
-  message: '',
-  lineNumber: 0,
-  type: '',
-  show(errType: string, errMessage: string, errLineNumber: number) {
-    console.log(arguments)
-    this.message = errMessage
-    this.lineNumber = errLineNumber
-    this.type = errType
-    this.hidden = false
-  },
-  hide() {
-    this.hidden = true
-  },
-})
-
-const logger = reactive({
-  logs: [],
-  logComplex(complex: Complex) {
-    this.logs.push({
-      title: 'Complex Number',
-      string: complex.toString(),
-      type: 'complex',
-    })
-  },
-  logMatrix() {},
-  logColor(color: Color) {
-    this.logs.push({
-      type: 'color',
-      title: 'Color',
-      rgba: color.rgba,
-      r: color.rgbaVals[0],
-      g: color.rgbaVals[1],
-      b: color.rgbaVals[2],
-      a: color.rgbaVals[3],
-      hex: color.hex,
-    })
-  },
-  logArray() {},
-  logObject() {},
-  log() {},
-  clear() {
-    this.logs = []
   },
 })
 
@@ -318,5 +261,3 @@ const UserControls = () => {
 }
 
 createApp({ UserControls, editor, code, error, logger }).mount()
-
-console.log(evaluate('4 - sigma(n, 1, 10)'))

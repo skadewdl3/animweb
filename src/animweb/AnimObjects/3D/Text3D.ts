@@ -9,7 +9,9 @@ interface Text3DProps {
   x?: number
   y?: number
   z?: number
-  fixed: true
+  fixPosition?: boolean
+  fixRotation?: boolean
+  fixed?: boolean
 }
 
 export default class Text3D extends AnimObject3D {
@@ -19,7 +21,17 @@ export default class Text3D extends AnimObject3D {
   z: number
   troikaText: Text
   distanceSquared: number
-  fixed: boolean = false
+  fixPosition: boolean = false
+  fixRotation: boolean = false
+
+  get fixed() {
+    return this.fixPosition && this.fixRotation
+  }
+
+  set fixed(fixed: boolean) {
+    this.fixPosition = fixed
+    this.fixRotation = fixed
+  }
 
   constructor(config: Text3DProps) {
     super(config.scene)
@@ -27,7 +39,9 @@ export default class Text3D extends AnimObject3D {
     this.x = config.x || 0
     this.y = config.y || 0
     this.z = config.z || 0
-    this.fixed = config.fixed || false
+    this.fixPosition = config.fixPosition || false
+    this.fixRotation = config.fixRotation || false
+    if (config.fixed) this.fixed = config.fixed
     this.troikaText = new Text()
 
     this.troikaText.text = this.text
@@ -44,30 +58,17 @@ export default class Text3D extends AnimObject3D {
     this.troikaText.sync()
   }
 
-  updatePosition(config: { x?: number; y?: number; z?: number }) {
-    if (config.x) {
-      this.x = config.x
-      this.troikaText.position.x = this.x
-    }
-    if (config.y) {
-      this.y = config.y
-      this.troikaText.position.y = this.y
-    }
-    if (config.z) {
-      this.z = config.z
-      this.troikaText.position.z = this.z
-    }
-  }
-
   update() {
-    if (this.fixed) {
+    if (this.fixPosition) {
       let currentDistanceSquared =
         this.scene.camera.camera.position.distanceToSquared(
           this.troikaText.position
         )
       let ratio = (currentDistanceSquared / this.distanceSquared) ** 0.5
-      this.troikaText.quaternion.copy(this.scene.camera.camera.quaternion)
       this.troikaText.scale.set(ratio, ratio, 1)
+    }
+    if (this.fixRotation) {
+      this.troikaText.quaternion.copy(this.scene.camera.camera.quaternion)
     }
   }
 }
