@@ -187,7 +187,6 @@ window.WebAnim = {
           `AnimObject '${name}' not found. Please check your spelling.`
         )
       if (name in window.WebAnim) return
-      console.log('importing')
       // @ts-ignore
       let arr = aos[name]
       let imported: Array<any> = []
@@ -212,6 +211,7 @@ window.WebAnim = {
       getElement('.user-imports')?.appendChild(importScript)
     }
   },
+
   ...functions,
   ...transitions,
   ...enums,

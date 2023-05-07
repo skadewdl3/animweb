@@ -10,6 +10,7 @@ import { rangePerFrame, roundOff } from '../helpers/miscellaneous'
 import { v4 as uuid } from 'uuid'
 import Constants from '../helpers/Constants'
 import { LinearTransformProps } from './NumberPlane'
+import { createTransition } from '../Transition'
 
 export enum Lines {
   DoublePoint,
@@ -357,28 +358,8 @@ export default class Line extends AnimObject {
     let x2Speed = rangePerFrame(newX2 - x2, duration)
     let y2Speed = rangePerFrame(newY2 - y2, duration)
 
-    let transitionQueueItem = {
-      id: uuid(),
-    }
-
-    let queued = false
-
-    this.transition = () => {
-      if (!queued) {
-        queued = true
-        this.scene.enqueueTransition(transitionQueueItem)
-      }
-      if (
-        roundOff(x1, 2) == roundOff(newX1, 2) &&
-        roundOff(y1, 2) == roundOff(newY1, 2) &&
-        roundOff(x2, 2) == roundOff(newX2, 2) &&
-        roundOff(y2, 2) == roundOff(newY2, 2)
-      ) {
-        this.transition = null
-        this.scene.dequeueTransition(transitionQueueItem)
-        this.point1 = { x: newX1, y: newY1 }
-        this.point2 = { x: newX2, y: newY2 }
-      } else {
+    this.transition = createTransition({
+      onProgress: () => {
         x1 += x1Speed
         y1 += y1Speed
         x2 += x2Speed
@@ -388,8 +369,19 @@ export default class Line extends AnimObject {
         if (s <= -Constants.Infinity) s = -Constants.Infinity
         this.setSlope(s)
         this.offset = y1 - this.slope * x1
-      }
-    }
+      },
+      onEnd: () => {
+        this.point1 = { x: newX1, y: newY1 }
+        this.point2 = { x: newX2, y: newY2 }
+      },
+      endCondition: () =>
+        roundOff(x1, 2) == roundOff(newX1, 2) &&
+        roundOff(y1, 2) == roundOff(newY1, 2) &&
+        roundOff(x2, 2) == roundOff(newX2, 2) &&
+        roundOff(y2, 2) == roundOff(newY2, 2),
+
+      object: this,
+    })
   }
 
   draw(p: p5) {

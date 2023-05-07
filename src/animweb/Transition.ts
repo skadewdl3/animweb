@@ -5,10 +5,12 @@ The transition has a format similar to: Create(Point, { duration: 1 })
 The structure of the second argument is given by this interface
 */
 
+import { Scene } from '../main'
 import AnimObject from './AnimObject'
 import Create from './transitions/Create'
 import FadeIn from './transitions/FadeIn'
 import FadeOut from './transitions/FadeOut'
+import { v4 as uuid } from 'uuid'
 
 export default interface TransitionProps {
   duration?: number // how long the transition should last (in seconds)
@@ -51,4 +53,40 @@ export interface TransitionQueueItem {
 export enum TransitionTypes {
   single = 'single',
   group = 'group',
+}
+
+export interface Transition {
+  onStart?: Function
+  onEnd: Function
+  onProgress: Function
+  endCondition: Function
+  object: any
+}
+
+export const createTransition = ({
+  onStart,
+  onEnd,
+  onProgress,
+  endCondition,
+  object,
+}: Transition) => {
+  let started = false
+  let transitionQueueItem = {
+    id: uuid(),
+  }
+  const tx = () => {
+    if (!started) {
+      onStart && onStart()
+      started = true
+      object.scene.enqueueTransition(transitionQueueItem)
+    }
+    if (endCondition()) {
+      onEnd()
+      object.scene.dequeueTransition(transitionQueueItem)
+      object.transition = null
+      return
+    }
+    onProgress()
+  }
+  return tx
 }
