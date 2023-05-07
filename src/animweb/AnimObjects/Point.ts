@@ -12,6 +12,7 @@ import { roundOff } from '../helpers/miscellaneous'
 import { rangePerFrame } from './../helpers/miscellaneous'
 import Matrix from '../helpers/Matrix'
 import { LinearTransformProps } from './NumberPlane'
+import { createTransition } from '../Transition'
 
 export interface PointProps extends AnimObjectProps {
   x: number
@@ -138,29 +139,25 @@ class Point extends AnimObject {
     let distance = Math.sqrt((newX - this.x) ** 2 + (newY - this.y) ** 2)
 
     let speed = rangePerFrame(Math.abs(distance), duration)
-    let transitionQueueItem = {
-      id: uuid(),
-    }
-    let queued = false
-    this.transition = () => {
-      let currentDistance = Math.sqrt(
-        (newX - this.x) ** 2 + (newY - this.y) ** 2
-      )
-      if (!queued) {
-        this.scene.enqueueTransition(transitionQueueItem)
-        queued = true
-      }
-      if (roundOff(currentDistance, 2) == 0) {
-        this.scene.dequeueTransition(transitionQueueItem)
+
+    this.transition = createTransition({
+      onEnd: () => {
         this.x = newX
         this.y = newY
-        this.transition = null
-      } else {
+      },
+      endCondition: () => {
+        let currentDistance = Math.sqrt(
+          (newX - this.x) ** 2 + (newY - this.y) ** 2
+        )
+        return roundOff(currentDistance, 2) == 0
+      },
+      onProgress: () => {
         let angle = Math.atan2(newY - this.y, newX - this.x)
         this.x += speed * Math.cos(angle)
         this.y += speed * Math.sin(angle)
-      }
-    }
+      },
+      object: this,
+    })
   }
 
   draw(p: p5) {

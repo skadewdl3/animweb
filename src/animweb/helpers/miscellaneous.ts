@@ -1,9 +1,10 @@
 // @ts-nocheck
-
-import Constants from "./Constants";
+import { create, all } from 'mathjs'
+import Constants from './Constants'
+const math = create(all)
 
 export const wait = (ms: number) => {
-  return new Promise(resolve => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 export const roundOff = (num, scale) => {
@@ -70,4 +71,63 @@ export const getQuadrant = (config: number | { x: number; y: number }) => {
       if (y < 0) return 3
     }
   }
+}
+
+const sigma = (args, math, userScope) => {
+  let [expression, lower, higher, variable = 'n'] = args.map((arg) =>
+    arg.toString()
+  )
+
+  let scope = {}
+
+  for (let [v, value] of userScope) {
+    scope[v] = value
+  }
+  let sum = 0
+
+
+  for (
+    let i = parseInt(math.evaluate(lower, userScope));
+    i <= parseInt(roundOff(parseFloat(math.evaluate(higher, userScope)), 6));
+    i++
+  ) {
+    sum += math.evaluate(expression, {
+      [variable]: i,
+      ...scope,
+    })
+  }
+  return sum
+}
+sigma.rawArgs = true
+
+const product = (args, math, userScope) => {
+  let [expression, lower, higher, variable = 'n'] = args.map((arg) =>
+    arg.toString()
+  )
+
+  let scope = {}
+
+  for (let [v, value] of userScope) {
+    scope[v] = value
+  }
+  let product = 1
+
+  for (
+    let i = parseInt(math.evaluate(lower, userScope));
+    i <= parseInt(roundOff(parseFloat(math.evaluate(higher, userScope)), 6));
+    i++
+  ) {
+    product *= math.evaluate(expression, {
+      [variable]: i,
+      ...scope,
+    })
+  }
+  return product
+}
+product.rawArgs = true
+
+math.import({ sigma, product })
+
+export const evaluate = (expression: string, scope = {}) => {
+  return math.evaluate(expression, scope)
 }

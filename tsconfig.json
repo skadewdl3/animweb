@@ -12,8 +12,7 @@
     "noEmit": true,
     "noImplicitReturns": true,
     "skipLibCheck": true,
-    "allowJs": true
+    "allowJs": true,
+    "allowImportingTsExtensions": true
   },
-  "include": ["src", "src/animweb/.Scene3D.ts", 
-],
 }

@@ -202,7 +202,6 @@ export default class NumberPlane3D extends AnimObject3D {
 
     if (definition.includes('=')) {
       let parts = definition.split('=')
-      console.log(parts)
       definition = parts[0]
       for (let i = 1; i < parts.length; i++) {
         definition = definition.concat(`-(${parts[i]})`)
@@ -220,12 +219,12 @@ export default class NumberPlane3D extends AnimObject3D {
     this.webWorker.postMessage(meshData)
 
     this.webWorker.onmessage = ({ data: meshData }: { data: MeshData }) => {
-      console.log(meshData)
       let surface = new Surface({
         scene: this.scene,
         meshData,
         color: config.color || this.color,
         filled: config.filled || false,
+        equation: definition,
       })
       this.surfaces.push(surface)
       this.meshes.push(surface)

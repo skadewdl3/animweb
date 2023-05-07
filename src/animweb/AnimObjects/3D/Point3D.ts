@@ -1,7 +1,11 @@
 import AnimObject3D from '../../AnimObject3D'
 import Scene3D from '../../Scene3D'
-import * as THREE from 'three'
 import Color from '../../helpers/Color'
+import {
+  SphereGeometry as ThreeSphereGeometry,
+  MeshBasicMaterial as ThreeMeshBasicMaterial,
+  Mesh as ThreeMesh,
+} from 'three'
 
 interface Point3DProps {
   scene: Scene3D
@@ -19,8 +23,8 @@ export default class Point3D extends AnimObject3D {
     config.color && (this.color = config.color)
     console.log(config.color)
 
-    const sphereGeometry = new THREE.SphereGeometry(0.1, 10)
-    const material = new THREE.MeshBasicMaterial({
+    const sphereGeometry = new ThreeSphereGeometry(0.1, 10)
+    const material = new ThreeMeshBasicMaterial({
       color: this.color.hexNumber,
     })
     if (this.color.opacity != 1) {
@@ -28,7 +32,7 @@ export default class Point3D extends AnimObject3D {
       material.opacity = this.color.opacity
     }
 
-    const sphere = new THREE.Mesh(sphereGeometry, material)
+    const sphere = new ThreeMesh(sphereGeometry, material)
     sphere.position.set(config.x, config.y, config.z)
     this.mesh = sphere
   }

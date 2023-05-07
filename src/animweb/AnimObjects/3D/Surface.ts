@@ -2,7 +2,17 @@ import { mergeBufferGeometries } from 'three/examples/jsm/utils/BufferGeometryUt
 import AnimObject3D from '../../AnimObject3D'
 import Scene3D from '../../Scene3D'
 import Color from '../../helpers/Color'
-import * as THREE from 'three'
+import {
+  BufferGeometry as ThreeBufferGeometry,
+  BufferAttribute as ThreeBufferAttribute,
+  MeshBasicMaterial as ThreeMeshBasicMaterial,
+  DoubleSide as ThreeDoubleSide,
+  LineBasicMaterial as ThreeLineBasicMaterial,
+  LineSegments as ThreeLineSegments,
+  EdgesGeometry as ThreeEdgesGeometry,
+  Mesh as ThreeMesh,
+} from 'three'
+import { error } from '../../../ui/elements'
 
 export interface MeshData {
   positions: Array<[number, number, number]>
@@ -13,6 +23,7 @@ export interface MeshData {
 interface SurfaceProps {
   scene: Scene3D
   meshData: MeshData
+  equation: string
   filled?: boolean
   color?: Color
 }
@@ -26,10 +37,12 @@ export interface MeshData {
 export default class Surface extends AnimObject3D {
   filled: boolean = false
   meshData: MeshData
+  equation: string
 
   constructor(config: SurfaceProps) {
     super(config.scene)
     this.meshData = config.meshData
+    this.equation = config.equation
     config.filled && (this.filled = config.filled)
     config.color && (this.color = config.color)
 
@@ -41,32 +54,46 @@ export default class Surface extends AnimObject3D {
   }
 
   createFilledSurface() {
-    let geometries: Array<THREE.BufferGeometry> = []
+    let geometries: Array<ThreeBufferGeometry> = []
     for (let triangle of this.meshData.triangles) {
-      const geometry = new THREE.BufferGeometry()
-      geometry.setAttribute('position', new THREE.BufferAttribute(triangle, 3))
+      const geometry = new ThreeBufferGeometry()
+      geometry.setAttribute('position', new ThreeBufferAttribute(triangle, 3))
       geometries.push(geometry)
     }
+    if (geometries.length == 0) {
+      window.WebAnim.error.show(
+        'PlotError',
+        `${this.equation} cannot be plot in 3 dimensions. Please check the equation or report this error.`
+      )
+      return
+    }
     const geometry = mergeBufferGeometries(geometries, true)
-    const material = new THREE.MeshBasicMaterial({
+    const material = new ThreeMeshBasicMaterial({
       color: this.color.hexNumber,
-      side: THREE.DoubleSide,
+      side: ThreeDoubleSide,
     })
-    this.mesh = new THREE.Mesh(geometry, material)
+    this.mesh = new ThreeMesh(geometry, material)
   }
 
   createWireframeSurface() {
-    let geometries: Array<THREE.BufferGeometry> = []
+    let geometries: Array<ThreeBufferGeometry> = []
     for (let triangle of this.meshData.triangles) {
-      const geometry = new THREE.BufferGeometry()
-      geometry.setAttribute('position', new THREE.BufferAttribute(triangle, 3))
+      const geometry = new ThreeBufferGeometry()
+      geometry.setAttribute('position', new ThreeBufferAttribute(triangle, 3))
       geometries.push(geometry)
     }
+    if (geometries.length == 0) {
+      error.show(
+        'PlotError',
+        `${this.equation} cannot be plot in 3 dimensions. Please check the equation or report this error.`
+      )
+      return
+    }
     const geometry = mergeBufferGeometries(geometries, true)
-    const material = new THREE.LineBasicMaterial({
+    const material = new ThreeLineBasicMaterial({
       color: this.color.hexNumber,
     })
-    const edges = new THREE.EdgesGeometry(geometry, 0)
-    this.mesh = new THREE.LineSegments(edges, material)
+    const edges = new ThreeEdgesGeometry(geometry, 0)
+    this.mesh = new ThreeLineSegments(edges, material)
   }
 }

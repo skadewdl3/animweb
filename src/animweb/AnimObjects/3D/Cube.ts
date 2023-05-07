@@ -1,6 +1,10 @@
 import AnimObject3D from '../../AnimObject3D'
 import Scene3D from '../../Scene3D'
-import * as THREE from 'three'
+import {
+  Mesh as ThreeMesh,
+  BoxGeometry as ThreeBoxGeometry,
+  MeshBasicMaterial as ThreeMeshBasicMaterial,
+} from 'three'
 
 interface CubeProps {
   scene: Scene3D
@@ -9,9 +13,9 @@ interface CubeProps {
 export default class Cube extends AnimObject3D {
   constructor(config: CubeProps) {
     super(config.scene)
-    const geometry = new THREE.BoxGeometry(1, 1, 1)
-    const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
-    const cube = new THREE.Mesh(geometry, material)
+    const geometry = new ThreeBoxGeometry(1, 1, 1)
+    const material = new ThreeMeshBasicMaterial({ color: 0x00ff00 })
+    const cube = new ThreeMesh(geometry, material)
     this.mesh = cube
     console.log('this ran')
   }

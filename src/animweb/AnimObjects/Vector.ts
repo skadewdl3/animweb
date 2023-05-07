@@ -13,6 +13,7 @@ import { multiply } from 'mathjs'
 import Matrix from '../helpers/Matrix'
 import { v4 as uuid } from 'uuid'
 import { LinearTransformProps } from './NumberPlane'
+import { createTransition } from '../Transition'
 
 export enum Vectors {
   OriginCentered = 'OriginCentered',
@@ -92,29 +93,13 @@ export default class Vector extends AnimObject {
     let newTailX = parseFloat(newTailMatrix[0].toString())
     let newTailY = parseFloat(newTailMatrix[1].toString())
 
-    let transitionQueueItem = {
-      id: uuid(),
-    }
-    let queued = false
-
     let headXSpeed = rangePerFrame(newHeadX - this.head.x, duration)
     let headYSpeed = rangePerFrame(newHeadY - this.head.y, duration)
     let tailXSpeed = rangePerFrame(newTailX - this.tail.x, duration)
     let tailYSpeed = rangePerFrame(newTailY - this.tail.y, duration)
 
-    this.transition = () => {
-      if (!queued) {
-        this.scene.enqueueTransition(transitionQueueItem)
-        queued = true
-      }
-      if (
-        roundOff(this.head.x, 2) == roundOff(newHeadX, 2) &&
-        roundOff(this.head.y, 2) == roundOff(newHeadY, 2) &&
-        roundOff(this.tail.x, 2) == roundOff(newTailX, 2) &&
-        roundOff(this.tail.y, 2) == roundOff(newTailY, 2)
-      ) {
-        this.transition = null
-        this.scene.dequeueTransition(transitionQueueItem)
+    this.transition = createTransition({
+      onEnd: () => {
         this.head.x = newHeadX
         this.head.y = newHeadY
         this.tail.x = newTailX
@@ -123,7 +108,8 @@ export default class Vector extends AnimObject {
           this.head.y - this.tail.y,
           this.head.x - this.tail.x
         )
-      } else {
+      },
+      onProgress: () => {
         this.head.x += headXSpeed
         this.head.y += headYSpeed
         this.tail.x += tailXSpeed
@@ -132,8 +118,17 @@ export default class Vector extends AnimObject {
           this.head.y - this.tail.y,
           this.head.x - this.tail.x
         )
-      }
-    }
+      },
+      endCondition: () => {
+        return (
+          roundOff(this.head.x, 2) == roundOff(newHeadX, 2) &&
+          roundOff(this.head.y, 2) == roundOff(newHeadY, 2) &&
+          roundOff(this.tail.x, 2) == roundOff(newTailX, 2) &&
+          roundOff(this.tail.y, 2) == roundOff(newTailY, 2)
+        )
+      },
+      object: this,
+    })
   }
 
   scale(scalar: number) {

@@ -5,9 +5,6 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script src="/p5.js"></script>
-    <!-- <script src="/p5.svg.js"></script> -->
-    <!-- <script src="/p5.capture.umd.min.js"></script> -->
-    <script src="/p5.camera.min.js"></script>
     <title>AnimWeb - Create Beautiful Math Animations, Anywhere</title>
     <script type="module" async defer src="/src/main.ts"></script>
   </head>
@@ -15,38 +12,89 @@
     <div style="overflow: hidden; height: 0">
       <div id="measure-vh" style="position: fixed; height: 100vh"></div>
     </div>
-    <div id="app">
-      <div class="user-controls"
-        style="position: absolute; top: 2rem; right: 1rem; min-width: 40%; max-width: 40%; min-height: 95vh">
-        <div style="display: flex; align-items: center; justify-content: space-between; padding-bottom: 1rem">
-          <p style="font-family: sans-serif; font-size:3rem" class="code-title">Code</p>
-          <div style="display: flex; align-items: center; justify-content: center">
-            <button class="btn btn-play">Play</button>
-            <button class="btn btn-clear">Clear</button>
-            <button class="btn btn-hide-code">Hide Code</button>
-            <button class="btn btn-show-code hidden">Show Code</button>
+    <template id="user-controls" class="user-controls">
+      <div @vue:mounted="editor.create()" style="
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                padding-bottom: 1rem;
+        "
+      >
+        <p style="font-family: sans-serif; font-size: 3rem" class="code-title">
+          Code
+        </p>
+        <div style="display: flex; align-items: center; justify-content: center">
+          <button class="btn btn-play" @click="editor.run()">Play</button>
+          <button class="btn btn-clear" @click="editor.clear()">Clear</button>
+          <button v-if="!code.hidden" class="btn btn-hide-code" @click="code.hide()">
+            Hide Code
+          </button>
+          <button v-if="code.hidden" class="btn btn-show-code" @click="code.show()">
+            Show Code
+          </button>
+        </div>
+        </div>
+        <div class="code-error" :class="{hidden: error.hidden}">
+        <div class="code-error-message">
+          {{ error.type }}: {{ error.message }}
+        </div>
+        <div class="code-error-line">
+          {{!isNaN(error.lineNumber) ? 'at line' : ''}} {{
+          !isNaN(error.lineNumber) ? error.lineNumber : '' }}
+        </div>
+        </div>
+      <div :class="{hidden: code.hidden}" class="codemirror-editor-container"></div>
+      <div class="logger">
+        <div v-for="log in logger.logs" class="log" style="
+                                    border-radius: 0.5rem;
+                                    overflow: hidden;
+                                    font-size: 1.6rem;
+                                    margin: 0.5rem 0;
+                                    width: 100%;
+                                  ">
+          <div class="logger-complex-content" v-if="log.type === 'complex'" style="padding: 0.5rem 1rem">
+            {{ log.string }}
+          </div>
+          <div class="logger-color-content" v-if="log.type === 'color'" :style="{background: log.rgba}"
+            style="padding: 0.5rem 1rem">
+            <div class="logger-color-name">
+              {{ log.title }} - {{ log.rgba }}
+            </div>
+            <!-- <div class="logger-color-patch" :style="{background: log.rgba}" style="width: 10px; height: 10px;"></div> -->
+          </div>
+          <div class="logger-matrix-content" v-if="log.type === 'matrix'"></div>
+          <div class="logger-array-content" v-if="log.type === 'array'">
+            {{ JSON.stringify(log.content) }}
+          </div>
+          <div class="logger-object-content" v-if="log.type === 'string'">
+            {{ log.content }}
+          </div>
+          <div class="logger-object-content" v-if="log.type === 'number'">
+            {{ log.content }}
+          </div>
+          <div class="logger-object-content" v-if="log.type === 'object'">
+            {{ JSON.stringify(log.content) }}
           </div>
         </div>
-        <div class="code-error hidden">
-          <div class="code-error-message"></div>
-          <div class="code-error-line"></div>
-        </div>
-        <div class="codemirror-editor-container">
-        </div>
       </div>
-    </div>
-    <script>
-    </script>
-    <script class="user-script"></script>
+    </template>
+    <div id="app" style="
+                    position: absolute;
+                    top: 2rem;
+                    right: 1rem;
+                    min-width: 40%;
+                    max-width: 40%;
+                  " v-scope="UserControls()"></div>
+    <div class="user-imports"></div>
     <style>
       * {
         border: 0;
         padding: 0;
         margin: 0;
         box-sizing: border-box;
-        outline: none!important;
+        outline: none !important;
       }
-      
+
       html {
         font-size: 10px;
       }
@@ -73,30 +121,30 @@
         margin-right: 0.5rem;
       }
       .hidden {
-        display: none
+        display: none;
       }
       .hidden-text {
         visibility: hidden;
       }
       .btn-play {
-      display: block;
-    }
-    .btn-hidden {
-      display: none;
-    }
-    .code-error {
-      font-size: 1.6rem;
-      color: #ff0000;
-      padding: 1rem 1rem;
-      background: #fff;
-      border-top-right-radius: 1rem;
-      border-top-left-radius: 1rem;
-      border: solid 0.2rem rgba(183, 21, 64,0.5);
-    }
-    .code-error-message {
-      font-weight: bold;  
-      margin-bottom: 0.5rem;
-    }
+        display: block;
+      }
+      .btn-hidden {
+        display: none;
+      }
+      .code-error {
+        font-size: 1.6rem;
+        color: #ff0000;
+        padding: 1rem 1rem;
+        background: #fff;
+        border-top-right-radius: 1rem;
+        border-top-left-radius: 1rem;
+        border: solid 0.2rem rgba(183, 21, 64, 0.5);
+      }
+      .code-error-message {
+        font-weight: bold;
+        margin-bottom: 0.5rem;
+      }
     </style>
   </body>
 </html>

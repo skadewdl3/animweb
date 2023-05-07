@@ -16,11 +16,15 @@ export default class Complex {
   }
 
   get re() {
-    return this.complex.re
+    return Math.abs(this.complex.re) <= Number.EPSILON * 10
+      ? 0
+      : this.complex.re
   }
 
   get im() {
-    return this.complex.im
+    return Math.abs(this.complex.im) <= Number.EPSILON * 10
+      ? 0
+      : this.complex.im
   }
 
   set re(re: number) {
@@ -87,5 +91,9 @@ export default class Complex {
 
   static fromComplex(c: ComplexType) {
     return new Complex(c.toString())
+  }
+
+  toString() {
+    return `${this.re} ${this.im >= 0 ? '+' : '-'} ${this.im}i`
   }
 }

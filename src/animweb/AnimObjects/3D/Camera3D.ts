@@ -1,4 +1,8 @@
-import * as THREE from 'three'
+import {
+  WebGLRenderer as ThreeWebGLRenderer,
+  PerspectiveCamera as ThreePerspectiveCamera,
+  Clock as ThreeClock,
+} from 'three'
 import { v4 as uuid } from 'uuid'
 import { rangePerFrame, roundOff } from '../../helpers/miscellaneous'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
@@ -11,7 +15,7 @@ export enum CameraAxes {
 }
 
 export default class Camera {
-  camera: THREE.PerspectiveCamera
+  camera: ThreePerspectiveCamera
   transitions: Array<{ id: string; function: Function }> = []
   x: number = 0
   y: number = 0
@@ -49,16 +53,16 @@ export default class Camera {
 
   orbitControls: OrbitControls
   // pointerLockControls: PointerLockControls
-  clock: THREE.Clock
+  clock: ThreeClock
 
-  constructor(width: number, height: number, renderer: THREE.WebGLRenderer) {
-    this.camera = new THREE.PerspectiveCamera(75, width / height, 0.1, 1000)
+  constructor(width: number, height: number, renderer: ThreeWebGLRenderer) {
+    this.camera = new ThreePerspectiveCamera(75, width / height, 0.1, 1000)
     this.orbitControls = new OrbitControls(this.camera, renderer.domElement)
     // this.pointerLockControls = new PointerLockControls(
     //   this.camera,
     //   renderer.domElement
     // )
-    this.clock = new THREE.Clock()
+    this.clock = new ThreeClock()
     this.updatePosition({ x: 0, y: 0, z: 5 })
     this.origin = {
       x: 0,
