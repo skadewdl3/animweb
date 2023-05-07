@@ -23,6 +23,8 @@ export default class Text3D extends AnimObject3D {
   distanceSquared: number
   fixPosition: boolean = false
   fixRotation: boolean = false
+  dx: number
+  origX: number
 
   get fixed() {
     return this.fixPosition && this.fixRotation
@@ -46,10 +48,12 @@ export default class Text3D extends AnimObject3D {
 
     this.troikaText.text = this.text
     this.troikaText.fontSize = 0.2
-    this.troikaText.color = 0xff0000
+    this.troikaText.color = this.color.hexNumber
     this.troikaText.position.x = this.x
     this.troikaText.position.y = this.y
     this.troikaText.position.z = this.z
+    this.origX = this.x
+    this.dx = this.scene.camera.camera.position.x - this.origX
     this.distanceSquared = this.scene.camera.camera.position.distanceToSquared(
       this.troikaText.position
     )
@@ -65,10 +69,11 @@ export default class Text3D extends AnimObject3D {
           this.troikaText.position
         )
       let ratio = (currentDistanceSquared / this.distanceSquared) ** 0.5
-      this.troikaText.scale.set(ratio, ratio, 1)
+      this.troikaText.scale.set(ratio, ratio, ratio)
     }
     if (this.fixRotation) {
       this.troikaText.quaternion.copy(this.scene.camera.camera.quaternion)
     }
+    console.log(this.scene.camera.camera.position)
   }
 }

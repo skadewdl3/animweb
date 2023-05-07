@@ -18,8 +18,8 @@ import { EditorView, basicSetup } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import Complex from './animweb/helpers/Complex'
 import { createApp, reactive } from 'petite-vue'
-import { evaluate } from './animweb/helpers/miscellaneous.ts'
 import { code, error, logger } from './ui/elements.ts'
+import { UserSVGs, svgData } from './animweb/helpers/addSVG.ts'
 
 declare global {
   interface Window {
@@ -74,6 +74,7 @@ const editor = reactive({
   },
   run() {
     error.hide()
+    svgData.clear()
     logger.clear()
     scene2D.resetScene()
     scene3D.resetScene()
@@ -89,6 +90,7 @@ const editor = reactive({
     document.body.appendChild(script)
   },
   clear() {
+    svgData.clear()
     scene2D.resetScene()
     scene3D.resetScene()
   },
@@ -260,4 +262,5 @@ const UserControls = () => {
   }
 }
 
-createApp({ UserControls, editor, code, error, logger }).mount()
+createApp({ UserControls, UserSVGs, editor, code, error, logger, svgData }).mount()
+// createApp({ UserSVGs, svgData }).mount()

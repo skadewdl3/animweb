@@ -4,15 +4,15 @@ import Colors from '../helpers/Colors'
 import { Observables } from '../AnimObject'
 import { roundOff } from '../helpers/miscellaneous'
 import Color from '../helpers/Color'
+import { textToSVGPolygons } from '../helpers/TextToSVG'
+import { createSVG, removeSVG } from '../helpers/addSVG'
 
 interface TextProps extends AnimObjectProps {
-  text?: string | number
+  text: string | number
   color?: Color
   size?: number
-  position?: {
-    x: number
-    y: number
-  }
+  x: number
+  y: number
   style?: TextStyle
   font?: any
 }
@@ -25,25 +25,21 @@ export enum TextStyle {
 }
 
 export default class Text extends AnimObject {
-  text: string | number = ''
+  text: string = ''
   size: number = 16
-  x: number
-  y: number
-  parentData: {
-    origin: { x: number; y: number }
-    stepX: number
-    stepY: number
-  } = {
-    origin: { x: this.scene.width / 2, y: this.scene.height / 2 },
-    stepX: 1,
-    stepY: 1,
-  }
+  x: number = this.parentData.origin.x
+  y: number = this.parentData.origin.y
   style: TextStyle = TextStyle.none
   font: any = null
+  svg?: string
+  svgEl?: SVGElement
 
   constructor(config: TextProps) {
     super(config.scene)
-    if (config.text) this.text = config.text
+    this.x = config.x
+    this.y = config.y
+    this.text = config.text.toString()
+
     if (config.color) this.color = config.color
     if (config.size) this.size = config.size
     if (config.style) {
@@ -55,13 +51,14 @@ export default class Text extends AnimObject {
         ...config.parentData,
       }
     }
-    this.x = this.parentData.origin.x
-    this.y = this.parentData.origin.y
-    if (config.position) {
-      this.x += config.position.x * this.parentData.stepX
-      this.y -= config.position.y * this.parentData.stepY
-    }
     if (config.font) this.font = config.font
+    createSVG(textToSVGPolygons(this.text, { size: this.size || 40 }), {
+      id: this.id,
+      y: this.parentData.origin.x + this.y,
+      x: this.parentData.origin.y + this.x,
+    }).then((el) => {
+      this.remove = () => removeSVG(this.id)
+    })
   }
 
   link(object: AnimObject, prop: Observables, callback: Function) {
@@ -90,23 +87,5 @@ export default class Text extends AnimObject {
 
   draw(p: p5) {
     if (this.transition) this.transition()
-    if (this.font) {
-      p.textFont(this.font)
-    }
-    p.fill(this.color.rgba)
-    p.textSize(this.size)
-    switch (this.style) {
-      case TextStyle.bold:
-        p.textStyle(p.BOLD)
-        break
-      case TextStyle.italic:
-        p.textStyle(p.ITALIC)
-        break
-      case TextStyle.boldItalic:
-        p.textStyle(p.BOLDITALIC)
-        break
-    }
-    p.text(this.text, this.x, this.y)
-    p.noFill()
   }
 }

@@ -1,8 +1,6 @@
 import p5 from 'p5'
 import AnimObject, { AnimObjectProps } from '../AnimObject'
 import Color from '../helpers/Color'
-import TeXToSVG from './../helpers/TexToSVG'
-import svg64 from 'svg64'
 import anime from 'animejs'
 
 interface LaTeXProps extends AnimObjectProps {
@@ -22,6 +20,10 @@ export default class LaTeX extends AnimObject {
   parentDiv?: p5.Element
   rendered: boolean = false
   position: { x: number; y: number } = { x: 0, y: 0 }
+  webWorker: Worker = new Worker(
+    new URL('./../helpers/TexToSVG.worker.js', import.meta.url),
+    { type: 'module' }
+  )
 
   constructor(config: LaTeXProps) {
     super(config.scene)
@@ -29,7 +31,10 @@ export default class LaTeX extends AnimObject {
     let temp = JSON.stringify(this.latex).split('')
     temp.splice(0, 1)
     temp.splice(-1, 1)
-    this.latexSVG = TeXToSVG(temp.join(''))
+    this.webWorker.onmessage = ({ data }) => {
+      this.latexSVG = data
+    }
+    this.webWorker.postMessage({ latex: temp.join(''), type: 'latex' })
     if (config.color) this.color = config.color
     if (config.size) this.size = config.size
     if (config.parentData) {
@@ -45,7 +50,7 @@ export default class LaTeX extends AnimObject {
   }
 
   draw(p: p5) {
-    if (!this.rendered) {
+    if (!this.rendered && this.latexSVG) {
       if (this.transition) this.transition()
       console.log(this.latexSVG)
       let div = p.createDiv(this.latexSVG)
