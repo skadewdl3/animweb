@@ -20,7 +20,8 @@
                 padding-bottom: 1rem;
         "
       >
-        <p style="font-family: sans-serif; font-size: 3rem" class="code-title">
+        <p style="font-family: sans-serif; font-size: 3rem" class="code-title"
+          :style="{visibility: code.hidden ? 'hidden' : 'visible'}">
           Code
         </p>
         <div style="display: flex; align-items: center; justify-content: center">
@@ -33,8 +34,8 @@
             Show Code
           </button>
         </div>
-        </div>
-        <div class="code-error" :class="{hidden: error.hidden}">
+      </div>
+      <div class="code-error" :class="{hidden: error.hidden}">
         <div class="code-error-message">
           {{ error.type }}: {{ error.message }}
         </div>
@@ -42,17 +43,22 @@
           {{!isNaN(error.lineNumber) ? 'at line' : ''}} {{
           !isNaN(error.lineNumber) ? error.lineNumber : '' }}
         </div>
-        </div>
+      </div>
       <div :class="{hidden: code.hidden}" class="codemirror-editor-container"></div>
       <div class="logger">
         <div v-for="log in logger.logs" class="log" style="
-                                    border-radius: 0.5rem;
-                                    overflow: hidden;
-                                    font-size: 1.6rem;
-                                    margin: 0.5rem 0;
-                                    width: 100%;
-                                  ">
-          <div class="logger-complex-content" v-if="log.type === 'complex'" style="padding: 0.5rem 1rem">
+                    border-radius: 0.5rem;
+                    overflow: hidden;
+                    font-size: 1.6rem;
+                    margin: 0.5rem 0;
+                    width: 100%;
+          "
+        >
+          <div
+            class="logger-complex-content"
+            v-if="log.type === 'complex'"
+            style="padding: 0.5rem 1rem"
+          >
             {{ log.string }}
           </div>
           <div class="logger-color-content" v-if="log.type === 'color'" :style="{background: log.rgba}"
@@ -78,14 +84,24 @@
         </div>
       </div>
     </template>
+    <template id="user-svgs-template">
+      <div @vue:mounted="svgItem.updateElement()" v-for="svgItem in svgData.svgs" :style="svgItem.styles" :id="svgItem.id"
+        :class="svgItem.id"
+        v-html="svgItem.svg">
+      </div>
+    </template>
     <div id="app" style="
-                    position: absolute;
-                    top: 2rem;
-                    right: 1rem;
-                    min-width: 40%;
-                    max-width: 40%;
-                  " v-scope="UserControls()"></div>
-    <div class="user-imports"></div>
+            position: absolute;
+            top: 2rem;
+            right: 1rem;
+            min-width: 40%;
+            max-width: 40%;
+            z-index: 2;
+      "
+      v-scope="UserControls()"
+    ></div>
+    <script class="user-imports"></script>
+    <div class="user-svgs" style="position: absolute; top: 0; left: 0; z-index: 1" v-scope="UserSVGs()"></div>
     <style>
       * {
         border: 0;

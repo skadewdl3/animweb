@@ -5,6 +5,7 @@ import Constants from '../../helpers/Constants'
 import Line3D from './Line3D'
 import Point3D from './Point3D'
 import Surface, { MeshData } from './Surface'
+import Text3D from './Text3D'
 
 export enum NumberPlanes {
   upper = 'Upper',
@@ -55,6 +56,7 @@ export default class NumberPlane3D extends AnimObject3D {
   axes: Array<Line3D> = []
   points: Array<Point3D> = []
   surfaces: Array<Surface> = []
+  texts: Array<Text3D> = []
   webWorker: Worker = new Worker(
     new URL('./../../helpers/Isosurface.worker.js', import.meta.url),
     { type: 'module' }
@@ -64,6 +66,34 @@ export default class NumberPlane3D extends AnimObject3D {
     super(config.scene)
     config.color && (this.color = config.color)
     config.form && (this.form = config.form)
+    let texts = [
+      new Text3D({
+        text: 'x',
+        x: 5,
+        y: 0,
+        z: 0,
+        scene: this.scene,
+        fixRotation: true,
+      }),
+      new Text3D({
+        text: 'y',
+        x: 0,
+        y: 5,
+        z: 0,
+        scene: this.scene,
+        fixRotation: true,
+      }),
+      new Text3D({
+        text: 'z',
+        x: 0,
+        y: 0,
+        z: 5,
+        scene: this.scene,
+        fixRotation: true,
+      }),
+    ]
+    this.texts.push(...texts)
+    this.meshes.push(...texts)
 
     // +y axis
     if (

@@ -6,10 +6,10 @@ import Matrix from '../animweb/helpers/Matrix'
 export const code = reactive({
   hidden: false,
   show() {
-    this.hidden = false
+    code.hidden = false
   },
   hide() {
-    this.hidden = true
+    code.hidden = true
   },
 })
 
@@ -20,20 +20,20 @@ export const error = reactive({
   type: '',
   show(errType: string, errMessage: string, errLineNumber: number) {
     console.log(arguments)
-    this.message = errMessage
-    this.lineNumber = errLineNumber
-    this.type = errType
-    this.hidden = false
+    error.message = errMessage
+    error.lineNumber = errLineNumber
+    error.type = errType
+    error.hidden = false
   },
   hide() {
-    this.hidden = true
+    error.hidden = true
   },
 })
 
 export const logger = reactive({
   logs: [],
   logComplex(complex: Complex) {
-    this.logs.push({
+    logger.logs.push({
       title: 'Complex Number',
       string: complex.toString(),
       type: 'complex',
@@ -41,7 +41,7 @@ export const logger = reactive({
   },
   logMatrix(matrix: Matrix) {},
   logColor(color: Color) {
-    this.logs.push({
+    logger.logs.push({
       type: 'color',
       title: 'Color',
       rgba: color.rgba,
@@ -56,6 +56,6 @@ export const logger = reactive({
   logObject(obj: object) {},
   log(config: any) {},
   clear() {
-    this.logs = []
+    logger.logs = []
   },
 })

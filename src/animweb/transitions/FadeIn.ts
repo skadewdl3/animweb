@@ -1,15 +1,21 @@
 import { v4 as uuid } from 'uuid'
-import AnimObject, { AnimObjects } from '../AnimObject'
+import AnimObject from '../AnimObject'
 import Curve from '../AnimObjects/Curve'
 import Line from '../AnimObjects/Line'
 import NumberPlane from '../AnimObjects/NumberPlane'
 import Point from '../AnimObjects/Point'
 import Constants from '../helpers/Constants'
 import { wait, roundOff, rangePerFrame } from '../helpers/miscellaneous'
-import TransitionProps, { TransitionTypes } from '../Transition'
+import TransitionProps, {
+  TransitionProgressProps,
+  TransitionTypes,
+  createTransition,
+} from '../Transition'
 import ImplicitCurve from '../AnimObjects/ImplicitCurve'
 import Text from '../AnimObjects/Text'
 import Vector from '../AnimObjects/Vector'
+import anime from 'animejs'
+import LaTeX from '../AnimObjects/LaTeX'
 
 interface FadeInTransitionProps extends TransitionProps {}
 
@@ -170,12 +176,59 @@ const FadeIn = <Object extends AnimObject>(
   } else if (object instanceof ImplicitCurve) {
     resetColor(object)
     object.transition = fadeInTransition(object, config)
-  } else if (object instanceof Text) {
-    resetColor(object)
-    object.transition = fadeInTransition(object, config)
   } else if (object instanceof Vector) {
     resetColor(object)
     object.transition = fadeInTransition(object, config)
+  } else if (object instanceof Text) {
+    let executeTransition = true
+    let tx = createTransition({
+      onProgress: ({ end }: TransitionProgressProps) => {
+        if (object.svgEl && executeTransition) {
+          anime({
+            targets: `#${object.id} path`,
+            stroke: '#ff0000',
+            fill: '#ff0000',
+            easing: 'easeInOutSine',
+            duration: 1500,
+            direction: 'alternate',
+            loop: false,
+            complete() {
+              end()
+            },
+          })
+          executeTransition = false
+        }
+      },
+      endCondition: () => false,
+      object,
+    })
+    object.transition = tx
+  } else if (object instanceof LaTeX) {
+    let executeTransition = true
+    let tx = createTransition({
+      onProgress: ({ end }: TransitionProgressProps) => {
+        if (object.svgEl && executeTransition) {
+          anime({
+            targets: `#${object.id} path`,
+            stroke: '#ff0000',
+            fill: '#ff0000',
+            easing: 'easeInOutSine',
+            duration: 1500,
+            direction: 'alternate',
+            loop: false,
+            complete() {
+              end()
+            },
+          })
+          executeTransition = false
+        }
+      },
+      endCondition: () => false,
+      object,
+    })
+    object.transition = tx
+
+    // console.log(object)
   }
   return object
 }
