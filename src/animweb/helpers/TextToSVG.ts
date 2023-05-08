@@ -13,7 +13,7 @@ export const textToSVGTriangles = (text: string, config: any = {}) => {
     polygons: false,
     font: config.font || 'Arial',
     textBaseline: 'hanging',
-    size: config.size,
+    size: config.size || 16,
     width: dimensions.width,
     height: `${dimensions.height}px`,
   })
@@ -47,15 +47,14 @@ export const textToSVGPolygons = (text: string, config: any = {}) => {
     font: config.font || 'Arial',
     fontSize: `${config.size}px`,
   })
-  console.log(dimensions)
   let polygons = vectorizeText(text, {
     ...config,
     triangles: false,
     polygons: true,
     font: config.font || 'Arial',
-    textBaseline: 'hanging',
+    textBaseline: 'top',
     size: config.size,
-    width: dimensions.width,
+    width: dimensions.width - 5,
     height: `${dimensions.height}px`,
   })
 
@@ -73,7 +72,9 @@ export const textToSVGPolygons = (text: string, config: any = {}) => {
       }
       svg.push('L ' + start[0] + ' ' + start[1])
     })
-    svg.push('" fill-rule="even-odd" stroke-width="1" fill="red"></path>')
+    svg.push(
+      '" stroke-width="1" stroke="transparent" fill="transparent"></path>'
+    )
   })
   svg.push('</svg>')
   return svg.join('')

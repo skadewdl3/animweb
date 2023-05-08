@@ -74,6 +74,5 @@ export default class Text3D extends AnimObject3D {
     if (this.fixRotation) {
       this.troikaText.quaternion.copy(this.scene.camera.camera.quaternion)
     }
-    console.log(this.scene.camera.camera.position)
   }
 }

@@ -7,9 +7,9 @@ import { AssistiveMmlHandler } from 'mathjax-full/js/a11y/assistive-mml.js'
 import { AllPackages } from 'mathjax-full/js/input/tex/AllPackages.js'
 
 const DEFAULT_OPTIONS = {
-  width: 1280,
-  ex: 20,
-  em: 300,
+  width: 1200,
+  em: 1,
+  ex: 1
 }
 
 const TeXToSVG = (str, opts) => {
@@ -30,11 +30,11 @@ const TeXToSVG = (str, opts) => {
   const html = mathjax.document('', { InputJax: tex, OutputJax: svg })
 
   const node = html.convert(str, {
-    display: !INLINE,
-    em: options.em,
-    ex: options.ex,
-    containerWidth: options.width,
-    scale: 1,
+      display: !INLINE,
+      em: options.em,
+      ex: options.ex,
+      containerWidth: options.width,
+      scale: 2,
   })
 
   const svgString = CSS

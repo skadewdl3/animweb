@@ -1,16 +1,14 @@
 import p5 from 'p5'
 import AnimObject, { AnimObjectProps } from '../AnimObject'
 import Color from '../helpers/Color'
-import anime from 'animejs'
+import { createSVG, removeSVG } from '../helpers/addSVG'
 
 interface LaTeXProps extends AnimObjectProps {
   latex: string
   color?: Color
   size?: number
-  position?: {
-    x: number
-    y: number
-  }
+  x: number
+  y: number
 }
 
 export default class LaTeX extends AnimObject {
@@ -24,15 +22,47 @@ export default class LaTeX extends AnimObject {
     new URL('./../helpers/TexToSVG.worker.js', import.meta.url),
     { type: 'module' }
   )
+  svg?: string
+  svgEl?: SVGElement
+  x: number
+  y: number
 
   constructor(config: LaTeXProps) {
     super(config.scene)
     this.latex = config.latex
+    this.x = config.x
+    this.y = config.y
     let temp = JSON.stringify(this.latex).split('')
     temp.splice(0, 1)
     temp.splice(-1, 1)
     this.webWorker.onmessage = ({ data }) => {
-      this.latexSVG = data
+      // console.log(data)
+      let template = document.createElement('template')
+      template.innerHTML = data
+      let svgElement = template.content.firstChild as SVGElement
+      let uses = svgElement.querySelectorAll('use')
+      svgElement.style.transform = `scale(${(this.size * 1.8) / 16})`
+      svgElement.style.transformOrigin = `0 0`
+      uses.forEach((use: any) => {
+        let path = svgElement.querySelector(use.getAttribute('xlink:href'))
+        path.style.fill = 'transparent'
+        path.style.stroke = 'transparent'
+        path.style.strokeWidth = '1rem'
+        use.parentNode.prepend(path.cloneNode())
+        use.remove()
+      })
+      let defs = svgElement.querySelector('defs')
+      defs?.remove()
+      template.innerHTML = ''
+      template.content.appendChild(svgElement)
+      createSVG(template.innerHTML, {
+        id: this.id,
+        y: this.parentData.origin.x + this.y,
+        x: this.parentData.origin.y + this.x,
+      }).then((el) => {
+        this.svgEl = el
+        this.remove = () => removeSVG(this.id)
+      })
     }
     this.webWorker.postMessage({ latex: temp.join(''), type: 'latex' })
     if (config.color) this.color = config.color
@@ -43,46 +73,9 @@ export default class LaTeX extends AnimObject {
         ...config.parentData,
       }
     }
-    if (config.position) {
-      this.position = config.position
-    }
-    this.remove = () => this.parentDiv?.remove()
   }
 
   draw(p: p5) {
-    if (!this.rendered && this.latexSVG) {
-      if (this.transition) this.transition()
-      console.log(this.latexSVG)
-      let div = p.createDiv(this.latexSVG)
-      let { x, y } = this.getAbsolutePosition(this.position)
-      div.position(x, y)
-      div.class(this.id)
-      let uses = [...div.elt.getElementsByTagName('use')]
-      uses.forEach((u: any) => {
-        let el = document.querySelector(u.getAttribute('xlink:href'))
-        el.style.fill = 'none'
-        el.style.strokeWidth = `1rem`
-        el.style.stroke = 'black'
-        u.parentNode.prepend(el.cloneNode())
-        u.remove()
-      })
-      div.style('transform', `scale(${this.size / 10})`)
-      this.parentDiv = div
-
-      anime({
-        targets: `.${this.id} path`,
-        strokeDashoffset: [anime.setDashoffset, 0],
-        easing: 'easeInOutSine',
-        duration: 1500,
-        direction: 'alternate',
-        loop: false,
-        complete() {
-          div.elt
-            .getElementsByTagName('path')
-            .forEach((c: any) => (c.style.fill = 'black'))
-        },
-      })
-      this.rendered = true
-    }
+    if (this.transition) this.transition()
   }
 }

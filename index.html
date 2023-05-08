@@ -20,7 +20,8 @@
                 padding-bottom: 1rem;
         "
       >
-        <p style="font-family: sans-serif; font-size: 3rem" class="code-title">
+        <p style="font-family: sans-serif; font-size: 3rem" class="code-title"
+          :style="{visibility: code.hidden ? 'hidden' : 'visible'}">
           Code
         </p>
         <div style="display: flex; align-items: center; justify-content: center">
@@ -85,6 +86,7 @@
     </template>
     <template id="user-svgs-template">
       <div @vue:mounted="svgItem.updateElement()" v-for="svgItem in svgData.svgs" :style="svgItem.styles" :id="svgItem.id"
+        :class="svgItem.id"
         v-html="svgItem.svg">
       </div>
     </template>

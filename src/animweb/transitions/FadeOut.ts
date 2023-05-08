@@ -7,9 +7,14 @@ import ImplicitCurve from '../AnimObjects/ImplicitCurve'
 import Text from '../AnimObjects/Text'
 import Constants from '../helpers/Constants'
 import { wait, rangePerFrame } from '../helpers/miscellaneous'
-import TransitionProps, { TransitionTypes } from '../Transition'
+import TransitionProps, {
+  TransitionProgressProps,
+  TransitionTypes,
+  createTransition,
+} from '../Transition'
 import { v4 as uuid } from 'uuid'
-
+import anime from 'animejs'
+import LaTeX from '../AnimObjects/LaTeX'
 interface FadeOutTransitionProps extends TransitionProps {}
 
 const resetColor = (object: AnimObject) => {
@@ -170,8 +175,53 @@ const FadeOut = <Object extends AnimObject>(
     resetColor(object)
     object.transition = fadeOutTransition(object, config)
   } else if (object instanceof Text) {
-    resetColor(object)
-    object.transition = fadeOutTransition(object, config)
+    let executeTransition = true
+    let tx = createTransition({
+      onProgress: ({ end }: TransitionProgressProps) => {
+        if (object.svgEl && executeTransition) {
+          anime({
+            targets: `#${object.id} path`,
+            opacity: 0,
+            easing: 'easeInOutSine',
+            duration: 1500,
+            direction: 'alternate',
+            loop: false,
+            complete() {
+              end()
+            },
+          })
+          executeTransition = false
+        }
+      },
+      endCondition: () => false,
+      object,
+    })
+    object.transition = tx
+  } else if (object instanceof LaTeX) {
+    let executeTransition = true
+    let tx = createTransition({
+      onProgress: ({ end }: TransitionProgressProps) => {
+        if (object.svgEl && executeTransition) {
+          anime({
+            targets: `#${object.id} path`,
+            opacity: 0,
+            easing: 'easeInOutSine',
+            duration: 1500,
+            direction: 'alternate',
+            loop: false,
+            complete() {
+              end()
+            },
+          })
+          executeTransition = false
+        }
+      },
+      endCondition: () => false,
+      object,
+    })
+    object.transition = tx
+
+    // console.log(object)
   }
   return object
 }

@@ -7,7 +7,14 @@ import Point from '../AnimObjects/Point'
 import Color from '../helpers/Color'
 import Constants from '../helpers/Constants'
 import { rangePerFrame, roundOff, wait } from '../helpers/miscellaneous'
-import TransitionProps, { TransitionTypes } from '../Transition'
+import TransitionProps, {
+  TransitionProgressProps,
+  TransitionTypes,
+  createTransition,
+} from '../Transition'
+import Text from '../AnimObjects/Text'
+import anime from 'animejs'
+import LaTeX from '../AnimObjects/LaTeX'
 
 interface CreateTransitionProps extends TransitionProps {}
 
@@ -299,6 +306,77 @@ const Create = <Object extends AnimObject>(
       : Constants.createLineDuration
     hideObjects(object.lines, true)
     createStaggeredLineTransitions(object.lines, config, duration)
+  } else if (object instanceof Text) {
+    let executeTransition = true
+    let tx = createTransition({
+      onProgress: ({ end }: TransitionProgressProps) => {
+        if (object.svgEl && executeTransition) {
+          anime({
+            targets: `#${object.id} path`,
+            strokeDashoffset: [anime.setDashoffset, 0],
+            stroke: '#ff0000',
+            easing: 'easeInOutSine',
+            duration: 1500,
+            direction: 'alternate',
+            loop: false,
+            complete() {
+              anime({
+                targets: `#${object.id} path`,
+                fill: '#ff0000',
+                easing: 'easeInOutSine',
+                duration: 1500,
+                direction: 'alternate',
+                loop: false,
+                complete() {
+                  end()
+                },
+              })
+            },
+          })
+          executeTransition = false
+        }
+      },
+      endCondition: () => false,
+      object,
+    })
+    object.transition = tx
+
+  } else if (object instanceof LaTeX) {
+    let executeTransition = true
+    let tx = createTransition({
+      onProgress: ({ end }: TransitionProgressProps) => {
+        if (object.svgEl && executeTransition) {
+          anime({
+            targets: `#${object.id} path`,
+            strokeDashoffset: [anime.setDashoffset, 0],
+            stroke: '#ff0000',
+            easing: 'easeInOutSine',
+            duration: 1500,
+            direction: 'alternate',
+            loop: false,
+            complete() {
+              anime({
+                targets: `#${object.id} path`,
+                fill: '#ff0000',
+                easing: 'easeInOutSine',
+                duration: 1500,
+                direction: 'alternate',
+                loop: false,
+                complete() {
+                  end()
+                },
+              })
+            },
+          })
+          executeTransition = false
+        }
+      },
+      endCondition: () => false,
+      object,
+    })
+    object.transition = tx
+
+    // console.log(object)
   }
   return object
 }

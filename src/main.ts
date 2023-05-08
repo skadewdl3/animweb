@@ -97,7 +97,7 @@ const editor = reactive({
 })
 
 const functions = {
-  wait: async (config: any) => scene.wait(config),
+  wait: async (config: any) => await scene.wait(config),
   show: (config: any) => scene.add(config),
   render: (mode: '3D' | '2D' = '2D') => {
     if (mode == '3D') {
@@ -159,11 +159,13 @@ const transitions = {
     if (scene instanceof Scene2D) {
       scene.add(Create(object, config))
     }
+    return object
   },
   FadeIn: (object: AnimObject, config: any) => {
     if (scene instanceof Scene2D) {
       scene.add(FadeIn(object, config))
     }
+    return object
   },
   FadeOut,
 }
@@ -262,5 +264,12 @@ const UserControls = () => {
   }
 }
 
-createApp({ UserControls, UserSVGs, editor, code, error, logger, svgData }).mount()
-// createApp({ UserSVGs, svgData }).mount()
+createApp({
+  UserControls,
+  UserSVGs,
+  editor,
+  code,
+  error,
+  logger,
+  svgData,
+}).mount()

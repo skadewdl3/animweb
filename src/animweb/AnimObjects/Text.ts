@@ -52,11 +52,12 @@ export default class Text extends AnimObject {
       }
     }
     if (config.font) this.font = config.font
-    createSVG(textToSVGPolygons(this.text, { size: this.size || 40 }), {
+    createSVG(textToSVGPolygons(this.text, { size: this.size }), {
       id: this.id,
       y: this.parentData.origin.x + this.y,
       x: this.parentData.origin.y + this.x,
     }).then((el) => {
+      this.svgEl = el
       this.remove = () => removeSVG(this.id)
     })
   }

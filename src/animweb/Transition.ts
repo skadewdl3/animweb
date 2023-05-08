@@ -55,11 +55,16 @@ export enum TransitionTypes {
   group = 'group',
 }
 
+export interface TransitionProgressProps {
+  start: Function
+  end: Function
+}
+
 export interface Transition {
   onStart?: Function
-  onEnd: Function
+  onEnd?: Function
   onProgress: Function
-  endCondition: Function
+  endCondition?: Function
   object: any
 }
 
@@ -75,18 +80,24 @@ export const createTransition = ({
     id: uuid(),
   }
   const tx = () => {
-    if (!started) {
-      onStart && onStart()
-      started = true
-      object.scene.enqueueTransition(transitionQueueItem)
-    }
-    if (endCondition()) {
-      onEnd()
+    const end = () => {
+      onEnd && onEnd()
       object.scene.dequeueTransition(transitionQueueItem)
       object.transition = null
       return
     }
-    onProgress()
+    const start = () => {
+      onStart && onStart()
+      started = true
+    }
+    if (!started) {
+      !started && start()
+      object.scene.enqueueTransition(transitionQueueItem)
+    }
+    if (endCondition ? endCondition() : false) {
+      end()
+    }
+    onProgress({ start, end })
   }
   return tx
 }

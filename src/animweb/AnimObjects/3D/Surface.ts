@@ -61,7 +61,7 @@ export default class Surface extends AnimObject3D {
       geometries.push(geometry)
     }
     if (geometries.length == 0) {
-      window.WebAnim.error.show(
+      error.show(
         'PlotError',
         `${this.equation} cannot be plot in 3 dimensions. Please check the equation or report this error.`
       )
@@ -82,6 +82,7 @@ export default class Surface extends AnimObject3D {
       geometry.setAttribute('position', new ThreeBufferAttribute(triangle, 3))
       geometries.push(geometry)
     }
+    console.log(geometries)
     if (geometries.length == 0) {
       error.show(
         'PlotError',
