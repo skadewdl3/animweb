@@ -19,7 +19,7 @@ export default class NumberPlane3D extends AnimObject3D {
   surfaces: Array<Surface> = []
   texts: Array<Text3D> = []
   webWorker: Worker = new Worker(
-    new URL('@@helpers/Isosurface.worker.js', import.meta.url),
+    new URL('@workers/Isosurface.worker.js', import.meta.url),
     { type: 'module' }
   )
 

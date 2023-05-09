@@ -17,7 +17,7 @@ export default class ComplexPlane3D extends AnimObject3D {
   points: Array<Point3D> = []
   surfaces: Array<Surface> = []
   webWorker: Worker = new Worker(
-    new URL('@@helpers/Complex.worker.js', import.meta.url),
+    new URL('@workers/Complex.worker.js', import.meta.url),
     { type: 'module' }
   )
 
