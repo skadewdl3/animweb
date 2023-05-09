@@ -10,7 +10,7 @@ import {
   EdgesGeometry as ThreeEdgesGeometry,
   Mesh as ThreeMesh,
 } from 'three'
-import { error } from '@ui/elements'
+import error from '@/ui/error'
 import { MeshData, SurfaceProps } from '@/interfaces/AnimObjects3D'
 
 
