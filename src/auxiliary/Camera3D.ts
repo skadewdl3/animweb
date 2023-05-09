@@ -4,15 +4,9 @@ import {
   Clock as ThreeClock,
 } from 'three'
 import { v4 as uuid } from 'uuid'
-import { rangePerFrame, roundOff } from '../helpers/miscellaneous'
+import { rangePerFrame, roundOff } from '@helpers/miscellaneous'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { PointerLockControls } from 'three/examples/jsm/controls/PointerLockControls'
-
-export enum CameraAxes {
-  X = 'X',
-  Y = 'Y',
-  Z = 'Z',
-}
+import { CameraAxes } from '@/enums/miscellaneous'
 
 export default class Camera {
   camera: ThreePerspectiveCamera

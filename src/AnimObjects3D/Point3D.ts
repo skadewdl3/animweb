@@ -1,19 +1,10 @@
-import AnimObject3D from './../core/AnimObject3D'
-import Scene3D from './../core/Scene3D'
-import Color from '../auxiliary/Color'
+import AnimObject3D from '@core/AnimObject3D'
 import {
   SphereGeometry as ThreeSphereGeometry,
   MeshBasicMaterial as ThreeMeshBasicMaterial,
   Mesh as ThreeMesh,
 } from 'three'
-
-interface Point3DProps {
-  scene: Scene3D
-  x: number
-  y: number
-  z: number
-  color?: Color
-}
+import { Point3DProps } from '@/interfaces/AnimObjects3D'
 
 export default class Point3D extends AnimObject3D {
   mesh: any

@@ -1,55 +1,16 @@
-import AnimObject3D from './../core/AnimObject3D'
-import Scene3D from './../core/Scene3D'
-import Color from '../auxiliary/Color'
-import Constants from '../helpers/Constants'
-import Line3D from './Line3D'
-import Point3D from './Point3D'
-import Surface, { MeshData } from './Surface'
-import Text3D from './Text3D'
-
-export enum NumberPlanes {
-  upper = 'Upper',
-  full = 'Full',
-  lower = 'Lower',
-  octants = 'Octants',
-}
-
-export enum Octants {
-  I = 'I',
-  II = 'II',
-  III = 'III',
-  IV = 'IV',
-  V = 'V',
-  VI = 'VI',
-  VII = 'VII',
-  VIII = 'VIII',
-}
-
-interface NumberPlane3DProps {
-  scene: Scene3D
-  color?: Color
-  form?: NumberPlanes
-  octants?: Array<Octants>
-}
-
-interface PointPlotProps {
-  x: number
-  y: number
-  z: number
-  color?: Color
-}
-
-interface SurfacePlotProps {
-  definition: string
-  sampleRate?: number
-  color?: Color
-  filled?: boolean
-  constraints?: {
-    x?: number
-    y?: number
-    z?: number
-  }
-}
+import AnimObject3D from '@core/AnimObject3D'
+import Constants from '@helpers/Constants'
+import Line3D from '@AnimObjects3D/Line3D'
+import Point3D from '@AnimObjects3D/Point3D'
+import Surface from '@AnimObjects3D/Surface'
+import Text3D from '@AnimObjects3D/Text3D'
+import {
+  NumberPlane3DProps,
+  PointPlotProps,
+  SurfacePlotProps,
+  MeshData,
+} from '@/interfaces/AnimObjects3D'
+import { Octants, NumberPlanes } from '@/enums/AnimObjects3D'
 
 export default class NumberPlane3D extends AnimObject3D {
   form: NumberPlanes = NumberPlanes.upper
@@ -58,7 +19,7 @@ export default class NumberPlane3D extends AnimObject3D {
   surfaces: Array<Surface> = []
   texts: Array<Text3D> = []
   webWorker: Worker = new Worker(
-    new URL('./../../helpers/Isosurface.worker.js', import.meta.url),
+    new URL('@@helpers/Isosurface.worker.js', import.meta.url),
     { type: 'module' }
   )
 

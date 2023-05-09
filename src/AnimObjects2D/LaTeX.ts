@@ -1,15 +1,7 @@
 import p5 from 'p5'
-import AnimObject, { AnimObjectProps } from '../core/AnimObject'
-import Color from '../auxiliary/Color'
-import { createSVG, removeSVG } from '../helpers/addSVG'
-
-interface LaTeXProps extends AnimObjectProps {
-  latex: string
-  color?: Color
-  size?: number
-  x: number
-  y: number
-}
+import AnimObject from '@/core/AnimObject2D'
+import { createSVG, removeSVG } from '@helpers/addSVG'
+import { LaTeXProps } from '@/interfaces/AnimObjects2D'
 
 export default class LaTeX extends AnimObject {
   latex: string = ''
@@ -19,7 +11,7 @@ export default class LaTeX extends AnimObject {
   rendered: boolean = false
   position: { x: number; y: number } = { x: 0, y: 0 }
   webWorker: Worker = new Worker(
-    new URL('./../helpers/TexToSVG.worker.js', import.meta.url),
+    new URL('@workers/TexToSVG.worker.js', import.meta.url),
     { type: 'module' }
   )
   svg?: string

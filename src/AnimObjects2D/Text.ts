@@ -1,28 +1,11 @@
 import p5 from 'p5'
-import AnimObject, { AnimObjectProps, Observer } from '../core/AnimObject'
-import Colors from '../helpers/Colors'
-import { Observables } from '../core/AnimObject'
-import { roundOff } from '../helpers/miscellaneous'
-import Color from '../auxiliary/Color'
-import { textToSVGPolygons } from '../helpers/TextToSVG'
-import { createSVG, removeSVG } from '../helpers/addSVG'
-
-interface TextProps extends AnimObjectProps {
-  text: string | number
-  color?: Color
-  size?: number
-  x: number
-  y: number
-  style?: TextStyle
-  font?: any
-}
-
-export enum TextStyle {
-  none,
-  italic,
-  bold,
-  boldItalic,
-}
+import AnimObject from '@/core/AnimObject2D'
+import { roundOff } from '@helpers/miscellaneous'
+import { textToSVGPolygons } from '@helpers/TextToSVG'
+import { createSVG, removeSVG } from '@helpers/addSVG'
+import { TextProps } from '@/interfaces/AnimObjects2D'
+import { TextStyle } from '@/enums/AnimObjects2D'
+import { Observables } from '@/enums/AnimObjects2D'
 
 export default class Text extends AnimObject {
   text: string = ''

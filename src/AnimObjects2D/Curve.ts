@@ -1,35 +1,20 @@
 import p5 from 'p5'
-import AnimObject, { AnimObjectProps, AnimObjects } from '../core/AnimObject'
-import Line, { Lines } from './Line'
-import Color from '../auxiliary/Color'
+import AnimObject2D from '@/core/AnimObject2D'
+import Line from '@AnimObjects2D/Line'
+import Color from '@auxiliary/Color'
 import { derivative } from 'mathjs'
-import { evaluate } from '../helpers/miscellaneous'
-import Point from './Point'
-import TransitionProps, { Transitions } from './../core/Transition'
-import { Transition } from './../core/Transition'
+import { evaluate } from '@helpers/miscellaneous'
+import Point from '@AnimObjects2D/Point'
+import { Transitions } from '@/enums/transitions'
+import { Transition } from '@core/Transition'
+import {
+  CurveAnchorPointProps,
+  CurveAnchorLineProps,
+  CurveProps,
+} from '@interfaces/AnimObjects2D'
+import { Lines } from '@/enums/AnimObjects2D'
 
-interface CurveAnchorPointProps extends AnimObjectProps {
-  x: number
-  size?: number
-  color?: Color
-}
-
-interface CurveAnchorLineProps extends AnimObjectProps {
-  x: number
-  length?: number
-  thickness?: number
-  color?: Color
-}
-
-export interface CurveProps extends AnimObjectProps {
-  definition: string
-  sampleRate: number
-  domain: [number, number]
-  range: [number, number]
-  thickness?: number
-}
-
-export default class Curve extends AnimObject {
+export default class Curve extends AnimObject2D {
   y: string
   sampleRate: number
   sections: Array<Line> = []
@@ -119,7 +104,7 @@ export default class Curve extends AnimObject {
     let transition = Transition(
       config.transition ? config.transition : Transitions.None
     )
-    let point = transition<Point>(
+    let point = transition(
       new Point({
         ...config,
         x: this.parentData.origin.x + x * this.parentData.stepX,
@@ -133,7 +118,7 @@ export default class Curve extends AnimObject {
       }),
       config.transitionOptions ? config.transitionOptions : {}
     )
-    return point
+    return point as Point
   }
 
   addTangent(config: CurveAnchorLineProps): Line {
@@ -145,7 +130,7 @@ export default class Curve extends AnimObject {
     let transition = Transition(
       config.transition ? config.transition : Transitions.None
     )
-    let line = transition<Line>(
+    let line = transition(
       new Line({
         ...config,
         form: Lines.SlopePoint,
@@ -160,8 +145,8 @@ export default class Curve extends AnimObject {
       }),
       config.transitionOptions ? config.transitionOptions : {}
     )
-    this.anchorLines.push(line)
-    return line
+    this.anchorLines.push(line as Line)
+    return line as Line
   }
 
   transform(lt: any) {}
@@ -172,7 +157,7 @@ export default class Curve extends AnimObject {
     }
     this.iterables.forEach((name: string) => {
       // @ts-ignore
-      this[name].forEach((o: AnimObject) => o.draw(p))
+      this[name].forEach((o: AnimObject2D) => o.draw(p))
     })
   }
 }

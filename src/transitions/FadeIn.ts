@@ -1,23 +1,19 @@
 import { v4 as uuid } from 'uuid'
-import AnimObject from '../core/AnimObject'
-import Curve from '../AnimObjects2D/Curve'
-import Line from '../AnimObjects2D/Line'
-import NumberPlane from '../AnimObjects2D/NumberPlane'
-import Point from '../AnimObjects2D/Point'
-import Constants from '../helpers/Constants'
-import { wait, roundOff, rangePerFrame } from '../helpers/miscellaneous'
-import TransitionProps, {
-  TransitionProgressProps,
-  TransitionTypes,
-  createTransition,
-} from './../core/Transition'
-import ImplicitCurve from '../AnimObjects2D/ImplicitCurve'
-import Text from '../AnimObjects2D/Text'
-import Vector from '../AnimObjects2D/Vector'
+import AnimObject from '@/core/AnimObject2D'
+import Curve from '@AnimObjects2D/Curve'
+import Line from '@AnimObjects2D/Line'
+import NumberPlane from '@AnimObjects2D/NumberPlane'
+import Point from '@AnimObjects2D/Point'
+import Constants from '@helpers/Constants'
+import { wait, roundOff, rangePerFrame } from '@helpers/miscellaneous'
+import { TransitionProgressProps } from '@interfaces/transitions'
+import { TransitionTypes } from '@/enums/transitions'
+import { createTransition } from '@core/Transition'
+import ImplicitCurve from '@AnimObjects2D/ImplicitCurve'
+import Text from '@AnimObjects2D/Text'
+import Vector from '@AnimObjects2D/Vector'
 import anime from 'animejs'
-import LaTeX from '../AnimObjects2D/LaTeX'
-
-interface FadeInTransitionProps extends TransitionProps {}
+import LaTeX from '@AnimObjects2D/LaTeX'
 
 const resetColor = (object: AnimObject) => {
   object.color.setAlpha(0)
@@ -30,7 +26,7 @@ const resetColors = (arr: Array<AnimObject>) => {
 
 const fadeInTransition = (
   object: AnimObject,
-  config: FadeInTransitionProps,
+  config: any,
   transitionData: {
     type?: TransitionTypes
     isFirst?: boolean
@@ -90,7 +86,7 @@ const fadeInTransition = (
 
 const fadeInTransitions = (
   arr: Array<AnimObject>,
-  config: FadeInTransitionProps,
+  config: any,
   overrideDuration?: number
 ) => {
   let id = uuid()
@@ -118,7 +114,7 @@ const fadeInTransitions = (
 
 const FadeIn = <Object extends AnimObject>(
   object: Object,
-  config: FadeInTransitionProps = {}
+  config: any = {}
 ): Object => {
   if (object instanceof Line) {
     resetColor(object)

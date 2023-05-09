@@ -1,20 +1,11 @@
-import AnimObject3D from './../core/AnimObject3D'
-import Scene3D from './../core/Scene3D'
+import AnimObject3D from '@core/AnimObject3D'
 import {
   LineBasicMaterial as ThreeLineBasicMaterial,
   Vector3 as ThreeVector3,
   BufferGeometry as ThreeBufferGeometry,
   Line as ThreeLine,
 } from 'three'
-import Color from '../auxiliary/Color'
-
-interface Line3DProps {
-  scene: Scene3D
-  point?: { x: number; y: number; z: number }
-  point1?: { x: number; y: number; z: number }
-  point2?: { x: number; y: number; z: number }
-  color?: Color
-}
+import { Line3DProps } from '@/interfaces/AnimObjects3D'
 
 export default class Line3D extends AnimObject3D {
   constructor(config: Line3DProps) {

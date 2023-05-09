@@ -1,32 +1,19 @@
 import p5 from 'p5'
-import AnimObject, { AnimObjectProps } from '../core/AnimObject'
-import Color from '../auxiliary/Color'
-import Colors from '../helpers/Colors'
+import AnimObject from '@/core/AnimObject2D'
+import Colors from '@helpers/Colors'
 import {
   degToRad,
   getQuadrant,
   radToDeg,
   rangePerFrame,
   roundOff,
-} from '../helpers/miscellaneous'
-import { multiply } from 'mathjs'
-import Matrix from '../auxiliary/Matrix'
-import { v4 as uuid } from 'uuid'
-import { LinearTransformProps } from './NumberPlane'
-import { createTransition } from './../core/Transition'
+} from '@helpers/miscellaneous'
+import Matrix from '@auxiliary/Matrix'
+import { LinearTransformProps } from '@AnimObjects2D/NumberPlane'
+import { createTransition } from '@core/Transition'
+import { VectorProps } from '@/interfaces/AnimObjects2D'
+import { Vectors } from '@/enums/AnimObjects2D'
 
-export enum Vectors {
-  OriginCentered = 'OriginCentered',
-  Free = 'Free',
-}
-
-export interface VectorProps extends AnimObjectProps {
-  form?: Vectors
-  x?: number
-  y?: number
-  head?: { x: number; y: number }
-  tail?: { x: number; y: number }
-}
 
 export default class Vector extends AnimObject {
   form: Vectors = Vectors.OriginCentered

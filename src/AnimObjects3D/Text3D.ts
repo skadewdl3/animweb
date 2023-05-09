@@ -1,18 +1,7 @@
-import AnimObject3D from './../core/AnimObject3D'
-import Scene3D from './../core/Scene3D'
+import AnimObject3D from '@core/AnimObject3D'
 // @ts-ignore
 import { Text } from 'troika-three-text'
-
-interface Text3DProps {
-  scene: Scene3D
-  text: string
-  x?: number
-  y?: number
-  z?: number
-  fixPosition?: boolean
-  fixRotation?: boolean
-  fixed?: boolean
-}
+import { Text3DProps } from '@/interfaces/AnimObjects3D'
 
 export default class Text3D extends AnimObject3D {
   text: string

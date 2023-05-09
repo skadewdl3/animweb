@@ -8,68 +8,18 @@ AnimObject will never be used directly, but only as a parent to Point, Line, Num
 
 import p5 from 'p5'
 import { v4 as uuidv4 } from 'uuid'
-import { Width, Height } from '../auxiliary/Dimensions'
-import Color from '../auxiliary/Color'
-import Colors from '../helpers/Colors'
-import { Transitions } from './Transition'
-import TransitionProps from './Transition'
-import { Scene } from '../main'
-
-/*
-Defines what kind of properties/arguments/parameters (aka props)
-every subclass of AnimObject can accept.
-Thus, Point, Line, NumberPlane, etc. - all, can accept these props.
-*/
-export interface AnimObjectProps {
-  color?: Color
-  backgroundColor?: Color
-  maxAlpha?: number
-  parentData?: {
-    origin: { x: number; y: number }
-    stepX: number
-    stepY: number
-  }
-  thickness?: number
-  size?: number
-  transition?: Transitions
-  transitionOptions?: TransitionProps
-  scene: Scene
-}
-
-/*
-An enum that lists the kinds of AnimObjects we have rn.
-When we create a new AnimObject, remember to add it to this enum.
-This enum is used to check whether an AnimObject is a Point, Line, etc.
-*/
-export enum AnimObjects {
-  Line,
-  Point,
-  NumberPlane,
-  Curve,
-}
-
-/*
-An enum that lists what kind of properties on an AnimObject
-can be observed by other AnimObjects. 
-*/
-export enum Observables {
-  color = 'color',
-  backgroundColor = 'backgroundColor',
-  slope = 'slope',
-  x = 'x',
-  y = 'y',
-}
+import Color from '@auxiliary/Color'
+import Colors from '@helpers/Colors'
+import { Observer } from '@/interfaces/core'
+import { Scene } from '@/interfaces/core'
+import Scene2D from './Scene2D'
 
 /*
 AnimObjects can observe properties by specifying the type of property
 and a handler for the returned value
 */
-export interface Observer {
-  property: Observables
-  handler: Function
-}
 
-export default class AnimObject {
+export default class AnimObject2D {
   id: string // A unique identifier created for every AnimObject. Used to identify which AnimObject to remove when Scene.remove is called
   color: Color = Colors.black // The fill color of the AnimObject. subclasses may or may not use this prop
   backgroundColor: Color = Colors.transparent // The fill bg color of the AnimObject. subclasses may or may not use this prop
@@ -77,7 +27,7 @@ export default class AnimObject {
   maxAlpha: number = 1
   observers: Array<Observer> = [] // An array containing the AnimObjects that are observing come property of this AnimObject
   iterables: Array<string> = []
-  scene: Scene
+  scene: Scene2D
 
   remove?: Function
   parentData: {
@@ -142,7 +92,7 @@ export default class AnimObject {
   When it ends, the transition method sets itself to null and stop being called inside AnimObject.draw
   */
 
-  constructor(s: Scene) {
+  constructor(s: Scene2D) {
     this.scene = s
     this.id = `webanimobject-${uuidv4()}`
   }

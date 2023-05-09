@@ -1,22 +1,17 @@
 import { v4 as uuid } from 'uuid'
-import AnimObject, { AnimObjects } from '../core/AnimObject'
-import Curve from '../AnimObjects2D/Curve'
-import Line from '../AnimObjects2D/Line'
-import NumberPlane from '../AnimObjects2D/NumberPlane'
-import Point from '../AnimObjects2D/Point'
-import Color from '../auxiliary/Color'
-import Constants from '../helpers/Constants'
-import { rangePerFrame, roundOff, wait } from '../helpers/miscellaneous'
-import TransitionProps, {
-  TransitionProgressProps,
-  TransitionTypes,
-  createTransition,
-} from '../core/Transition'
-import Text from '../AnimObjects2D/Text'
+import AnimObject from '@/core/AnimObject2D'
+import Curve from '@AnimObjects2D/Curve'
+import Line from '@AnimObjects2D/Line'
+import NumberPlane from '@AnimObjects2D/NumberPlane'
+import Point from '@AnimObjects2D/Point'
+import Constants from '@helpers/Constants'
+import { rangePerFrame, wait } from '@helpers/miscellaneous'
+import { TransitionProgressProps } from '@interfaces/transitions'
+import { TransitionTypes } from '@/enums/transitions'
+import { createTransition } from '@core/Transition'
+import Text from '@AnimObjects2D/Text'
 import anime from 'animejs'
-import LaTeX from '../AnimObjects2D/LaTeX'
-
-interface CreateTransitionProps extends TransitionProps {}
+import LaTeX from '@AnimObjects2D/LaTeX'
 
 const hideObject = (object: AnimObject, shouldHide: boolean) => {
   object.color.setAlpha(shouldHide ? 0 : object.maxAlpha)
@@ -28,7 +23,7 @@ const hideObjects = (arr: Array<AnimObject>, shouldHide: boolean) => {
 
 const createLineTransition = (
   object: Line,
-  config: CreateTransitionProps,
+  config: any,
   transitionData: {
     type: TransitionTypes
     isFirst?: boolean
@@ -127,7 +122,7 @@ const createLineTransition = (
 
 const createLineTransitions = (
   arr: Array<Line>,
-  config: CreateTransitionProps,
+  config: any,
   totalDuration: number
 ) => {
   let duration = totalDuration
@@ -150,7 +145,7 @@ const createLineTransitions = (
 
 const createStaggeredLineTransitions = async (
   arr: Array<Line>,
-  config: CreateTransitionProps,
+  config: any,
   totalDuration: number
 ) => {
   let id = uuid()
@@ -175,7 +170,7 @@ const createStaggeredLineTransitions = async (
 
 const createPointTransition = (
   object: Point,
-  config: CreateTransitionProps,
+  config: any,
   transitionData: {
     type: TransitionTypes
     isFirst?: boolean
@@ -233,7 +228,7 @@ const createPointTransition = (
 
 const createPointTransitions = async (
   arr: Array<Point>,
-  config: CreateTransitionProps,
+  config: any,
   totalDuration: number
 ) => {
   let id = uuid()
@@ -256,7 +251,7 @@ const createPointTransitions = async (
 
 const Create = <Object extends AnimObject>(
   object: Object,
-  config: CreateTransitionProps = {}
+  config: any = {}
 ): Object => {
   if (object instanceof Line) {
     object.transition = createLineTransition(object, config)

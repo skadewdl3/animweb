@@ -1,15 +1,9 @@
 import p5 from 'p5'
-import Color from '../auxiliary/Color'
-import Colors from '../helpers/Colors'
-import AnimObject, { AnimObjectProps } from '../core/AnimObject'
-import { roundOff } from '../helpers/miscellaneous'
-
-interface ImplicitCurveProps extends AnimObjectProps {
-  definition: string
-  sampleRate?: number
-  thickness?: number
-  color?: Color
-}
+import Color from '@auxiliary/Color'
+import Colors from '@helpers/Colors'
+import AnimObject from '@/core/AnimObject2D'
+import { roundOff } from '@helpers/miscellaneous'
+import { ImplicitCurveProps } from '@/interfaces/AnimObjects2D'
 
 export default class ImplicitCurve extends AnimObject {
   definition: string = ''
@@ -19,7 +13,7 @@ export default class ImplicitCurve extends AnimObject {
   sampleRate: number = 6
   calculatingQuadtree: boolean = false
   webWorker: Worker = new Worker(
-    new URL('./../helpers/QuadTree.worker.js', import.meta.url),
+    new URL('@workers/QuadTree.worker.js', import.meta.url),
     { type: 'module' }
   )
   graphicsBuffer: any

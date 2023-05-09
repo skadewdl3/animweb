@@ -1,77 +1,15 @@
-import AnimObject, {
-  AnimObjectProps,
-  Observables,
-  Observer,
-} from '../core/AnimObject'
+import AnimObject from '@/core/AnimObject2D'
+import { Observables } from '@/enums/AnimObjects2D'
+import { Observer } from '@/interfaces/core'
 import p5 from 'p5'
 import { evaluate, derivative } from 'mathjs'
-import Matrix from '../auxiliary/Matrix'
-import { rangePerFrame, roundOff } from '../helpers/miscellaneous'
-import { v4 as uuid } from 'uuid'
-import Constants from '../helpers/Constants'
+import Matrix from '@auxiliary/Matrix'
+import { rangePerFrame, roundOff } from '@helpers/miscellaneous'
+import Constants from '@helpers/Constants'
 import { LinearTransformProps } from './NumberPlane'
-import { createTransition } from './../core/Transition'
-
-export enum Lines {
-  DoublePoint,
-  SlopePoint,
-  SlopeIntercept,
-  DoubleIntercept,
-  Normal,
-}
-
-interface CommonLineProps extends AnimObjectProps {
-  domain?: [number, number]
-  range?: [number, number]
-  thickness?: number
-  parentData?: {
-    origin: { x: number; y: number }
-    stepX: number
-    stepY: number
-  }
-  definition?: string
-  length?: number
-}
-
-interface DoublePointLineProps extends CommonLineProps {
-  x1: number
-  x2: number
-  y1: number
-  y2: number
-  form: Lines.DoublePoint
-}
-
-interface SlopePointLineProps extends CommonLineProps {
-  point: { x: number; y: number }
-  slope: number
-  form: Lines.SlopePoint
-}
-
-interface SlopeInterceptForm extends CommonLineProps {
-  slope: number
-  yIntercept?: number
-  xIntercept?: number
-  form: Lines.SlopeIntercept
-}
-
-interface DoubleInterceptForm extends CommonLineProps {
-  xIntercept: number
-  yIntercept: number
-  form: Lines.DoubleIntercept
-}
-
-interface NormalForm extends CommonLineProps {
-  distance: number
-  alpha: number
-  form: Lines.Normal
-}
-
-type LineProps =
-  | DoublePointLineProps
-  | SlopePointLineProps
-  | SlopeInterceptForm
-  | DoubleInterceptForm
-  | NormalForm
+import { createTransition } from '@core/Transition'
+import { Lines } from '@/enums/AnimObjects2D'
+import { LineProps } from '@/interfaces/AnimObjects2D'
 
 export default class Line extends AnimObject {
   y: Function = (x: number) => {

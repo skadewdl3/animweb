@@ -1,21 +1,18 @@
-import AnimObject, { AnimObjects } from '../core/AnimObject'
-import Curve from '../AnimObjects2D/Curve'
-import Point from '../AnimObjects2D/Point'
-import Line from '../AnimObjects2D/Line'
-import NumberPlane from '../AnimObjects2D/NumberPlane'
-import ImplicitCurve from '../AnimObjects2D/ImplicitCurve'
-import Text from '../AnimObjects2D/Text'
-import Constants from '../helpers/Constants'
-import { wait, rangePerFrame } from '../helpers/miscellaneous'
-import TransitionProps, {
-  TransitionProgressProps,
-  TransitionTypes,
-  createTransition,
-} from '../core/Transition'
+import AnimObject from '@/core/AnimObject2D'
+import Curve from '@AnimObjects2D/Curve'
+import Point from '@AnimObjects2D/Point'
+import Line from '@AnimObjects2D/Line'
+import NumberPlane from '@AnimObjects2D/NumberPlane'
+import ImplicitCurve from '@AnimObjects2D/ImplicitCurve'
+import Text from '@AnimObjects2D/Text'
+import Constants from '@helpers/Constants'
+import { wait, rangePerFrame } from '@helpers/miscellaneous'
+import { TransitionProgressProps } from '@interfaces/transitions'
+import { TransitionTypes } from '@/enums/transitions'
+import { createTransition } from '@core/Transition'
 import { v4 as uuid } from 'uuid'
 import anime from 'animejs'
-import LaTeX from '../AnimObjects2D/LaTeX'
-interface FadeOutTransitionProps extends TransitionProps {}
+import LaTeX from '@AnimObjects2D/LaTeX'
 
 const resetColor = (object: AnimObject) => {
   object.color.setAlpha(object.maxAlpha)
@@ -28,7 +25,7 @@ const resetColors = (arr: Array<AnimObject>) => {
 
 const fadeOutTransition = (
   object: AnimObject,
-  config: FadeOutTransitionProps,
+  config: any,
   transitionData: {
     type?: TransitionTypes
     isFirst?: boolean
@@ -91,7 +88,7 @@ const fadeOutTransition = (
 
 const fadeOutTransitions = (
   arr: Array<AnimObject>,
-  config: FadeOutTransitionProps,
+  config: any,
   overrideDuration?: number
 ) => {
   let id = uuid()
@@ -119,7 +116,7 @@ const fadeOutTransitions = (
 
 const FadeOut = <Object extends AnimObject>(
   object: Object,
-  config: FadeOutTransitionProps = {}
+  config: any = {}
 ): Object => {
   if (object instanceof Line) {
     resetColor(object)

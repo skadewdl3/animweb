@@ -1,25 +1,42 @@
-import { NumberPlanes, Octants } from './AnimObjects3D/NumberPlane3D.ts'
-import Scene2D from './core/Scene2D'
-import { Lines } from './AnimObjects2D/Line.ts'
-import { Width, Height } from './auxiliary/Dimensions.ts'
-import Colors from './helpers/Colors.ts'
-import FadeIn from './transitions/FadeIn.ts'
-import FadeOut from './transitions/FadeOut.ts'
-import Create from './transitions/Create.ts'
-import Color from './auxiliary/Color.ts'
-import { Transitions } from './core/Transition'
-import { TextStyle } from './AnimObjects2D/Text.ts'
-import AnimObject, { Observables } from './core/AnimObject.ts'
-import Constants from './helpers/Constants.ts'
-import Matrix from './auxiliary/Matrix.ts'
-import { Vectors } from './AnimObjects2D/Vector.ts'
-import Scene3D from './core/Scene3D'
+// Core
+import Scene2D from '@core/Scene2D'
+import Scene3D from '@core/Scene3D'
+import { Observables } from './enums/AnimObjects2D'
+
+// Transitions
+import FadeIn from '@transitions/FadeIn.ts'
+import FadeOut from '@transitions/FadeOut.ts'
+import Create from '@transitions/Create.ts'
+
+// Auxiliary
+import Color from '@auxiliary/Color.ts'
+import Matrix from '@auxiliary/Matrix.ts'
+import Complex from '@auxiliary/Complex.ts'
+
+// Helpers
+import Colors from '@helpers/Colors.ts'
+import { Width, Height } from '@/helpers/Dimensions'
+import Constants from '@helpers/Constants.ts'
+import { UserSVGs, svgData } from '@helpers/addSVG.ts'
+import { getElement, getInlineCode } from './helpers/miscellaneous'
+
+// Interfaces
+import { AnimObject, Scene } from '@interfaces/core'
+
+// Enums
+import { Octants, NumberPlanes, ComplexPlanes } from './enums/AnimObjects3D'
+import { Vectors, TextStyle, Lines } from './enums/AnimObjects2D'
+import { Transitions } from './enums/transitions'
+import { Fonts } from './enums/miscellaneous'
+
+// UI
+import { code, error, logger } from '@ui/elements.ts'
+
+// Libraries
 import { EditorView, basicSetup } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
-import Complex from './auxiliary/Complex.ts'
 import { createApp, reactive } from 'petite-vue'
-import { code, error, logger } from './ui/elements.ts'
-import { UserSVGs, svgData } from './helpers/addSVG.ts'
+import AnimObject2D from './core/AnimObject2D'
 
 declare global {
   interface Window {
@@ -30,36 +47,12 @@ declare global {
   }
 }
 
-const getElement = (selector: string) => {
-  return document.querySelector(selector)
-}
-
-export type Scene = Scene2D | Scene3D
 let scene: Scene
 let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0)
 let scene3D = new Scene3D(Width.full, Height.full, Colors.gray0)
 scene2D.show()
 scene3D.hide()
 scene = scene2D
-
-const getInlineCode = (codeEditor: EditorView) => {
-  let defaultExports = ''
-  for (let name in window.WebAnim) {
-    defaultExports = defaultExports.concat(
-      `var ${name} = window.WebAnim.${name}\n`
-    )
-  }
-  let inlineCode = document.createTextNode(
-    `try {\n${defaultExports}${codeEditor.state.doc.toString()}\n}\ncatch (err) {
-            let [errLineNumber, errLineColumn] = err.stack.split(':').slice(-2).map((i) => parseInt(i))
-            let errType = err.stack.split(':')[0]
-            showError(errType, err.message, parseInt(errLineNumber - ${
-              defaultExports.split('\n').length
-            }))
-        }`
-  )
-  return inlineCode
-}
 
 const editor = reactive({
   editor: null,
@@ -123,43 +116,43 @@ const helpers = {
 
 const aos = {
   Point: [
-    async () => await import('./AnimObjects2D/Point.ts'),
-    async () => await import('./AnimObjects3D/Point3D.ts'),
+    async () => await import('@AnimObjects2D/Point.ts'),
+    async () => await import('@AnimObjects3D/Point3D.ts'),
   ],
   Line: [
-    async () => await import('./AnimObjects2D/Line.ts'),
-    async () => await import('./AnimObjects3D/Line3D.ts'),
+    async () => await import('@AnimObjects2D/Line.ts'),
+    async () => await import('@AnimObjects3D/Line3D.ts'),
   ],
   NumberPlane: [
-    async () => await import('./AnimObjects2D/NumberPlane.ts'),
-    async () => await import('./AnimObjects3D/NumberPlane3D.ts'),
+    async () => await import('@AnimObjects2D/NumberPlane.ts'),
+    async () => await import('@AnimObjects3D/NumberPlane3D.ts'),
   ],
   Text: [
-    async () => await import('./AnimObjects2D/Text.ts'),
-    async () => await import('./AnimObjects3D/Text3D.ts'),
+    async () => await import('@AnimObjects2D/Text.ts'),
+    async () => await import('@AnimObjects3D/Text3D.ts'),
   ],
-  Curve: [async () => await import('./AnimObjects2D/Curve.ts')],
-  ImplicitCurve: [async () => await import('./AnimObjects2D/ImplicitCurve.ts')],
-  Surface: [async () => await import('./AnimObjects3D/Surface.ts')],
-  ComplexPlane: [async () => await import('./AnimObjects3D/ComplexPlane3D.ts')],
-  Cube: [async () => await import('./AnimObjects3D/Cube.ts')],
-  LaTeX: [async () => await import('./AnimObjects2D/LaTeX.ts')],
-  Latex: [async () => await import('./AnimObjects2D/LaTeX.ts')],
-  TeX: [async () => await import('./AnimObjects2D/LaTeX.ts')],
-  Tex: [async () => await import('./AnimObjects2D/LaTeX.ts')],
-  Vector: [async () => await import('./AnimObjects2D/Vector.ts')],
+  Curve: [async () => await import('@AnimObjects2D/Curve.ts')],
+  ImplicitCurve: [async () => await import('@AnimObjects2D/ImplicitCurve.ts')],
+  Surface: [async () => await import('@AnimObjects3D/Surface.ts')],
+  ComplexPlane: [async () => await import('@AnimObjects3D/ComplexPlane3D.ts')],
+  Cube: [async () => await import('@AnimObjects3D/Cube.ts')],
+  LaTeX: [async () => await import('@AnimObjects2D/LaTeX.ts')],
+  Latex: [async () => await import('@AnimObjects2D/LaTeX.ts')],
+  TeX: [async () => await import('@AnimObjects2D/LaTeX.ts')],
+  Tex: [async () => await import('@AnimObjects2D/LaTeX.ts')],
+  Vector: [async () => await import('@AnimObjects2D/Vector.ts')],
 }
 
 const transitions = {
   Create: (object: AnimObject, config: any) => {
     if (scene instanceof Scene2D) {
-      scene.add(Create(object, config))
+      scene.add(Create(object as AnimObject2D, config))
     }
     return object
   },
   FadeIn: (object: AnimObject, config: any) => {
     if (scene instanceof Scene2D) {
-      scene.add(FadeIn(object, config))
+      scene.add(FadeIn(object as AnimObject2D, config))
     }
     return object
   },
@@ -175,7 +168,8 @@ const enums = {
   Vectors,
   NumberPlanes,
   Octants,
-  Fonts: {},
+  ComplexPlanes,
+  Fonts,
 }
 
 window.WebAnim = {

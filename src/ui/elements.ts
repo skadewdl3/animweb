@@ -1,7 +1,7 @@
 import { reactive } from 'petite-vue'
-import Color from '../auxiliary/Color'
-import Complex from '../auxiliary/Complex'
-import Matrix from '../auxiliary/Matrix'
+import Color from '@auxiliary/Color'
+import Complex from '@auxiliary/Complex'
+import Matrix from '@auxiliary/Matrix'
 
 export const code = reactive({
   hidden: false,

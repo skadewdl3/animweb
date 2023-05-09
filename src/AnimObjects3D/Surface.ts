@@ -1,7 +1,5 @@
 import { mergeBufferGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils'
-import AnimObject3D from './../core/AnimObject3D'
-import Scene3D from './../core/Scene3D'
-import Color from '../auxiliary/Color'
+import AnimObject3D from '@core/AnimObject3D'
 import {
   BufferGeometry as ThreeBufferGeometry,
   BufferAttribute as ThreeBufferAttribute,
@@ -12,27 +10,10 @@ import {
   EdgesGeometry as ThreeEdgesGeometry,
   Mesh as ThreeMesh,
 } from 'three'
-import { error } from '../ui/elements'
+import { error } from '@ui/elements'
+import { MeshData, SurfaceProps } from '@/interfaces/AnimObjects3D'
 
-export interface MeshData {
-  positions: Array<[number, number, number]>
-  cells: Array<[number, number, number]>
-  triangles: Array<Float32Array>
-}
 
-interface SurfaceProps {
-  scene: Scene3D
-  meshData: MeshData
-  equation: string
-  filled?: boolean
-  color?: Color
-}
-
-export interface MeshData {
-  positions: Array<[number, number, number]>
-  cells: Array<[number, number, number]>
-  triangles: Array<Float32Array>
-}
 
 export default class Surface extends AnimObject3D {
   filled: boolean = false

@@ -1,70 +1,22 @@
-/*
-This interface simply describes what kind of props a Transition Function (FadeIn, Create, etc.) can accept.
-
-The transition has a format similar to: Create(Point, { duration: 1 })
-The structure of the second argument is given by this interface
-*/
-
-import AnimObject from './AnimObject'
-import Create from './../transitions/Create'
-import FadeIn from './../transitions/FadeIn'
-import FadeOut from './../transitions/FadeOut'
+import { TransitionProps } from '@/interfaces/transitions'
+import { Transitions } from '@/enums/transitions'
+import FadeIn from '@/transitions/FadeIn'
+import FadeOut from '@/transitions/FadeOut'
+import Create from '@/transitions/Create'
 import { v4 as uuid } from 'uuid'
+import AnimObject2D from './AnimObject2D'
 
-export default interface TransitionProps {
-  duration?: number // how long the transition should last (in seconds)
-}
-
-// Similar to the lines enum, this enum is used to pass a transition to an AnimObject (if we aren't applying it externally)
-export enum Transitions {
-  FadeIn = 'FadeIn',
-  FadeOut = 'FadeOut',
-  Create = 'Create',
-  None = 'None',
-}
-
-type TrasitionReturnType = <Object extends AnimObject>(
-  obj: Object,
-  config: any
-) => Object
-
-export const Transition = (type: Transitions): TrasitionReturnType => {
+export const Transition = (type: Transitions) => {
   switch (type) {
     case Transitions.FadeIn:
-      return <Object extends AnimObject>(obj: Object, config: any) =>
-        FadeIn<Object>(obj, config)
+      return (obj: AnimObject2D, config: any) => FadeIn(obj, config)
     case Transitions.FadeOut:
-      return <Object extends AnimObject>(obj: Object, config: any) =>
-        FadeOut<Object>(obj, config)
+      return (obj: AnimObject2D, config: any) => FadeOut(obj, config)
     case Transitions.Create:
-      return <Object extends AnimObject>(obj: Object, config: any) =>
-        Create<Object>(obj, config)
+      return (obj: AnimObject2D, config: any) => Create(obj, config)
     default:
-      return <Object extends AnimObject>(object: Object, config: any) => object
+      return <AnimObject>(object: AnimObject, config: any): AnimObject => object
   }
-}
-
-export interface TransitionQueueItem {
-  id: string
-  object?: AnimObject
-}
-
-export enum TransitionTypes {
-  single = 'single',
-  group = 'group',
-}
-
-export interface TransitionProgressProps {
-  start: Function
-  end: Function
-}
-
-export interface Transition {
-  onStart?: Function
-  onEnd?: Function
-  onProgress: Function
-  endCondition?: Function
-  object: any
 }
 
 export const createTransition = ({
@@ -73,7 +25,7 @@ export const createTransition = ({
   onProgress,
   endCondition,
   object,
-}: Transition) => {
+}: TransitionProps) => {
   let started = false
   let transitionQueueItem = {
     id: uuid(),

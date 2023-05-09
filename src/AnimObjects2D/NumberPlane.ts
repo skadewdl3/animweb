@@ -1,57 +1,24 @@
-import AnimObject, { AnimObjectProps, AnimObjects } from '../core/AnimObject'
+import AnimObject from '@/core/AnimObject2D'
 import p5 from 'p5'
-import Point, { PointProps } from './Point'
+import Point from './Point'
 import Curve from './Curve'
-import Line, { Lines } from './Line'
-import Colors from '../helpers/Colors'
-import Color from '../auxiliary/Color'
-import TransitionProps, { Transition, Transitions } from './../core/Transition'
-import Constants, { RenderingModes } from '../helpers/Constants'
+import Line from './Line'
+import { Lines } from '@/enums/AnimObjects2D'
+import { Transition } from '@core/Transition'
+import { Transitions } from '@/enums/transitions'
+import { RenderingModes } from '@/enums/miscellaneous'
+import Constants from '@helpers/Constants'
 import ImplicitCurve from './ImplicitCurve'
 import { matrix } from 'mathjs'
-import Vector, { VectorProps } from './Vector'
-import Matrix from '../auxiliary/Matrix'
-
-interface NumberPlaneProps extends AnimObjectProps {
-  stepX?: number
-  stepY?: number
-  step?: number
-  width?: number
-  height?: number
-  x?: number
-  y?: number
-  origin?: { x: number; y: number }
-  showTicks?: boolean
-  grid?: boolean
-  xGrid?: boolean
-  yGrid?: boolean
-}
-
-interface ImplicitCurvePlotProps extends AnimObjectProps {
-  definition: string
-  sampleRate?: number
-  thickness?: number
-  transition?: Transitions
-  transitionOptions?: TransitionProps
-}
-
-interface CurvePlotProps extends AnimObjectProps {
-  definition: string
-  domain?: [number, number]
-  sampleRate?: number
-  thickness?: number
-  transition?: Transitions
-  transitionOptions?: TransitionProps
-}
-
-interface PointPlotProps extends AnimObjectProps {
-  x: number
-  y: number
-  z?: number
-  size?: number
-  transition?: Transitions
-  transitionOptions?: TransitionProps
-}
+import Matrix from '@auxiliary/Matrix'
+import {
+  PointPlotProps,
+  ImplicitCurvePlotProps,
+  CurvePlotProps,
+  NumberPlaneProps,
+  VectorProps,
+} from '@/interfaces/AnimObjects2D'
+import Vector from './Vector'
 
 export interface LinearTransformProps {
   duration: number
@@ -341,7 +308,7 @@ export default class NumberPlane extends AnimObject {
     let transitionOptions = config.transitionOptions
       ? config.transitionOptions
       : {}
-    let point = transition<Point>(
+    let point = transition(
       new Point({
         color: this.color.copy(),
         ...config,
@@ -354,8 +321,8 @@ export default class NumberPlane extends AnimObject {
       }),
       transitionOptions
     )
-    this.points.push(point)
-    return point
+    this.points.push(point as Point)
+    return point as Point
   }
 
   plot(config: CurvePlotProps): Curve {
@@ -383,7 +350,7 @@ export default class NumberPlane extends AnimObject {
     let transitionOptions = config.transitionOptions
       ? config.transitionOptions
       : {}
-    let curve = transition<Curve>(
+    let curve = transition(
       new Curve({
         color: this.color.copy(),
         ...config,
@@ -399,8 +366,8 @@ export default class NumberPlane extends AnimObject {
       }),
       transitionOptions
     )
-    this.curves.push(curve)
-    return curve
+    this.curves.push(curve as Curve)
+    return curve as Curve
   }
 
   plotImplicit(config: ImplicitCurvePlotProps): ImplicitCurve {
@@ -411,7 +378,7 @@ export default class NumberPlane extends AnimObject {
       ? config.transitionOptions
       : {}
 
-    let implicitCurve = transition<ImplicitCurve>(
+    let implicitCurve = transition(
       new ImplicitCurve({
         color: this.color.copy(),
         ...config,
@@ -424,8 +391,8 @@ export default class NumberPlane extends AnimObject {
       }),
       transitionOptions
     )
-    this.implicitCurves.push(implicitCurve)
-    return implicitCurve
+    this.implicitCurves.push(implicitCurve as ImplicitCurve)
+    return implicitCurve as ImplicitCurve
   }
 
   vector(config: VectorProps) {

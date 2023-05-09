@@ -1,54 +1,15 @@
-import AnimObject3D from './../core/AnimObject3D'
-import Scene3D from './../core/Scene3D'
-import Color from '../auxiliary/Color'
-import Constants from '../helpers/Constants'
-import Line3D from './Line3D'
-import Point3D from './Point3D'
-import Surface, { MeshData } from './Surface'
-
-export enum ComplexPlanes {
-  upper = 'Upper',
-  full = 'Full',
-  lower = 'Lower',
-  octants = 'Octants',
-}
-
-export enum Octants {
-  I = 'I',
-  II = 'II',
-  III = 'III',
-  IV = 'IV',
-  V = 'V',
-  VI = 'VI',
-  VII = 'VII',
-  VIII = 'VIII',
-}
-
-interface ComplexPlane3DProps {
-  scene: Scene3D
-  color?: Color
-  form?: ComplexPlanes
-  octants?: Array<Octants>
-}
-
-interface PointPlotProps {
-  x: number
-  y: number
-  z: number
-  color?: Color
-}
-
-interface SurfacePlotProps {
-  definition: string
-  sampleRate?: number
-  color?: Color
-  filled?: boolean
-  constraints?: {
-    x?: number
-    y?: number
-    z?: number
-  }
-}
+import AnimObject3D from '@core/AnimObject3D'
+import Constants from '@helpers/Constants'
+import Line3D from '@AnimObjects3D/Line3D'
+import Point3D from '@AnimObjects3D/Point3D'
+import Surface from '@AnimObjects3D/Surface'
+import {
+  PointPlotProps,
+  SurfacePlotProps,
+  MeshData,
+  ComplexPlane3DProps,
+} from '@/interfaces/AnimObjects3D'
+import { Octants, ComplexPlanes } from '@/enums/AnimObjects3D'
 
 export default class ComplexPlane3D extends AnimObject3D {
   form: ComplexPlanes = ComplexPlanes.upper
@@ -56,7 +17,7 @@ export default class ComplexPlane3D extends AnimObject3D {
   points: Array<Point3D> = []
   surfaces: Array<Surface> = []
   webWorker: Worker = new Worker(
-    new URL('./../../helpers/Complex.worker.js', import.meta.url),
+    new URL('@@helpers/Complex.worker.js', import.meta.url),
     { type: 'module' }
   )
 

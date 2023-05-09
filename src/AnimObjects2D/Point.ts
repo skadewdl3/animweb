@@ -1,25 +1,15 @@
-import { evaluate, matrix } from 'mathjs'
+import { evaluate } from 'mathjs'
 import p5 from 'p5'
 import { v4 as uuid } from 'uuid'
-import AnimObject, {
-  AnimObjectProps,
-  AnimObjects,
-  Observables,
-  Observer,
-} from '../core/AnimObject'
-import Color from '../auxiliary/Color'
-import { roundOff } from '../helpers/miscellaneous'
-import { rangePerFrame } from '../helpers/miscellaneous'
-import Matrix from '../auxiliary/Matrix'
+import AnimObject from '@/core/AnimObject2D'
+import { Observables } from '@/enums/AnimObjects2D'
+import { Observer } from '@/interfaces/core'
+import { roundOff } from '@helpers/miscellaneous'
+import { rangePerFrame } from '@helpers/miscellaneous'
+import Matrix from '@auxiliary/Matrix'
 import { LinearTransformProps } from './NumberPlane'
-import { createTransition } from './../core/Transition'
-
-export interface PointProps extends AnimObjectProps {
-  x: number
-  y: number
-  size?: number
-  definition?: string
-}
+import { createTransition } from '@core/Transition'
+import { PointProps } from '@/interfaces/AnimObjects2D'
 
 class Point extends AnimObject {
   x: number

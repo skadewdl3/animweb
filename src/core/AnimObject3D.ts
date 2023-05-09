@@ -6,70 +6,12 @@ The AnimObject3D clas specifies color and backgruondColor properties for all of 
 AnimObject3D will never be used directly, but only as a parent to Point, Line, NumberPlane, etc
 */
 
-import p5 from 'p5'
 import { v4 as uuidv4 } from 'uuid'
-import { Width, Height } from './../auxiliary/Dimensions'
-import Color from './../auxiliary/Color'
-import Colors from './../helpers/Colors'
-import { Transitions } from './Transition'
-import TransitionProps from './Transition'
-import { Scene } from '../main'
-import Scene3D from './Scene3D'
+import Color from '@auxiliary/Color'
+import Colors from '@helpers/Colors'
+import Scene3D from '@core/Scene3D'
 import { Mesh as ThreeMesh } from 'three'
-
-/*
-Defines what kind of properties/arguments/parameters (aka props)
-every subclass of AnimObject3D can accept.
-Thus, Point, Line, NumberPlane, etc. - all, can accept these props.
-*/
-export interface AnimObject3DProps {
-  color?: Color
-  backgroundColor?: Color
-  maxAlpha?: number
-  parentData?: {
-    origin: { x: number; y: number }
-    stepX: number
-    stepY: number
-  }
-  thickness?: number
-  size?: number
-  transition?: Transitions
-  transitionOptions?: TransitionProps
-  scene: Scene
-}
-
-/*
-An enum that lists the kinds of AnimObject3Ds we have rn.
-When we create a new AnimObject3D, remember to add it to this enum.
-This enum is used to check whether an AnimObject3D is a Point, Line, etc.
-*/
-export enum AnimObject3Ds {
-  Line,
-  Point,
-  NumberPlane,
-  Curve,
-}
-
-/*
-An enum that lists what kind of properties on an AnimObject3D
-can be observed by other AnimObject3Ds. 
-*/
-export enum Observables {
-  color = 'color',
-  backgroundColor = 'backgroundColor',
-  slope = 'slope',
-  x = 'x',
-  y = 'y',
-}
-
-/*
-AnimObject3Ds can observe properties by specifying the type of property
-and a handler for the returned value
-*/
-export interface Observer {
-  property: Observables
-  handler: Function
-}
+import { Observer } from '@/interfaces/core'
 
 export default class AnimObject3D {
   id: string // A unique identifier created for every AnimObject3D. Used to identify which AnimObject3D to remove when Scene.remove is called
@@ -131,21 +73,7 @@ export default class AnimObject3D {
       upperBound * this.parentData.stepX,
     ]
   }
-
-  /*
-  Right now, the transition method is a placeholder method. When we apply a transition like so:
-  FadeIn(Line) or Create(NumberPlane), this method gets modified by FadeIn or Create.
-
-  The transition method is called before inside the AnimObject3D.draw method of every AnimObject3D.
-  It is called before *anything* is displayed on the screen.
-  So, if we want to fade an element out, we increase color transparency by a small amount. This is drawn to the screen.
-  On next call of draw method we increase transparency even further. This is drawn to the screen
-  This continues till the transparency is 100% (alpha = 0)
-
-  The transition method must check for this condition i.e. when the transition ends.
-  When it ends, the transition method sets itself to null and stop being called inside AnimObject3D.draw
-  */
-
+  draw() {}
   constructor(s: Scene3D) {
     this.scene = s
     this.id = `webAnimObject3D-${uuidv4()}`

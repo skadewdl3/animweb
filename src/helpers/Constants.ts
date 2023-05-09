@@ -11,9 +11,5 @@ const Constants = {
   defaultSurfaceSampleRate: 400,
 }
 
-export enum RenderingModes {
-  _2D = '2D',
-  _3D = '3D',
-}
 
 export default Constants

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { create, all } from 'mathjs'
-import Constants from './Constants'
+import Constants from '@/helpers/Constants'
 const math = create(all)
 
 export const wait = (ms: number) => {
@@ -129,4 +129,27 @@ math.import({ sigma, product })
 
 export const evaluate = (expression: string, scope = {}) => {
   return math.evaluate(expression, scope)
+}
+
+export const getElement = (selector: string) => {
+  return document.querySelector(selector)
+}
+
+export const getInlineCode = (codeEditor: EditorView) => {
+  let defaultExports = ''
+  for (let name in window.WebAnim) {
+    defaultExports = defaultExports.concat(
+      `var ${name} = window.WebAnim.${name}\n`
+    )
+  }
+  let inlineCode = document.createTextNode(
+    `try {\n${defaultExports}${codeEditor.state.doc.toString()}\n}\ncatch (err) {
+            let [errLineNumber, errLineColumn] = err.stack.split(':').slice(-2).map((i) => parseInt(i))
+            let errType = err.stack.split(':')[0]
+            showError(errType, err.message, parseInt(errLineNumber - ${
+              defaultExports.split('\n').length
+            }))
+        }`
+  )
+  return inlineCode
 }
