@@ -30,7 +30,9 @@ import { Transitions } from './enums/transitions'
 import { Fonts } from './enums/miscellaneous'
 
 // UI
-import { code, error, logger } from '@ui/elements.ts'
+import code from './ui/code'
+import logger from './ui/logger'
+import error from './ui/error'
 
 // Libraries
 import { EditorView, basicSetup } from 'codemirror'
