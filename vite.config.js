@@ -43,6 +43,7 @@ export default defineConfig({
       { find: '@AnimObjects2D', replacement: fileURLToPath(new URL('./src/AnimObjects2D', import.meta.url)) },
       { find: '@AnimObjects3D', replacement: fileURLToPath(new URL('./src/AnimObjects3D', import.meta.url)) },
       { find: '@workers', replacement: fileURLToPath(new URL('./src/workers', import.meta.url)) },
+      { find: '@enums', replacement: fileURLToPath(new URL('./src/enums', import.meta.url)) },
     ],
   }
 });

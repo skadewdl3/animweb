@@ -25,6 +25,7 @@
       "@transitions/*": ["./src/transitions/*"],
       "@ui/*": ["./src/ui/*"],
       "@workers/*": ["./src/workers/*"],
+      "@enums/*": ["./src/enums/*"],
     }
   },
 }

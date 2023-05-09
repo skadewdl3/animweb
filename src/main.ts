@@ -23,12 +23,6 @@ import { getElement, getInlineCode } from './helpers/miscellaneous'
 // Interfaces
 import { AnimObject, Scene } from '@interfaces/core'
 
-// Enums
-import { Octants, NumberPlanes, ComplexPlanes } from './enums/AnimObjects3D'
-import { Vectors, TextStyle, Lines } from './enums/AnimObjects2D'
-import { Transitions } from './enums/transitions'
-import { Fonts } from './enums/miscellaneous'
-
 // UI
 import code from './ui/code'
 import logger from './ui/logger'
@@ -49,11 +43,11 @@ declare global {
   }
 }
 
-let scene: Scene
 let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0)
 let scene3D = new Scene3D(Width.full, Height.full, Colors.gray0)
 scene2D.show()
 scene3D.hide()
+let scene: Scene = scene2D
 scene = scene2D
 
 const editor = reactive({
@@ -115,34 +109,116 @@ const helpers = {
   Width,
   Height,
 }
+type AnimObjectsImports =
+  | [
+      () => Promise<any>,
+      () => Promise<any>,
+      { [key: string]: () => Promise<any> }
+    ]
+  | [undefined, () => Promise<any>, { [key: string]: () => Promise<any> }]
+  | [() => Promise<any>, undefined, { [key: string]: () => Promise<any> }]
+  | [() => Promise<any>, () => Promise<any>]
+  | [() => Promise<any>]
 
-const aos = {
+const AnimObjects: { [key: string]: AnimObjectsImports } = {
   Point: [
     async () => await import('@AnimObjects2D/Point.ts'),
     async () => await import('@AnimObjects3D/Point3D.ts'),
+    {
+      Observables: async () => await import('@enums/AnimObjects2D.ts'),
+      Transitions: async () => await import('@enums/transitions.ts'),
+    },
   ],
   Line: [
     async () => await import('@AnimObjects2D/Line.ts'),
     async () => await import('@AnimObjects3D/Line3D.ts'),
+    {
+      Lines: async () => await import('@enums/AnimObjects2D.ts'),
+      Observables: async () => await import('@enums/AnimObjects2D.ts'),
+      Transitions: async () => await import('@enums/transitions.ts'),
+    },
   ],
   NumberPlane: [
     async () => await import('@AnimObjects2D/NumberPlane.ts'),
     async () => await import('@AnimObjects3D/NumberPlane3D.ts'),
+    {
+      NumberPlanes: async () => await import('@enums/AnimObjects3D.ts'),
+      Observables: async () => await import('@enums/AnimObjects2D.ts'),
+      Octants: async () => await import('@enums/AnimObjects3D.ts'),
+      Transitions: async () => await import('@enums/transitions.ts'),
+    },
   ],
   Text: [
     async () => await import('@AnimObjects2D/Text.ts'),
     async () => await import('@AnimObjects3D/Text3D.ts'),
+    {
+      TextStyle: async () => await import('@enums/AnimObjects2D.ts'),
+      Observables: async () => await import('@enums/AnimObjects2D.ts'),
+      Transitions: async () => await import('@enums/transitions.ts'),
+      Fonts: async () => await import('@enums/miscellaneous.ts'),
+    },
   ],
-  Curve: [async () => await import('@AnimObjects2D/Curve.ts')],
-  ImplicitCurve: [async () => await import('@AnimObjects2D/ImplicitCurve.ts')],
+  Curve: [
+    async () => await import('@AnimObjects2D/Curve.ts'),
+    undefined,
+    {
+      Transitions: async () => await import('@enums/transitions.ts'),
+    },
+  ],
+  ImplicitCurve: [
+    async () => await import('@AnimObjects2D/ImplicitCurve.ts'),
+    undefined,
+    {
+      Transitions: async () => await import('@enums/transitions.ts'),
+    },
+  ],
   Surface: [async () => await import('@AnimObjects3D/Surface.ts')],
-  ComplexPlane: [async () => await import('@AnimObjects3D/ComplexPlane3D.ts')],
+  ComplexPlane: [
+    undefined,
+    async () => await import('@AnimObjects3D/ComplexPlane3D.ts'),
+    {
+      ComplexPlanes: async () => await import('@enums/AnimObjects3D.ts'),
+      Octants: async () => await import('@enums/AnimObjects3D.ts'),
+      Transitions: async () => await import('@enums/transitions.ts'),
+    },
+  ],
   Cube: [async () => await import('@AnimObjects3D/Cube.ts')],
-  LaTeX: [async () => await import('@AnimObjects2D/LaTeX.ts')],
-  Latex: [async () => await import('@AnimObjects2D/LaTeX.ts')],
-  TeX: [async () => await import('@AnimObjects2D/LaTeX.ts')],
-  Tex: [async () => await import('@AnimObjects2D/LaTeX.ts')],
-  Vector: [async () => await import('@AnimObjects2D/Vector.ts')],
+  LaTeX: [
+    async () => await import('@AnimObjects2D/LaTeX.ts'),
+    undefined,
+    {
+      Transitions: async () => await import('@enums/transitions.ts'),
+    },
+  ],
+  Latex: [
+    async () => await import('@AnimObjects2D/LaTeX.ts'),
+    undefined,
+    {
+      Transitions: async () => await import('@enums/transitions.ts'),
+    },
+  ],
+  TeX: [
+    async () => await import('@AnimObjects2D/LaTeX.ts'),
+    undefined,
+    {
+      Transitions: async () => await import('@enums/transitions.ts'),
+    },
+  ],
+  Tex: [
+    async () => await import('@AnimObjects2D/LaTeX.ts'),
+    undefined,
+    {
+      Transitions: async () => await import('@enums/transitions.ts'),
+    },
+  ],
+  Vector: [
+    async () => await import('@AnimObjects2D/Vector.ts'),
+    undefined,
+    {
+      Vectors: async () => await import('@enums/AnimObjects2D.ts'),
+      Transitions: async () => await import('@enums/transitions.ts'),
+    },
+  ],
 }
 
 const transitions = {
@@ -160,37 +236,41 @@ const transitions = {
   },
   FadeOut,
 }
-
-const enums = {
-  Transitions,
-  Observables,
-  Lines,
-  TextStyle,
-  Constants,
-  Vectors,
-  NumberPlanes,
-  Octants,
-  ComplexPlanes,
-  Fonts,
-}
-
 window.WebAnim = {
   use: async (...config: Array<any>) => {
     for (let name of config) {
-      if (!(name in aos))
+      if (!(name in AnimObjects))
         return error.show(
           'ImportError',
           `AnimObject '${name}' not found. Please check your spelling.`
         )
       if (name in window.WebAnim) return
-      // @ts-ignore
-      let arr = aos[name]
+      let arr = AnimObjects[name]
       let imported: Array<any> = []
-      if (arr.length > 1) {
-        for (let i = 0; i < arr.length; i++) {
-          let obj = await arr[i]()
-          imported.push(obj.default)
+      let helperImports: Array<any> = []
+      if (arr.length == 3) {
+        imported.push(arr[0] ? (await arr[0]()).default : undefined)
+        imported.push(arr[1] ? (await arr[1]()).default : undefined)
+
+        window.WebAnim[name] = (config: any) => {
+          return scene == scene2D
+            ? imported[0]
+              ? new imported[0]({ ...config, scene })
+              : imported[0]
+            : imported[1]
+            ? new imported[1]({ ...config, scene })
+            : imported[1]
         }
+
+        for (let [helperName, helperImport] of Object.entries(arr[2])) {
+          if (helperName in window.WebAnim) continue
+          let obj = await helperImport()
+          helperImports.push(helperName)
+          window.WebAnim[helperName] = obj[helperName]
+        }
+      } else if (arr.length == 2) {
+        imported.push((await arr[0]()).default)
+        imported.push((await arr[1]()).default)
         window.WebAnim[name] = (config: any) => {
           return scene == scene2D
             ? new imported[0]({ ...config, scene })
@@ -202,28 +282,23 @@ window.WebAnim = {
           new obj.default({ ...config, scene })
       }
       let importScript = document.createElement('script')
-      let text = document.createTextNode(`var ${name} = window.WebAnim.${name}`)
-      importScript.appendChild(text)
+      let text = `var ${name} = window.WebAnim.${name}`
+      for (let helperName of helperImports) {
+        text = text.concat(`\nvar ${helperName} = window.WebAnim.${helperName}`)
+      }
+      let textNode = document.createTextNode(text)
+      importScript.appendChild(textNode)
       getElement('.user-imports')?.appendChild(importScript)
     }
   },
-
   ...functions,
   ...transitions,
-  ...enums,
   ...helpers,
-  error,
 }
 
 Object.defineProperty(window, 'camera', {
   get() {
     return scene == scene2D ? undefined : scene3D.camera
-  },
-})
-
-Object.defineProperty(window, 'showError', {
-  get() {
-    return error.show
   },
 })
 
@@ -245,6 +320,14 @@ Object.defineProperty(window, 'print', {
           logger.log(config, typeof config)
         }
       }
+    }
+  },
+})
+
+Object.defineProperty(window, 'showError', {
+  get() {
+    return (...config: any) => {
+      error.show(...config)
     }
   },
 })
