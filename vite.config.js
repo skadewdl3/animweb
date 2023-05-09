@@ -3,20 +3,7 @@ import topLevelAwait from "vite-plugin-top-level-await";
 import dynamicImport from 'vite-plugin-dynamic-import'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import { fileURLToPath, URL } from "url";
-
-// https://vitejs.dev/config/
-// export default defineConfig({
-//   plugins: [vue()],
-//   resolve: {
-//     alias: [
-//       { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
-//       { find: '@assets', replacement: fileURLToPath(new URL('./src/shared/assets', import.meta.url)) },
-//       { find: '@cmp', replacement: fileURLToPath(new URL('./src/shared/cmp', import.meta.url)) },
-//       { find: '@stores', replacement: fileURLToPath(new URL('./src/shared/stores', import.meta.url)) },
-//       { find: '@use', replacement: fileURLToPath(new URL('./src/shared/use', import.meta.url)) },
-//     ],
-//   },
-// });
+import viteCompression from 'vite-plugin-compression'
 
 export default defineConfig({
   plugins: [
@@ -27,9 +14,13 @@ export default defineConfig({
       promiseImportName: i => `__tla_${i}`
     }),
     // better dynamic imports for lazy importing modules
-    dynamicImport(),
+    dynamicImport({
+    
+    }),
     // polyfills for vectorize-text library
     nodePolyfills(), 
+    // compression to reduce js file size
+    viteCompression()
   ],
   resolve: {
     alias: [
@@ -45,5 +36,5 @@ export default defineConfig({
       { find: '@workers', replacement: fileURLToPath(new URL('./src/workers', import.meta.url)) },
       { find: '@enums', replacement: fileURLToPath(new URL('./src/enums', import.meta.url)) },
     ],
-  }
+  },
 });

@@ -8,7 +8,9 @@ The Scene itself cannot be animated, but every AnimObject3D can be animated.
 P.S - A function declared inside a class is called a method
 */
 
-import { Scene as ThreeScene, WebGLRenderer as ThreeWebGLRenderer } from 'three'
+const three = await import('three')
+const { Scene: ThreeScene, WebGLRenderer: ThreeWebGLRenderer } = three
+const Camera = (await import('@auxiliary/Camera3D')).default
 import AnimObject3D from '@core/AnimObject3D'
 import Color from '@auxiliary/Color'
 import Colors from '@helpers/Colors'
@@ -16,7 +18,6 @@ import { v4 as uuid } from 'uuid'
 import { wait } from '@helpers/miscellaneous'
 import { TransitionQueueItem } from '@/interfaces/transitions'
 import { RenderingModes } from '@/enums/miscellaneous'
-import Camera from '@auxiliary/Camera3D'
 
 export default class Scene3D {
   height: number
@@ -25,8 +26,11 @@ export default class Scene3D {
   objects: Array<AnimObject3D>
   backgroundColor: Color
   rendererElement: HTMLElement | null = null
+  // @ts-ignore
   scene: ThreeScene
+  // @ts-ignore
   camera: Camera
+  // @ts-ignore
   renderer: ThreeWebGLRenderer
 
   transitionQueue: Array<TransitionQueueItem> = []

@@ -1,7 +1,6 @@
 // Core
 import Scene2D from '@core/Scene2D'
 import Scene3D from '@core/Scene3D'
-import { Observables } from './enums/AnimObjects2D'
 
 // Transitions
 import FadeIn from '@transitions/FadeIn.ts'
@@ -16,7 +15,6 @@ import Complex from '@auxiliary/Complex.ts'
 // Helpers
 import Colors from '@helpers/Colors.ts'
 import { Width, Height } from '@/helpers/Dimensions'
-import Constants from '@helpers/Constants.ts'
 import { UserSVGs, svgData } from '@helpers/addSVG.ts'
 import { getElement, getInlineCode } from './helpers/miscellaneous'
 
@@ -29,8 +27,10 @@ import logger from './ui/logger'
 import error from './ui/error'
 
 // Libraries
-import { EditorView, basicSetup } from 'codemirror'
-import { javascript } from '@codemirror/lang-javascript'
+const codemirror = await import('codemirror')
+const { EditorView, basicSetup } = codemirror
+const codeMirrorJavascript = await import('@codemirror/lang-javascript')
+const { javascript } = codeMirrorJavascript
 import { createApp, reactive } from 'petite-vue'
 import AnimObject2D from './core/AnimObject2D'
 
