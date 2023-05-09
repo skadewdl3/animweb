@@ -291,13 +291,11 @@ export default class NumberPlane extends AnimObject {
 
   draw(p: p5) {
     this.planeComponents.forEach((name: string) => {
-      //@ts-ignore
-      this[name].forEach((o: AnimObject) => o.draw(p))
+      ;(this as any)[name].forEach((o: AnimObject) => o.draw(p))
     })
 
     this.drawnComponents.forEach((name: string) => {
-      //@ts-ignore
-      this[name].forEach((o: AnimObject) => o.draw(p))
+      ;(this as any)[name].forEach((o: AnimObject) => o.draw(p))
     })
   }
 

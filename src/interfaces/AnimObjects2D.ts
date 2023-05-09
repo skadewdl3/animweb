@@ -146,6 +146,22 @@ export interface PointPlotProps extends AnimObject2DProps {
   transitionOptions?: TransitionProps
 }
 
+// ComplexPlane
+export interface ComplexPlaneProps extends AnimObject2DProps {
+  stepX?: number
+  stepY?: number
+  step?: number
+  width?: number
+  height?: number
+  x?: number
+  y?: number
+  origin?: { x: number; y: number }
+  showTicks?: boolean
+  grid?: boolean
+  xGrid?: boolean
+  yGrid?: boolean
+}
+
 // Vector
 
 export interface VectorProps extends AnimObject2DProps {
