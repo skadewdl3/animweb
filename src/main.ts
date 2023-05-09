@@ -27,10 +27,8 @@ import logger from './ui/logger'
 import error from './ui/error'
 
 // Libraries
-const codemirror = await import('codemirror')
-const { EditorView, basicSetup } = codemirror
-const codeMirrorJavascript = await import('@codemirror/lang-javascript')
-const { javascript } = codeMirrorJavascript
+import { EditorView, basicSetup } from 'codemirror'
+import { javascript } from '@codemirror/lang-javascript'
 import { createApp, reactive } from 'petite-vue'
 import AnimObject2D from './core/AnimObject2D'
 
@@ -60,7 +58,6 @@ const editor = reactive({
       doc: defaultCode,
       extensions: [basicSetup, javascript(), EditorView.lineWrapping],
     })
-    console.log(this.editor)
   },
   run() {
     error.hide()
