@@ -60,6 +60,7 @@ const editor = reactive({
       doc: defaultCode,
       extensions: [basicSetup, javascript(), EditorView.lineWrapping],
     })
+    console.log(this.editor)
   },
   run() {
     error.hide()
