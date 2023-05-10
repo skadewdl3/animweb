@@ -4,9 +4,15 @@
   border: solid 0.1rem #ccc;
   border-radius: 0.5rem;
   padding: 0.5rem 1rem;
+  max-height: 8rem;
+  height: 8rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
-.slider input[type="range"] {
+.slider input[type='range'] {
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
@@ -14,7 +20,7 @@
   margin-top: 1rem;
 }
 
-.slider input[type="text"] {
+.slider input[type='text'] {
   width: 4rem;
   margin: 0 0.5rem;
   margin-top: 1rem;
@@ -26,8 +32,8 @@
   text-align: center;
 }
 
-.slider input[type="number"]::-webkit-outer-spin-button,
-.slider input[type="number"]::-webkit-inner-spin-button {
+.slider input[type='number']::-webkit-outer-spin-button,
+.slider input[type='number']::-webkit-inner-spin-button {
   -webkit-appearance: none;
   margin: 0;
 }
@@ -36,7 +42,6 @@
   display: flex;
   align-items: center;
 }
-
 
 .slider .slider-title-container {
   text-align: center;
