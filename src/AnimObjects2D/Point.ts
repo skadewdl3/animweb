@@ -2,14 +2,10 @@ import { evaluate } from 'mathjs'
 import p5 from 'p5'
 import { v4 as uuid } from 'uuid'
 import AnimObject from '@/core/AnimObject2D'
-import { Observables } from '@/enums/AnimObjects2D'
-import { Observer } from '@/interfaces/core'
-import { roundOff } from '@helpers/miscellaneous'
-import { rangePerFrame } from '@helpers/miscellaneous'
+import { roundOff, rangePerFrame } from '@helpers/miscellaneous'
 import Matrix from '@auxiliary/Matrix'
-import { LinearTransformProps } from './NumberPlane'
 import { createTransition } from '@core/Transition'
-import { PointProps } from '@/interfaces/AnimObjects2D'
+import { PointProps, LinearTransformProps } from '@/interfaces/AnimObjects2D'
 
 class Point extends AnimObject {
   x: number

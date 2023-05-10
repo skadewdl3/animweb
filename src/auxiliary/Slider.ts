@@ -1,10 +1,9 @@
 import { reactive } from 'petite-vue'
 import { wait } from '@/helpers/miscellaneous'
-import { Observables } from '@/enums/AnimObjects2D'
+import { Watchables } from '@/enums/auxiliary'
 import { AnimObject } from '@/interfaces/core'
 import AnimObject2D from '@/core/AnimObject2D'
 import { v4 as uuid } from 'uuid'
-import { Observer } from './Observer'
 
 export const sliderData = reactive({
   sliders: [],
@@ -23,28 +22,28 @@ export const sliderData = reactive({
 })
 
 export class Slider {
-  private observer: any
+  private watcher: any
   id: string
   min: number
   max: number
   step: number
 
   get value() {
-    return this.observer.value
+    return this.watcher.value
   }
 
   set value(val: any) {
-    this.observer.executeMutation((o: any) => {
+    this.watcher.executeMutation((o: any) => {
       o.value = val
     })
   }
 
-  constructor(min: number, max: number, step: number, observer: any) {
+  constructor(min: number, max: number, step: number, watcher: any) {
     this.min = min
     this.max = max
     this.step = step
-    this.observer = observer
-    this.id = this.observer.onChange((val: any) => {
+    this.watcher = watcher
+    this.id = this.watcher.onChange((val: any) => {
       console.log('value updated to: ', val)
     })
   }

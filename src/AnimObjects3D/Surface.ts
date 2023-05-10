@@ -12,8 +12,7 @@ import {
 } from 'three'
 import error from '@/ui/error'
 import { MeshData, SurfaceProps } from '@/interfaces/AnimObjects3D'
-
-
+import { throwError } from '@/helpers/miscellaneous'
 
 export default class Surface extends AnimObject3D {
   filled: boolean = false
@@ -42,11 +41,10 @@ export default class Surface extends AnimObject3D {
       geometries.push(geometry)
     }
     if (geometries.length == 0) {
-      error.show(
+      throwError(
         'PlotError',
         `${this.equation} cannot be plot in 3 dimensions. Please check the equation or report this error.`
       )
-      return
     }
     const geometry = mergeBufferGeometries(geometries, true)
     const material = new ThreeMeshBasicMaterial({

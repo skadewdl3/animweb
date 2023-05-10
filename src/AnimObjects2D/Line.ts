@@ -1,15 +1,12 @@
 import AnimObject from '@/core/AnimObject2D'
-import { Observables } from '@/enums/AnimObjects2D'
-import { Observer } from '@/interfaces/core'
 import p5 from 'p5'
 import { evaluate, derivative } from 'mathjs'
 import Matrix from '@auxiliary/Matrix'
 import { rangePerFrame, roundOff } from '@helpers/miscellaneous'
 import Constants from '@helpers/Constants'
-import { LinearTransformProps } from './NumberPlane'
 import { createTransition } from '@core/Transition'
 import { Lines } from '@/enums/AnimObjects2D'
-import { LineProps } from '@/interfaces/AnimObjects2D'
+import { LineProps, LinearTransformProps } from '@/interfaces/AnimObjects2D'
 
 export default class Line extends AnimObject {
   y: Function = (x: number) => {
@@ -288,7 +285,7 @@ export default class Line extends AnimObject {
         let s = (y2 - y1) / (x2 - x1)
         if (s >= Constants.Infinity) s = Constants.Infinity
         if (s <= -Constants.Infinity) s = -Constants.Infinity
-        this.slope = (s)
+        this.slope = s
         this.offset = y1 - this.slope * x1
       },
       onEnd: () => {

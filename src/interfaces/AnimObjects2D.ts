@@ -146,6 +146,10 @@ export interface PointPlotProps extends AnimObject2DProps {
   transitionOptions?: TransitionProps
 }
 
+export interface LinearTransformProps {
+  duration: number
+}
+
 // Vector
 
 export interface VectorProps extends AnimObject2DProps {
@@ -158,7 +162,7 @@ export interface VectorProps extends AnimObject2DProps {
 
 // Text
 export interface TextProps extends AnimObject2DProps {
-  text: string | number
+  text?: string | number
   color?: Color
   size?: number
   x: number

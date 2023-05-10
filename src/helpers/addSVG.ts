@@ -1,16 +1,7 @@
 import { reactive } from 'petite-vue'
 import { wait } from './miscellaneous'
+import { SVGData } from '@/interfaces/helpers'
 
-interface SVGData {
-  id: string
-  x: number
-  y: number
-  width?: number
-  height?: number
-  size?: number
-  font?: any
-  fontStyle?: any
-}
 
 export const svgData = reactive({
   svgs: [],

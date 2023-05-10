@@ -154,6 +154,12 @@ export const getInlineCode = (codeEditor: EditorView) => {
   return inlineCode
 }
 
+export const throwError = (name: string, message: string) => {
+  let err = new Error(message)
+  err.name = name
+  throw err
+}
+
 export function applyMixins(derivedCtor: any, constructors: any[]) {
   constructors.forEach((baseCtor) => {
     Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {

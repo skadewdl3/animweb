@@ -5,7 +5,7 @@ const error = reactive({
   message: '',
   lineNumber: 0,
   type: '',
-  show(errType: string, errMessage: string, errLineNumber: number) {
+  show(errType: string, errMessage: string, errLineNumber?: number) {
     console.log(arguments)
     error.message = errMessage
     error.lineNumber = errLineNumber

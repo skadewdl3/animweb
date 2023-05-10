@@ -24,11 +24,3 @@ export enum AnimObjects {
   NumberPlane,
   Curve,
 }
-
-export enum Observables {
-  color = 'color',
-  backgroundColor = 'backgroundColor',
-  slope = 'slope',
-  x = 'x',
-  y = 'y',
-}

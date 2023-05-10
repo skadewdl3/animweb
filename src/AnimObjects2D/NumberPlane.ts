@@ -17,12 +17,9 @@ import {
   CurvePlotProps,
   NumberPlaneProps,
   VectorProps,
+  LinearTransformProps,
 } from '@/interfaces/AnimObjects2D'
 import Vector from './Vector'
-
-export interface LinearTransformProps {
-  duration: number
-}
 
 export default class NumberPlane extends AnimObject {
   stepX: number
