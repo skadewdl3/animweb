@@ -33,6 +33,10 @@ import { javascript } from '@codemirror/lang-javascript'
 import { createApp, reactive } from 'petite-vue'
 import AnimObject2D from './core/AnimObject2D'
 
+// Styles
+import './styles/main.css'
+import './styles/slider.css'
+
 declare global {
   interface Window {
     p5: any
