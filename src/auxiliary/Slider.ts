@@ -1,6 +1,9 @@
 import { Watchables } from '@/enums/auxiliary'
 import { v4 as uuid } from 'uuid'
 import { sliders } from '@/ui/sliders'
+//@ts-ignore
+import debounce from 'lodash.debounce'
+
 
 export class Slider {
   private watcher: any
@@ -49,6 +52,11 @@ export class Slider {
 
   updateElement() {
     this.element = document.getElementById(this.id) as HTMLElement
+    let textbox = this.element.querySelector('.slider-textbox') as HTMLInputElement
+    textbox.value = this.value
+    textbox.addEventListener('input', debounce((e: any) => {
+      this.value = isNaN(parseFloat(e.target.value)) ? this.value : parseFloat(e.target.value)
+    }, {leading: false}))
   }
 
   destroy() {

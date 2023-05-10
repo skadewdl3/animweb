@@ -95,10 +95,7 @@
         <div class="slider-input-container">
           <input type="range" :min="slider.min" :max="slider.max" :step="slider.step" :value="slider.value"
             :onInput="e => slider.value = e.target.value">
-          <input type="number" :onInput="e => {
-                      if (!e.target.value) return
-                      slider.value = e.target.value > slider.max ? slider.max : e.target.value < slider.min ? slider.min : e.target.value
-                    }" :value="slider.value">
+          <input type="text" class="slider-textbox">
           </div>
           <div class="slider-title-container">
             <span class="slider-title">{{ slider.title }}</span>
