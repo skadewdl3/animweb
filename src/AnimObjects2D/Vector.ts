@@ -9,7 +9,7 @@ import {
   roundOff,
 } from '@helpers/miscellaneous'
 import Matrix from '@auxiliary/Matrix'
-import { LinearTransformProps } from '@AnimObjects2D/NumberPlane'
+import { LinearTransformProps } from '@interfaces/AnimObjects2D'
 import { createTransition } from '@core/Transition'
 import { VectorProps } from '@/interfaces/AnimObjects2D'
 import { Vectors } from '@/enums/AnimObjects2D'
