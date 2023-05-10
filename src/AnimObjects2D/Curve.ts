@@ -122,8 +122,9 @@ export default class Curve extends AnimObject2D {
   }
 
   addTangent(config: CurveAnchorLineProps): Line {
+    console.log(this.y)
     let x = config.x
-    let y = evaluate(this.y, { x })
+    let y = evaluate(this.y, { x, y: 0 })
     let parts = this.y.split('=')
     let rhs = parts[parts.length - 1]
     // let length = config.length ? config.length : this.parentData.stepX * 2
@@ -134,7 +135,7 @@ export default class Curve extends AnimObject2D {
       new Line({
         ...config,
         form: Lines.SlopePoint,
-        slope: derivative(rhs, 'x').evaluate({ x }),
+        slope: -derivative(rhs, 'x').evaluate({ x }),
         point: { x, y },
         definition: this.y,
         parentData: {
@@ -142,6 +143,7 @@ export default class Curve extends AnimObject2D {
           stepY: this.parentData.stepY,
           origin: this.parentData.origin,
         },
+        scene: this.scene,
       }),
       config.transitionOptions ? config.transitionOptions : {}
     )

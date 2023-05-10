@@ -40,32 +40,6 @@ class Point extends AnimObject {
     }
   }
 
-  setX(x: number) {
-    this.x = x
-    this.observers.forEach((observer: Observer) => {
-      if (observer.property == Observables.x) observer.handler(this.x)
-    })
-  }
-
-  setY(y: number) {
-    this.y = y
-    this.observers.forEach((observer: Observer) => {
-      if (observer.property == Observables.y) observer.handler(this.y)
-    })
-  }
-
-  addObserver(observer: Observer): void {
-    this.observers.push(observer)
-    switch (observer.property) {
-      case Observables.x:
-        observer.handler(this.x)
-        break
-      case Observables.y:
-        observer.handler(this.y)
-        break
-    }
-  }
-
   moveTo({ x, duration = 1 }: { x: number; duration?: number }): Promise<void> {
     let transitionQueueItem = {
       id: uuid(),
@@ -81,40 +55,36 @@ class Point extends AnimObject {
         queued = true
         if (roundOff(this.x, 0) < roundOff(newX, 0)) {
           if (this.x + speed > newX) {
-            this.setX(newX)
-            this.setY(newY)
+            this.x = newX
+            this.y = newY
             this.transition = null
             this.scene.dequeueTransition(transitionQueueItem)
             resolve()
           } else {
-            this.setX(this.x + speed)
-            this.setY(
+            this.x = this.x + speed
+            this.y =
               this.parentData.origin.y -
-                evaluate(this.definition, {
-                  x:
-                    (this.x - this.parentData.origin.x) / this.parentData.stepX,
-                }) *
-                  this.parentData.stepY
-            )
+              evaluate(this.definition, {
+                x: (this.x - this.parentData.origin.x) / this.parentData.stepX,
+              }) *
+                this.parentData.stepY
           }
         }
         if (roundOff(this.x, 0) > roundOff(newX, 0)) {
           if (this.x - speed < newX) {
-            this.setX(newX)
-            this.setY(newY)
+            this.x = newX
+            this.y = newY
             this.transition = null
             this.scene.dequeueTransition(transitionQueueItem)
             resolve()
           } else {
-            this.setX(this.x - speed)
-            this.setY(
+            this.x = this.x - speed
+            this.y =
               this.parentData.origin.y -
-                evaluate(this.definition, {
-                  x:
-                    (this.x - this.parentData.origin.x) / this.parentData.stepX,
-                }) *
-                  this.parentData.stepY
-            )
+              evaluate(this.definition, {
+                x: (this.x - this.parentData.origin.x) / this.parentData.stepX,
+              }) *
+                this.parentData.stepY
           }
         }
       }

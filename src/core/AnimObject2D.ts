@@ -13,13 +13,16 @@ import Colors from '@helpers/Colors'
 import { Observer } from '@/interfaces/core'
 import { Scene } from '@/interfaces/core'
 import Scene2D from './Scene2D'
+import { applyMixins } from '@/helpers/miscellaneous'
+import CreateSlider from '@/auxiliary/Slider'
+import CreateObserver from '@/auxiliary/Observer'
 
 /*
 AnimObjects can observe properties by specifying the type of property
 and a handler for the returned value
 */
 
-export default class AnimObject2D {
+class AnimObject2D {
   id: string // A unique identifier created for every AnimObject. Used to identify which AnimObject to remove when Scene.remove is called
   color: Color = Colors.black // The fill color of the AnimObject. subclasses may or may not use this prop
   backgroundColor: Color = Colors.transparent // The fill bg color of the AnimObject. subclasses may or may not use this prop
@@ -27,6 +30,9 @@ export default class AnimObject2D {
   maxAlpha: number = 1
   observers: Array<Observer> = [] // An array containing the AnimObjects that are observing come property of this AnimObject
   iterables: Array<string> = []
+  observables: {
+    [key: string]: Observer
+  } = {}
   scene: Scene2D
 
   remove?: Function
@@ -153,3 +159,6 @@ export default class AnimObject2D {
   */
   addObserver(observer: Observer) {}
 }
+
+applyMixins(AnimObject2D, [CreateObserver])
+export default AnimObject2D

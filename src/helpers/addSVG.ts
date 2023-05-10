@@ -2,7 +2,7 @@ import { reactive } from 'petite-vue'
 import { wait } from './miscellaneous'
 
 interface SVGData {
-  id?: string
+  id: string
   x: number
   y: number
   width?: number
