@@ -29,5 +29,4 @@ export enum Properties {
   re = 're',
   im = 'im',
   text = 'text',
-  latex = 'latex',
 }
