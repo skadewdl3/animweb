@@ -90,7 +90,11 @@
       </div>
     </template>
     <template id="user-sliders-template">
-      <div @vue:mounted="slider.updateElement()" v-for="slider in sliders.sliders" :id="slider.id" :class="slider.id">
+      <div @vue:mounted="slider.updateElement()" v-for="slider in sliders.sliders" :id="slider.id" :class="slider.id"
+        style="position: absolute;" :style="{top: `${slider.y}px`, left: `${slider.x}px`}">
+        <div class="slider-title">
+          <span>{{ slider.title }}</span>
+        </div>
         <input type="range" :min="slider.min" :max="slider.max" :step="slider.step" :value="slider.value"
           :onInput="e => slider.value = e.target.value">
       </div>

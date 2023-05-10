@@ -7,6 +7,12 @@ export const sliders = reactive({
     this.sliders.push(slider)
     console.log(slider)
   },
+  removeSlider(id: string) {
+    this.sliders = this.sliders.filter((slider: Slider) => slider.id !== id)
+  },
+  clear() {
+    this.sliders = []
+  },
 })
 
 export const UserSliders = () => {

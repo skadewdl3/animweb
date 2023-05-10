@@ -63,6 +63,7 @@ const editor = reactive({
   run() {
     error.hide()
     svgData.clear()
+    sliders.clear()
     logger.clear()
     scene2D.resetScene()
     scene3D.resetScene()
@@ -79,6 +80,7 @@ const editor = reactive({
   },
   clear() {
     svgData.clear()
+    sliders.clear()
     scene2D.resetScene()
     scene3D.resetScene()
   },

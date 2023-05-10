@@ -1,13 +1,14 @@
 import { applyMixins, throwError } from '@/helpers/miscellaneous'
 import { Properties, Watchables } from '@/enums/auxiliary'
 import { v4 as uuid } from 'uuid'
-import CreateSlider from './Slider'
+import CreateSlider, { Slider } from './Slider'
 
 export class Watcher {
   private listeners: { [id: string]: Function } = {}
   private property: Watchables
   private id: string = uuid()
   private target: any
+  sliders: Array<Slider> = []
   value: any
 
   constructor(target: any, property: Watchables) {
@@ -49,9 +50,9 @@ export class Watcher {
 
   destroy() {
     for (let listener in this.listeners) {
-      console.log(listener)
-      // this.removeListener(listen er)
+      delete this.listeners[listener]
     }
+    this.sliders.forEach((slider: any) => slider.destroy())
   }
 }
 
