@@ -4,6 +4,7 @@ import { Watchables } from '@/enums/auxiliary'
 import { AnimObject } from '@/interfaces/core'
 import AnimObject2D from '@/core/AnimObject2D'
 import { v4 as uuid } from 'uuid'
+import { sliders } from '@/ui/sliders'
 
 export const sliderData = reactive({
   sliders: [],
@@ -27,6 +28,7 @@ export class Slider {
   min: number
   max: number
   step: number
+  element?: HTMLElement
 
   get value() {
     return this.watcher.value
@@ -44,7 +46,7 @@ export class Slider {
     this.step = step
     this.watcher = watcher
     this.id = this.watcher.onChange((val: any) => {
-      console.log('value updated to: ', val)
+      // console.log('value updated to: ', val)
     })
   }
 
@@ -55,10 +57,17 @@ export class Slider {
   dec() {
     this.value -= this.step
   }
+
+  updateElement() {
+    this.element = document.getElementById(this.id) as HTMLElement
+    console.log(this.element)
+  }
 }
 
 export default class CreateSlider {
   createSlider(min: number = 0, max: number = 100, step: number = 2) {
-    return new Slider(min, max, step, this)
+    let slider = new Slider(min, max, step, this)
+    sliders.addSlider(slider)
+    return slider
   }
 }

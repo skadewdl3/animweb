@@ -15,7 +15,6 @@ import Complex from '@auxiliary/Complex.ts'
 // Helpers
 import Colors from '@helpers/Colors.ts'
 import { Width, Height } from '@/helpers/Dimensions'
-import { UserSVGs, svgData } from '@helpers/addSVG.ts'
 import { getElement, getInlineCode, throwError } from './helpers/miscellaneous'
 
 // Interfaces
@@ -25,6 +24,8 @@ import { AnimObject, Scene } from '@interfaces/core'
 import code from './ui/code'
 import logger from './ui/logger'
 import error from './ui/error'
+import { svgData, UserSVGs } from './ui/svg'
+import { sliders, UserSliders } from './ui/sliders'
 
 // Libraries
 import { EditorView, basicSetup } from 'codemirror'
@@ -338,9 +339,11 @@ const UserControls = () => {
 createApp({
   UserControls,
   UserSVGs,
+  UserSliders,
   editor,
   code,
   error,
   logger,
   svgData,
+  sliders,
 }).mount()

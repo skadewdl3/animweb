@@ -2,7 +2,6 @@ import { applyMixins, throwError } from '@/helpers/miscellaneous'
 import { Properties, Watchables } from '@/enums/auxiliary'
 import { v4 as uuid } from 'uuid'
 import CreateSlider from './Slider'
-import error from '@/ui/error'
 
 export class Watcher {
   private listeners: { [id: string]: Function } = {}
@@ -51,7 +50,7 @@ export class Watcher {
   destroy() {
     for (let listener in this.listeners) {
       console.log(listener)
-      // this.removeListener(listener)
+      // this.removeListener(listen er)
     }
   }
 }
