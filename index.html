@@ -93,8 +93,7 @@
       <div @vue:mounted="slider.updateElement()" v-for="slider in sliders.sliders" :id="slider.id" :class="slider.id"
         class="slider" :style="{top: `${slider.y}px`, left: `${slider.x}px`}">
         <div class="slider-input-container">
-          <input type="range" :min="slider.min" :max="slider.max" :step="slider.step" :value="slider.value"
-            :onInput="e => slider.value = e.target.value">
+          <input type="range" class="slider-bar" :min="slider.min" :max="slider.max" :step="slider.step" :value="slider.value">
           <input type="text" class="slider-textbox">
           </div>
           <div class="slider-title-container">

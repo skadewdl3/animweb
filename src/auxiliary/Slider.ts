@@ -53,7 +53,12 @@ export class Slider {
   updateElement() {
     this.element = document.getElementById(this.id) as HTMLElement
     let textbox = this.element.querySelector('.slider-textbox') as HTMLInputElement
+    let slider = this.element.querySelector('.slider-bar') as HTMLInputElement
     textbox.value = this.value
+    slider.addEventListener('input', (e: any) => {
+      this.value = parseFloat(e.target.value)
+      textbox.value = this.value
+    })
     textbox.addEventListener('input', debounce((e: any) => {
       this.value = isNaN(parseFloat(e.target.value)) ? this.value : parseFloat(e.target.value)
     }, {leading: false}))
