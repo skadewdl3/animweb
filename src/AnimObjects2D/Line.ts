@@ -1,15 +1,12 @@
 import AnimObject from '@/core/AnimObject2D'
-import { Observables } from '@/enums/AnimObjects2D'
-import { Observer } from '@/interfaces/core'
 import p5 from 'p5'
 import { evaluate, derivative } from 'mathjs'
 import Matrix from '@auxiliary/Matrix'
 import { rangePerFrame, roundOff } from '@helpers/miscellaneous'
 import Constants from '@helpers/Constants'
-import { LinearTransformProps } from './NumberPlane'
 import { createTransition } from '@core/Transition'
 import { Lines } from '@/enums/AnimObjects2D'
-import { LineProps } from '@/interfaces/AnimObjects2D'
+import { LineProps, LinearTransformProps } from '@/interfaces/AnimObjects2D'
 
 export default class Line extends AnimObject {
   y: Function = (x: number) => {
@@ -73,7 +70,7 @@ export default class Line extends AnimObject {
         let { x: x1, y: y1 } = this.getAbsolutePosition({ x: X1, y: Y1 })
         y1 *= -1
         let s = (Y2 - Y1) / (X2 - X1)
-        this.setSlope(s)
+        this.slope = s
         let c = y1 - this.slope * x1
         this.offset = c
         this.point1 = { x: x1, y: y1 }
@@ -83,7 +80,7 @@ export default class Line extends AnimObject {
         let { point } = config
         let { x, y } = this.getAbsolutePosition(point)
 
-        this.setSlope(config.slope)
+        this.slope = config.slope
         this.offset = y - this.slope * x
 
         this.point1 = { x, y }
@@ -101,7 +98,7 @@ export default class Line extends AnimObject {
       // woll fix whatever the fuck i did here when i understand what i did
       // case Lines.SlopeIntercept:
       //   let { xIntercept = 0, yIntercept = 0 } = config
-      //   this.setSlope(config.slope)
+      //   this.slope = (config.slope)
       //   this.offset = yIntercept
       //   this.x = (y: number) =>
       //     xIntercept == Infinity || xIntercept == -Infinity
@@ -114,33 +111,17 @@ export default class Line extends AnimObject {
       case Lines.DoubleIntercept:
         let { xIntercept: relativeA, yIntercept: relativeB } = config
         let { a, b } = this.getAbsolutePosition(relativeA, relativeB)
-        this.setSlope(-b / a)
+        this.slope = -b / a
         this.offset = b
         break
       // case Lines.Normal:
       //   let { alpha, distance } = config
       //   this.y = (x: number) => {
-      //     this.setSlope(-1 / Math.tan((3 * Math.PI) / 2 + alpha))
+      //     this.slope = (-1 / Math.tan((3 * Math.PI) / 2 + alpha))
       //     return distance / Math.sin(alpha) + x * this.slope
       //   }
       // bug: case of slope = Infinty
       // fix this go awful code later
-    }
-  }
-
-  setSlope(slope: number) {
-    this.slope = slope
-    this.observers.forEach((observer: Observer) => {
-      if (observer.property == Observables.slope) observer.handler(this.slope)
-    })
-  }
-
-  addObserver(observer: Observer): void {
-    this.observers.push(observer)
-    switch (observer.property) {
-      case Observables.slope:
-        observer.handler(this.slope)
-        break
     }
   }
 
@@ -179,13 +160,13 @@ export default class Line extends AnimObject {
     return new Promise((resolve, reject) => {
       let finalPoint = {
         x: x * this.parentData.stepX,
-        y: evaluate(this.definition, { x }) * this.parentData.stepY,
+        y: -evaluate(this.definition, { x, y: 0 }) * this.parentData.stepY,
       }
 
       let parts = this.definition.split('=')
       let rhs = parts[parts.length - 1]
 
-      let finalSlope = derivative(rhs, 'x').evaluate({ x })
+      let finalSlope = derivative(rhs, 'x').evaluate({ x, y: 0 })
       this.transition = () => {
         let pointSpeed = rangePerFrame(
           Math.abs(this.x(1) - finalPoint.x),
@@ -196,16 +177,16 @@ export default class Line extends AnimObject {
           let nextPoint = {
             x: this.x(1) + pointSpeed,
             y:
-              evaluate(rhs, {
+              -evaluate(rhs, {
                 x: (this.x(1) + pointSpeed) / this.parentData.stepX,
+                y: 0,
               }) * this.parentData.stepY,
           }
           if (roundOff(this.x(1) + pointSpeed, 0) < roundOff(finalPoint.x, 0)) {
-            this.setSlope(
-              derivative(rhs, 'x').evaluate({
-                x: nextPoint.x / this.parentData.stepX,
-              })
-            )
+            this.slope = -derivative(rhs, 'x').evaluate({
+              x: nextPoint.x / this.parentData.stepX,
+              y: 0,
+            })
             this.x = (y: number) => nextPoint.x
             this.y = (x: number) => {
               return this.slope * x + (nextPoint.y - this.slope * nextPoint.x)
@@ -217,7 +198,7 @@ export default class Line extends AnimObject {
             this.domain = domain
             this.range = range
           } else {
-            this.setSlope(finalSlope)
+            this.slope = -finalSlope
             this.x = (y: number) => finalPoint.x
             this.y = (x: number) => {
               return this.slope * x + (finalPoint.y - this.slope * finalPoint.x)
@@ -235,16 +216,15 @@ export default class Line extends AnimObject {
           let nextPoint = {
             x: this.x(1) - pointSpeed,
             y:
-              evaluate(rhs, {
+              -evaluate(rhs, {
                 x: (this.x(1) - pointSpeed) / this.parentData.stepX,
               }) * this.parentData.stepY,
           }
           if (roundOff(this.x(1) - pointSpeed, 0) > roundOff(finalPoint.x, 0)) {
-            this.setSlope(
-              derivative(rhs, 'x').evaluate({
-                x: nextPoint.x / this.parentData.stepX,
-              })
-            )
+            this.slope = -derivative(rhs, 'x').evaluate({
+              x: nextPoint.x / this.parentData.stepX,
+              y: 0,
+            })
             this.x = (y: number) => nextPoint.x
             this.y = (x: number) => {
               return this.slope * x + (nextPoint.y - this.slope * nextPoint.x)
@@ -256,7 +236,7 @@ export default class Line extends AnimObject {
             this.domain = domain
             this.range = range
           } else {
-            this.setSlope(finalSlope)
+            this.slope = -finalSlope
             this.x = (y: number) => finalPoint.x
             this.y = (x: number) => {
               return this.slope * x + (finalPoint.y - this.slope * finalPoint.x)
@@ -305,7 +285,7 @@ export default class Line extends AnimObject {
         let s = (y2 - y1) / (x2 - x1)
         if (s >= Constants.Infinity) s = Constants.Infinity
         if (s <= -Constants.Infinity) s = -Constants.Infinity
-        this.setSlope(s)
+        this.slope = s
         this.offset = y1 - this.slope * x1
       },
       onEnd: () => {

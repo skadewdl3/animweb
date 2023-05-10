@@ -10,23 +10,29 @@ import p5 from 'p5'
 import { v4 as uuidv4 } from 'uuid'
 import Color from '@auxiliary/Color'
 import Colors from '@helpers/Colors'
-import { Observer } from '@/interfaces/core'
+import { Watcher } from '@/interfaces/core'
 import { Scene } from '@/interfaces/core'
 import Scene2D from './Scene2D'
+import { applyMixins } from '@/helpers/miscellaneous'
+import CreateWatcher from '@/auxiliary/Watcher'
+import CreateLink from '@/auxiliary/Link'
 
 /*
 AnimObjects can observe properties by specifying the type of property
 and a handler for the returned value
 */
 
-export default class AnimObject2D {
+class AnimObject2D {
   id: string // A unique identifier created for every AnimObject. Used to identify which AnimObject to remove when Scene.remove is called
   color: Color = Colors.black // The fill color of the AnimObject. subclasses may or may not use this prop
   backgroundColor: Color = Colors.transparent // The fill bg color of the AnimObject. subclasses may or may not use this prop
   transition: any = null // A placeholder method that is used to smoothly animate the AnimObject
   maxAlpha: number = 1
-  observers: Array<Observer> = [] // An array containing the AnimObjects that are observing come property of this AnimObject
+  watchers: Array<Watcher> = [] // An array containing the AnimObjects that are observing come property of this AnimObject
   iterables: Array<string> = []
+  watchables: {
+    [key: string]: Watcher
+  } = {}
   scene: Scene2D
 
   remove?: Function
@@ -147,9 +153,14 @@ export default class AnimObject2D {
   draw(p: p5) {}
 
   /*
-  A placeholder method like draw. This method takes in an Observer and adds it to the observers
+  A placeholder method like draw. This method takes in an Watcher and adds it to the watchers
   array of that specific AnimObject. In doing so, it calls the handler once at the start
   to give the present value. Subsequent calls are made when the property being observed changes.
   */
-  addObserver(observer: Observer) {}
+  addWatcher(watcher: Watcher) {}
 }
+
+interface AnimObject2D extends CreateWatcher, CreateLink {}
+applyMixins(AnimObject2D, [CreateLink, CreateWatcher])
+
+export default AnimObject2D

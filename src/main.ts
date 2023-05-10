@@ -15,8 +15,7 @@ import Complex from '@auxiliary/Complex.ts'
 // Helpers
 import Colors from '@helpers/Colors.ts'
 import { Width, Height } from '@/helpers/Dimensions'
-import { UserSVGs, svgData } from '@helpers/addSVG.ts'
-import { getElement, getInlineCode } from './helpers/miscellaneous'
+import { getElement, getInlineCode, throwError } from './helpers/miscellaneous'
 
 // Interfaces
 import { AnimObject, Scene } from '@interfaces/core'
@@ -25,12 +24,18 @@ import { AnimObject, Scene } from '@interfaces/core'
 import code from './ui/code'
 import logger from './ui/logger'
 import error from './ui/error'
+import { svgData, UserSVGs } from './ui/svg'
+import { sliders, UserSliders } from './ui/sliders'
 
 // Libraries
 import { EditorView, basicSetup } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { createApp, reactive } from 'petite-vue'
 import AnimObject2D from './core/AnimObject2D'
+
+// Styles
+import './styles/main.css'
+import './styles/slider.css'
 
 declare global {
   interface Window {
@@ -62,6 +67,7 @@ const editor = reactive({
   run() {
     error.hide()
     svgData.clear()
+    sliders.clear()
     logger.clear()
     scene2D.resetScene()
     scene3D.resetScene()
@@ -78,6 +84,7 @@ const editor = reactive({
   },
   clear() {
     svgData.clear()
+    sliders.clear()
     scene2D.resetScene()
     scene3D.resetScene()
   },
@@ -123,7 +130,7 @@ const AnimObjects: { [key: string]: AnimObjectsImports } = {
     async () => await import('@AnimObjects2D/Point.ts'),
     async () => await import('@AnimObjects3D/Point3D.ts'),
     {
-      Observables: async () => await import('@enums/AnimObjects2D.ts'),
+      Properties: async () => await import('@enums/auxiliary.ts'),
       Transitions: async () => await import('@enums/transitions.ts'),
     },
   ],
@@ -132,7 +139,7 @@ const AnimObjects: { [key: string]: AnimObjectsImports } = {
     async () => await import('@AnimObjects3D/Line3D.ts'),
     {
       Lines: async () => await import('@enums/AnimObjects2D.ts'),
-      Observables: async () => await import('@enums/AnimObjects2D.ts'),
+      Properties: async () => await import('@enums/auxiliary.ts'),
       Transitions: async () => await import('@enums/transitions.ts'),
     },
   ],
@@ -141,7 +148,7 @@ const AnimObjects: { [key: string]: AnimObjectsImports } = {
     async () => await import('@AnimObjects3D/NumberPlane3D.ts'),
     {
       NumberPlanes: async () => await import('@enums/AnimObjects3D.ts'),
-      Observables: async () => await import('@enums/AnimObjects2D.ts'),
+      Properties: async () => await import('@enums/auxiliary.ts'),
       Octants: async () => await import('@enums/AnimObjects3D.ts'),
       Transitions: async () => await import('@enums/transitions.ts'),
     },
@@ -151,7 +158,7 @@ const AnimObjects: { [key: string]: AnimObjectsImports } = {
     async () => await import('@AnimObjects3D/Text3D.ts'),
     {
       TextStyle: async () => await import('@enums/AnimObjects2D.ts'),
-      Observables: async () => await import('@enums/AnimObjects2D.ts'),
+      Properties: async () => await import('@enums/auxiliary.ts'),
       Transitions: async () => await import('@enums/transitions.ts'),
       Fonts: async () => await import('@enums/miscellaneous.ts'),
     },
@@ -238,10 +245,8 @@ window.WebAnim = {
   use: async (...config: Array<any>) => {
     for (let name of config) {
       if (!(name in AnimObjects))
-        return error.show(
-          'ImportError',
-          `AnimObject '${name}' not found. Please check your spelling.`
-        )
+        throwError('ImportError', `'${name}' is not a valid AnimObject`)
+
       if (name in window.WebAnim) return
       let arr = AnimObjects[name]
       let imported: Array<any> = []
@@ -340,9 +345,11 @@ const UserControls = () => {
 createApp({
   UserControls,
   UserSVGs,
+  UserSliders,
   editor,
   code,
   error,
   logger,
   svgData,
+  sliders,
 }).mount()

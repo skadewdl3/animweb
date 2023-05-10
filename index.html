@@ -89,6 +89,19 @@
         v-html="svgItem.svg">
       </div>
     </template>
+    <template id="user-sliders-template">
+      <div @vue:mounted="slider.updateElement()" v-for="slider in sliders.sliders" :id="slider.id" :class="slider.id"
+        class="slider" :style="{top: `${slider.y}px`, left: `${slider.x}px`}">
+        <div class="slider-input-container">
+          <input type="range" :min="slider.min" :max="slider.max" :step="slider.step" :value="slider.value"
+            :onInput="e => slider.value = e.target.value">
+          <input type="text" class="slider-textbox">
+          </div>
+          <div class="slider-title-container">
+            <span class="slider-title">{{ slider.title }}</span>
+          </div>
+      </div>
+    </template>
     <div id="app" style="
             position: absolute;
             top: 2rem;
@@ -101,65 +114,6 @@
     ></div>
     <script class="user-imports"></script>
     <div class="user-svgs" style="position: absolute; top: 0; left: 0; z-index: 1" v-scope="UserSVGs()"></div>
-    <style>
-      * {
-        border: 0;
-        padding: 0;
-        margin: 0;
-        box-sizing: border-box;
-        outline: none !important;
-      }
-
-      html {
-        font-size: 10px;
-      }
-      body {
-        font-size: inherit;
-        font-family: sans-serif, monospace;
-      }
-      .cm-editor {
-        font-family: monospace;
-        font-size: 2rem;
-        background: #fff;
-        border-radius: 1rem;
-        outline: none;
-      }
-      .btn {
-        cursor: pointer;
-        padding: 0.5rem 1rem;
-        font-size: 2rem;
-        font-family: sans-serif;
-        border: 0;
-        background: #6c5ce7;
-        color: #fff;
-        border-radius: 0.2rem;
-        margin-right: 0.5rem;
-      }
-      .hidden {
-        display: none;
-      }
-      .hidden-text {
-        visibility: hidden;
-      }
-      .btn-play {
-        display: block;
-      }
-      .btn-hidden {
-        display: none;
-      }
-      .code-error {
-        font-size: 1.6rem;
-        color: #ff0000;
-        padding: 1rem 1rem;
-        background: #fff;
-        border-top-right-radius: 1rem;
-        border-top-left-radius: 1rem;
-        border: solid 0.2rem rgba(183, 21, 64, 0.5);
-      }
-      .code-error-message {
-        font-weight: bold;
-        margin-bottom: 0.5rem;
-      }
-    </style>
+    <div class="user-sliders" style="position: absolute; top: 0; left: 0; z-index: 2" v-scope="UserSliders()"></div>
   </body>
 </html>

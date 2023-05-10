@@ -5,7 +5,7 @@ import { textToSVGPolygons } from '@helpers/TextToSVG'
 import { createSVG, removeSVG } from '@helpers/addSVG'
 import { TextProps } from '@/interfaces/AnimObjects2D'
 import { TextStyle } from '@/enums/AnimObjects2D'
-import { Observables } from '@/enums/AnimObjects2D'
+import { Watchables } from '@/enums/auxiliary'
 
 export default class Text extends AnimObject {
   text: string = ''
@@ -21,7 +21,7 @@ export default class Text extends AnimObject {
     super(config.scene)
     this.x = config.x
     this.y = config.y
-    this.text = config.text.toString()
+    config.text && (this.text = config.text.toString())
 
     if (config.color) this.color = config.color
     if (config.size) this.size = config.size
@@ -45,29 +45,29 @@ export default class Text extends AnimObject {
     })
   }
 
-  link(object: AnimObject, prop: Observables, callback: Function) {
-    if (!(prop in object)) return
+  // link(object: AnimObject, prop: Watchables, callback: Function) {
+  //   if (!(prop in object)) return
 
-    let observer = {
-      property: prop,
-      handler: (text: string) => {
-        let value = ''
-        switch (prop) {
-          case Observables.slope:
-          case Observables.x:
-          case Observables.y:
-            value = roundOff(parseFloat(text), 3).toString()
-            break
-          default:
-            value = text
-            break
-        }
-        callback(value)
-      },
-    }
+  //   let watcher = {
+  //     property: prop,
+  //     handler: (text: string) => {
+  //       let value = ''
+  //       switch (prop) {
+  //         case Watchables.slope:
+  //         case Watchables.x:
+  //         case Watchables.y:
+  //           value = roundOff(parseFloat(text), 3).toString()
+  //           break
+  //         default:
+  //           value = text
+  //           break
+  //       }
+  //       callback(value)
+  //     },
+  //   }
 
-    object.addObserver(observer)
-  }
+  //   object.addWatcher(watcher)
+  // }
 
   draw(p: p5) {
     if (this.transition) this.transition()

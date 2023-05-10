@@ -11,7 +11,7 @@ import Color from '@auxiliary/Color'
 import Colors from '@helpers/Colors'
 import Scene3D from '@core/Scene3D'
 import { Mesh as ThreeMesh } from 'three'
-import { Observer } from '@/interfaces/core'
+import { Watcher } from '@/interfaces/core'
 
 export default class AnimObject3D {
   id: string // A unique identifier created for every AnimObject3D. Used to identify which AnimObject3D to remove when Scene.remove is called
@@ -19,7 +19,7 @@ export default class AnimObject3D {
   backgroundColor: Color = Colors.transparent // The fill bg color of the AnimObject3D. subclasses may or may not use this prop
   transition: any = null // A placeholder method that is used to smoothly animate the AnimObject3D
   maxAlpha: number = 1
-  observers: Array<Observer> = [] // An array containing the AnimObject3Ds that are observing come property of this AnimObject3D
+  watchers: Array<Watcher> = [] // An array containing the AnimObject3Ds that are observing come property of this AnimObject3D
   iterables: Array<string> = []
   scene: Scene3D
   mesh: any = new ThreeMesh()
@@ -111,9 +111,9 @@ export default class AnimObject3D {
   update() {}
 
   /*
-  A placeholder method like draw. This method takes in an Observer and adds it to the observers
+  A placeholder method like draw. This method takes in an Watcher and adds it to the watchers
   array of that specific AnimObject3D. In doing so, it calls the handler once at the start
   to give the present value. Subsequent calls are made when the property being observed changes.
   */
-  addObserver(observer: Observer) {}
+  addWatcher(watcher: Watcher) {}
 }
