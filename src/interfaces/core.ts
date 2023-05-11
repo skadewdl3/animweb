@@ -5,7 +5,7 @@ import Scene2D from '@/core/Scene2D'
 import Scene3D from '@/core/Scene3D'
 import AnimObject2D from '@/core/AnimObject2D'
 import AnimObject3D from '@/core/AnimObject3D'
-import { Watchables } from '@/enums/auxiliary'
+import { Watchables } from '@/enums/mixins'
 // Scene
 export type Scene = Scene2D | Scene3D
 export type AnimObject = AnimObject2D | AnimObject3D

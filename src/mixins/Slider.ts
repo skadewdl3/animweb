@@ -41,7 +41,13 @@ export class Slider {
     this.title = title || this.property
     this.id = uuid()
     console.log(value)
-    this.value = value || this.watcher.value
+    this.value = value
+      ? value > this.max
+        ? this.max
+        : value < this.min
+        ? this.min
+        : value
+      : this.watcher.value
   }
 
   inc() {
