@@ -25,7 +25,7 @@ import code from './ui/code'
 import logger from './ui/logger'
 import error from './ui/error'
 import { svgData, UserSVGs } from './ui/svg'
-import { sliders, UserSliders } from './ui/sliders'
+import { sliders, UserSliders } from './ui/slider'
 
 // Libraries
 import { EditorView, basicSetup } from 'codemirror'

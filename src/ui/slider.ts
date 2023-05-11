@@ -1,4 +1,4 @@
-import { Slider } from '@/auxiliary/Slider'
+import { Slider } from '@/mixins/Slider'
 import { reactive } from 'petite-vue'
 
 export const sliders = reactive({

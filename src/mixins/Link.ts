@@ -1,6 +1,5 @@
 import { Linkables, Properties } from '@/enums/auxiliary'
 import { Watcher } from './Watcher'
-import error from '@/ui/error'
 import { throwError } from '@/helpers/miscellaneous'
 
 export class Link {

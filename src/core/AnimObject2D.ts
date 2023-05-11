@@ -14,8 +14,8 @@ import { Watcher } from '@/interfaces/core'
 import { Scene } from '@/interfaces/core'
 import Scene2D from './Scene2D'
 import { applyMixins } from '@/helpers/miscellaneous'
-import CreateWatcher from '@/auxiliary/Watcher'
-import CreateLink from '@/auxiliary/Link'
+import CreateWatcher from '@/mixins/Watcher'
+import CreateLink from '@/mixins/Link'
 
 /*
 AnimObjects can observe properties by specifying the type of property
