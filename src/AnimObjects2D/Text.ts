@@ -14,6 +14,7 @@ export default class Text extends AnimObject {
   font: any = null
   svg?: string
   svgEl?: SVGElement
+  animating?: boolean = false
 
   constructor(config: TextProps) {
     super(config.scene)
@@ -45,5 +46,14 @@ export default class Text extends AnimObject {
 
   draw(p: p5) {
     if (this.transition) this.transition()
+    if (!this.animating) {
+      p.fill(this.color.rgba)
+      p.strokeWeight(1)
+      p.stroke(this.color.rgba)
+      p.textFont('sans-serif')
+      p.textSize(this.size)
+      p.textAlign(p.LEFT, p.TOP)
+      p.text(this.text, this.x, this.y)
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { Linkables, Properties } from '@/enums/auxiliary'
+import { Linkables, Properties } from '@/enums/mixins'
 import { Watcher } from './Watcher'
 import { throwError } from '@/helpers/miscellaneous'
 
