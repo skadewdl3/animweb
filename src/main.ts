@@ -36,6 +36,7 @@ import AnimObject2D from './core/AnimObject2D'
 
 // Mixins
 import { createButton } from './mixins/Button'
+import { createSlider } from './mixins/Slider'
 
 // Styles
 import './styles/main.css'
@@ -117,6 +118,7 @@ const functions = {
     }
   },
   createButton: (config: any) => createButton(config),
+  createSlider: (config: any) => createSlider(config),
 }
 
 const helpers = {

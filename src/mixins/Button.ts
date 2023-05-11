@@ -1,6 +1,5 @@
 import { Watchables } from '@/enums/mixins'
 import { v4 as uuid } from 'uuid'
-import { sliders } from '@/ui/slider'
 import { ButtonProps } from '@/interfaces/mixins'
 //@ts-ignore
 import debounce from 'lodash.debounce'
@@ -98,14 +97,14 @@ export class Button {
   }
 
   onClick(listener: Function) {
+    if (!this.independent && this.clickLiseners.length > 0) return
     let id = uuid()
     this.clickLiseners.push({ listener, id })
     return () => this.executeClickListener(id)
   }
 
   destroy() {
-    sliders.removeButton(this.id)
-    this.element?.remove()
+    buttons.removeButton(this.id)
   }
 }
 

@@ -20,7 +20,10 @@ export default class Text extends AnimObject {
     super(config.scene)
     this.x = config.x || 0
     this.y = config.y || 0
-    config.text && (this.text = config.text.toString())
+    if (config.text != undefined && config.text != null) {
+      this.text = config.text.toString()
+      console.log(this.text)
+    }
 
     if (config.color) this.color = config.color
     if (config.size) this.size = config.size > 40 ? 40 : config.size

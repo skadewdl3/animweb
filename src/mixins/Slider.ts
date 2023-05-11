@@ -12,24 +12,24 @@ export class Slider {
   max: number
   step: number
   element?: HTMLElement
-  property: Watchables
+  property?: Watchables
   x: number
   y: number
   title: string
+  slideListeners: Array<{ id: string; listener: Function }> = []
+  tempValue: number = 0
 
   get value() {
-    return this.watcher.value
+    return this.watcher ? this.watcher.value : this.tempValue
   }
 
   set value(val: any) {
-    this.watcher.executeMutation((o: any) => {
-      o.value = val
-    })
+    if (!this.watcher) this.executeSlideListeners(val)
   }
 
   constructor(
     { min = 1, max = 100, step = 1, x = 0, y = 0, title, value }: SliderProps,
-    watcher: any
+    watcher?: any
   ) {
     this.min = min
     this.max = max
@@ -37,17 +37,20 @@ export class Slider {
     this.x = x
     this.y = y
     this.watcher = watcher
-    this.property = watcher.property
-    this.title = title || this.property
+    this.property = this.watcher ? watcher.property : null
+    this.title = title || this.property || ''
     this.id = uuid()
     console.log(value)
-    this.value = value
-      ? value > this.max
-        ? this.max
-        : value < this.min
-        ? this.min
-        : value
-      : this.watcher.value
+    this.value =
+      typeof value == 'number'
+        ? value > this.max
+          ? this.max
+          : value < this.min
+          ? this.min
+          : value
+        : this.watcher
+        ? this.watcher.value
+        : this.min
   }
 
   inc() {
@@ -82,6 +85,38 @@ export class Slider {
     )
   }
 
+  executeSlideListeners(val: number) {
+    if (this.watcher) {
+      this.watcher.executeMutation((o: any) => {
+        o.value = val
+        for (let listener of this.slideListeners) {
+          listener.listener(val)
+        }
+      })
+    } else {
+      for (let listener of this.slideListeners) {
+        listener.listener(val)
+      }
+      this.tempValue = val
+    }
+  }
+
+  executeSlideListener(id: string) {
+    this.slideListeners = this.slideListeners.filter((listener) => {
+      if (listener.id == id) {
+        listener.listener()
+        return false
+      }
+      return true
+    })
+  }
+
+  onSlide(slideListener: Function) {
+    let id = uuid()
+    this.slideListeners.push({ listener: slideListener, id })
+    return () => this.executeSlideListener(id)
+  }
+
   destroy() {
     sliders.removeSlider(this.id)
     this.element?.remove()
@@ -96,4 +131,11 @@ export default class CreateSlider {
     this.sliders.push(slider)
     return slider
   }
+}
+
+export const createSlider = (config: SliderProps = {}) => {
+  let slider = new Slider(config)
+  sliders.addSlider(slider)
+
+  return slider
 }
