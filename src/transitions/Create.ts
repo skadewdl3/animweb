@@ -314,6 +314,7 @@ const Create = <Object extends AnimObject>(
             strokeDashoffset: [anime.setDashoffset, 0],
             easing: 'easeInOutSine',
             duration: config.duration || 1500,
+            direction: 'alternate',
             loop: false,
             complete() {
               end()
@@ -338,6 +339,7 @@ const Create = <Object extends AnimObject>(
             easing: 'easeInOutSine',
             duration: (3 * config.duration) / 4 || 1500,
             direction: 'alternate',
+            // delay: anime.stagger(100, { direction: 'reverse' }),
             loop: false,
             complete() {
               anime({

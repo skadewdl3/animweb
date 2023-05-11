@@ -2,9 +2,10 @@ import p5 from 'p5'
 import Color from '@auxiliary/Color'
 import Colors from '@helpers/Colors'
 import AnimObject from '@/core/AnimObject2D'
-import { roundOff } from '@helpers/miscellaneous'
 import { ImplicitCurveProps } from '@/interfaces/AnimObjects2D'
 import { createSVG, removeSVG } from '@/helpers/addSVG'
+// @ts-ignore
+import createKDTree from 'static-kdtree'
 
 export default class ImplicitCurve extends AnimObject {
   definition: string = ''
@@ -64,6 +65,8 @@ export default class ImplicitCurve extends AnimObject {
         id: this.id,
       })
 
+      let points: Array<[number, number]> = []
+
       this.webWorker.onmessage = ({ data }) => {
         this.quadTree = JSON.parse(data)
         this.calculatingQuadtree = false
@@ -80,6 +83,7 @@ export default class ImplicitCurve extends AnimObject {
           } else {
             if (q.contours) {
               q.contours.forEach((contour: any) => {
+                points.push([contour.x1, contour.y1], [contour.x2, contour.y2])
                 svg.push(
                   `M${contour.x1} ${contour.y1} L${contour.x2} ${contour.y2} `
                 )
@@ -105,25 +109,5 @@ export default class ImplicitCurve extends AnimObject {
 
   draw(p: p5) {
     if (this.transition) this.transition()
-    // if (!this.graphicsBuffer) {
-    //   this.graphicsBuffer = p.createGraphics(
-    //     this.scene.width,
-    //     this.scene.height
-    //   )
-    // }
-    // this.graphicsBuffer.stroke(this.color.rgba)
-    // this.graphicsBuffer.strokeWeight(this.thickness)
-    // if (this.quadTree && this.shouldRedraw) {
-    //   this.drawQuadtree(p, this.quadTree.ne)
-    //   this.drawQuadtree(p, this.quadTree.nw)
-    //   this.drawQuadtree(p, this.quadTree.se)
-    //   this.drawQuadtree(p, this.quadTree.sw)
-    //   this.shouldRedraw = false
-    // } else {
-    //   if (!this.calculatingQuadtree) this.calculateQuadtree()
-    // }
-    // p.tint(255, roundOff(this.color.rgbaVals[3] * 255, 2))
-    // p.image(this.graphicsBuffer, 0, 0)
-    // this.graphicsBuffer.noStroke()
   }
 }
