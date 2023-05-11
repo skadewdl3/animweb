@@ -34,14 +34,14 @@ self.onmessage = ({ data }) => {
         // but we are considering z is up and y is outwards from screen
       mesh.triangles.push(new Float32Array([
       p1.x,
-      p1.y,
       p1.z,
+      p1.y,
       p2.x,
-      p2.y,
       p2.z,
+      p2.y,
       p3.x,
-      p3.y,
       p3.z,
+      p3.y,
     ]))
     
     }

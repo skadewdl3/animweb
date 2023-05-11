@@ -12,6 +12,7 @@ import { createTransition } from '@core/Transition'
 import Text from '@AnimObjects2D/Text'
 import anime from 'animejs'
 import LaTeX from '@AnimObjects2D/LaTeX'
+import ImplicitCurve from '@/AnimObjects2D/ImplicitCurve'
 
 const hideObject = (object: AnimObject, shouldHide: boolean) => {
   object.color.setAlpha(shouldHide ? 0 : object.maxAlpha)
@@ -301,6 +302,30 @@ const Create = <Object extends AnimObject>(
       : Constants.createLineDuration
     hideObjects(object.lines, true)
     createStaggeredLineTransitions(object.lines, config, duration)
+  } else if (object instanceof ImplicitCurve) {
+    let executeTransition = true
+    let tx = createTransition({
+      onProgress: ({ end }: TransitionProgressProps) => {
+        if (object.svgEl && executeTransition) {
+          // @ts-ignore
+          object.svgEl.querySelector('path').style.stroke = 'black'
+          anime({
+            targets: `#${object.id} path`,
+            strokeDashoffset: [anime.setDashoffset, 0],
+            easing: 'easeInOutSine',
+            duration: config.duration || 1500,
+            loop: false,
+            complete() {
+              end()
+            },
+          })
+          executeTransition = false
+        }
+      },
+      endCondition: () => false,
+      object,
+    })
+    object.transition = tx
   } else if (object instanceof Text) {
     let executeTransition = true
     let tx = createTransition({
@@ -311,7 +336,7 @@ const Create = <Object extends AnimObject>(
             strokeDashoffset: [anime.setDashoffset, 0],
             stroke: '#ff0000',
             easing: 'easeInOutSine',
-            duration: 1500,
+            duration: (3 * config.duration) / 4 || 1500,
             direction: 'alternate',
             loop: false,
             complete() {
@@ -319,7 +344,7 @@ const Create = <Object extends AnimObject>(
                 targets: `#${object.id} path`,
                 fill: '#ff0000',
                 easing: 'easeInOutSine',
-                duration: 1500,
+                duration: config.duration / 4 || 500,
                 direction: 'alternate',
                 loop: false,
                 complete() {
@@ -345,7 +370,7 @@ const Create = <Object extends AnimObject>(
             strokeDashoffset: [anime.setDashoffset, 0],
             stroke: '#ff0000',
             easing: 'easeInOutSine',
-            duration: 1500,
+            duration: (3 * config.duration) / 4 || 1500,
             direction: 'alternate',
             loop: false,
             complete() {
@@ -353,7 +378,7 @@ const Create = <Object extends AnimObject>(
                 targets: `#${object.id} path`,
                 fill: '#ff0000',
                 easing: 'easeInOutSine',
-                duration: 1500,
+                duration: config.duration / 4 || 1500,
                 direction: 'alternate',
                 loop: false,
                 complete() {
