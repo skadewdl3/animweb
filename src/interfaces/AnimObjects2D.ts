@@ -146,11 +146,6 @@ export interface PointPlotProps extends AnimObject2DProps {
   transitionOptions?: TransitionProps
 }
 
-export interface LinearTransformProps {
-  duration: number
-}
-
-
 // ComplexPlane
 export interface ComplexPlaneProps extends AnimObject2DProps {
   stepX?: number
