@@ -119,7 +119,6 @@ export class Slider {
 
   destroy() {
     sliders.removeSlider(this.id)
-    this.element?.remove()
   }
 }
 
