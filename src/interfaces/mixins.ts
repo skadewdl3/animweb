@@ -5,6 +5,7 @@ export interface SliderProps {
   x?: number
   y?: number
   title?: string
+  value?: number
 }
 
 export interface ButtonProps {

@@ -28,7 +28,7 @@ export class Slider {
   }
 
   constructor(
-    { min = 1, max = 100, step = 1, x = 0, y = 0, title }: SliderProps,
+    { min = 1, max = 100, step = 1, x = 0, y = 0, title, value }: SliderProps,
     watcher: any
   ) {
     this.min = min
@@ -40,6 +40,8 @@ export class Slider {
     this.property = watcher.property
     this.title = title || this.property
     this.id = uuid()
+    console.log(value)
+    this.value = value || this.watcher.value
   }
 
   inc() {

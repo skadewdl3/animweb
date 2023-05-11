@@ -24,7 +24,6 @@ export class Link {
     this.id = this.watcher.onChange((value: any) => {
       console.log(callback)
       let v = callback ? callback(value) : value
-      console.log(parseFloat(v))
       this.target[this.property] = v
       console.log(this.target)
     })
