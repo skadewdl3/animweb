@@ -44,17 +44,17 @@ export const textToSVGTriangles = (text: string, config: any = {}) => {
 
 export const textToSVGPolygons = (text: string, config: any = {}) => {
   let dimensions = calculateSize(text, {
-    font: config.font || 'Arial',
+    font: config.font || 'sans-serif',
     fontSize: `${config.size}px`,
   })
   let polygons = vectorizeText(text, {
     ...config,
     triangles: false,
     polygons: true,
-    font: config.font || 'Arial',
+    font: 'sans-serif',
     textBaseline: 'top',
-    size: config.size,
-    width: dimensions.width - 5,
+    size: `${config.size}px`,
+    width: dimensions.width - 1,
     height: `${dimensions.height}px`,
   })
 
@@ -90,7 +90,7 @@ export const textToSVGGraph = (text: string, config: any = {}) => {
     triangles: false,
     polygons: false,
     font: config.font || 'Arial',
-    textBaseline: 'hanging',
+    textBaseline: 'top',
     size: config.size,
     width: dimensions.width,
     height: `${dimensions.height}px`,

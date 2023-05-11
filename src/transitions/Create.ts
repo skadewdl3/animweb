@@ -5,7 +5,7 @@ import Line from '@AnimObjects2D/Line'
 import NumberPlane from '@AnimObjects2D/NumberPlane'
 import Point from '@AnimObjects2D/Point'
 import Constants from '@helpers/Constants'
-import { rangePerFrame, wait } from '@helpers/miscellaneous'
+import { rangePerFrame, roundOff, wait } from '@helpers/miscellaneous'
 import { TransitionProgressProps } from '@interfaces/transitions'
 import { TransitionTypes } from '@/enums/transitions'
 import { createTransition } from '@core/Transition'
@@ -13,6 +13,7 @@ import Text from '@AnimObjects2D/Text'
 import anime from 'animejs'
 import LaTeX from '@AnimObjects2D/LaTeX'
 import ImplicitCurve from '@/AnimObjects2D/ImplicitCurve'
+import Color from '@/auxiliary/Color'
 
 const hideObject = (object: AnimObject, shouldHide: boolean) => {
   object.color.setAlpha(shouldHide ? 0 : object.maxAlpha)
@@ -324,27 +325,35 @@ const Create = <Object extends AnimObject>(
         }
       },
       endCondition: () => false,
+      onEnd() {
+        setTimeout(() => {
+          object.svgEl?.classList.add('hidden')
+        }, 100)
+      },
       object,
     })
     object.transition = tx
   } else if (object instanceof Text) {
     let executeTransition = true
+    object.animating = true
     let tx = createTransition({
       onProgress: ({ end }: TransitionProgressProps) => {
         if (object.svgEl && executeTransition) {
           anime({
             targets: `#${object.id} path`,
             strokeDashoffset: [anime.setDashoffset, 0],
-            stroke: '#ff0000',
+            stroke: object.color.rgba,
             easing: 'easeInOutSine',
             duration: (3 * config.duration) / 4 || 1500,
             direction: 'alternate',
-            // delay: anime.stagger(100, { direction: 'reverse' }),
+            translateY: [0, object.size < 20 ? 0 : 2],
             loop: false,
             complete() {
+              ;(object.svgEl as SVGElement).style.transformOrigin = '50% 50%'
+
               anime({
                 targets: `#${object.id} path`,
-                fill: '#ff0000',
+                fill: object.color.rgba,
                 easing: 'easeInOutSine',
                 duration: config.duration / 4 || 500,
                 direction: 'alternate',
@@ -353,10 +362,34 @@ const Create = <Object extends AnimObject>(
                   end()
                 },
               })
+              if (object.size < 20) {
+                end()
+                return
+              }
+              anime({
+                targets: `#${object.id}`,
+                scale: [1, 0.974],
+                easing: 'easeInOutSine',
+                duration: config.duration / 5 || 500,
+                loop: false,
+                complete() {
+                  object.animating = false
+                  anime({
+                    targets: `#${object.id}`,
+                    opacity: [1, 0],
+                    easing: 'easeInOutSine',
+                    duration: config.duration / 5 || 500,
+                    loop: false,
+                  })
+                },
+              })
             },
           })
           executeTransition = false
         }
+      },
+      onEnd() {
+        // object.svgEl?.classList.add('hidden')
       },
       endCondition: () => false,
       object,

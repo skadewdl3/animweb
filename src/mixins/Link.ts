@@ -1,6 +1,5 @@
-import { Linkables, Properties } from '@/enums/auxiliary'
+import { Linkables, Properties } from '@/enums/mixins'
 import { Watcher } from './Watcher'
-import error from '@/ui/error'
 import { throwError } from '@/helpers/miscellaneous'
 
 export class Link {
@@ -18,12 +17,14 @@ export class Link {
     this.target = target
     this.watcher = watcher
     this.property = property
+    this.target[this.property] = callback
+      ? callback(this.watcher.value)
+      : this.watcher.value
 
     this.id = this.watcher.onChange((value: any) => {
       console.log(callback)
-      let v = callback ? callback(parseFloat(value)) : value
-      console.log(parseFloat(v))
-      this.target[this.property] = parseFloat(v)
+      let v = callback ? callback(value) : value
+      this.target[this.property] = v
       console.log(this.target)
     })
   }

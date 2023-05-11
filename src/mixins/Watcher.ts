@@ -1,7 +1,8 @@
 import { applyMixins, throwError } from '@/helpers/miscellaneous'
-import { Properties, Watchables } from '@/enums/auxiliary'
+import { Properties, Watchables } from '@/enums/mixins'
 import { v4 as uuid } from 'uuid'
 import CreateSlider, { Slider } from './Slider'
+import CreateButton, { Button } from './Button'
 
 export class Watcher {
   private listeners: { [id: string]: Function } = {}
@@ -9,6 +10,7 @@ export class Watcher {
   private id: string = uuid()
   private target: any
   sliders: Array<Slider> = []
+  buttons: Array<Button> = []
   value: any
 
   constructor(target: any, property: Watchables) {
@@ -56,7 +58,7 @@ export class Watcher {
   }
 }
 
-applyMixins(Watcher, [CreateSlider])
+applyMixins(Watcher, [CreateSlider, CreateButton])
 
 export default class CreateWatcher {
   watch(property: Properties) {

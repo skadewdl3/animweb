@@ -32,9 +32,9 @@ export const createTransition = ({
   }
   const tx = () => {
     const end = () => {
+      object.transition = null
       onEnd && onEnd()
       object.scene.dequeueTransition(transitionQueueItem)
-      object.transition = null
       return
     }
     const start = () => {

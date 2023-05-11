@@ -7,4 +7,5 @@ export interface SVGData {
   size?: number
   font?: any
   fontStyle?: any
+  hide?: boolean
 }

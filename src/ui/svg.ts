@@ -12,6 +12,7 @@ export const svgData = reactive({
         top: `${data.y}px`,
         left: `${data.x}px`,
         position: 'absolute',
+        display: data.hide ? 'none' : 'block',
       },
       svgElement: null,
       updateElement() {

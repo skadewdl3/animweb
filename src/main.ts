@@ -25,7 +25,8 @@ import code from './ui/code'
 import logger from './ui/logger'
 import error from './ui/error'
 import { svgData, UserSVGs } from './ui/svg'
-import { sliders, UserSliders } from './ui/sliders'
+import { sliders, UserSliders } from './ui/slider'
+import { buttons, UserButtons } from './ui/button'
 
 // Libraries
 import { EditorView, basicSetup } from 'codemirror'
@@ -33,9 +34,14 @@ import { javascript } from '@codemirror/lang-javascript'
 import { createApp, reactive } from 'petite-vue'
 import AnimObject2D from './core/AnimObject2D'
 
+// Mixins
+import { createButton } from './mixins/Button'
+import { createSlider } from './mixins/Slider'
+
 // Styles
 import './styles/main.css'
 import './styles/slider.css'
+import './styles/button.css'
 
 declare global {
   interface Window {
@@ -53,6 +59,16 @@ scene3D.hide()
 let scene: Scene = scene2D
 scene = scene2D
 
+const resetScene = (clearDebuggingData = false) => {
+  clearDebuggingData && error.hide()
+  clearDebuggingData && logger.clear()
+  svgData.clear()
+  sliders.clear()
+  buttons.clear()
+  scene2D.resetScene()
+  scene3D.resetScene()
+}
+
 const editor = reactive({
   editor: null,
   create() {
@@ -65,12 +81,7 @@ const editor = reactive({
     })
   },
   run() {
-    error.hide()
-    svgData.clear()
-    sliders.clear()
-    logger.clear()
-    scene2D.resetScene()
-    scene3D.resetScene()
+    resetScene(true)
     let inlineCode = getInlineCode(this.editor)
     let script = document.createElement('script')
     script.type = 'module'
@@ -83,16 +94,18 @@ const editor = reactive({
     document.body.appendChild(script)
   },
   clear() {
-    svgData.clear()
-    sliders.clear()
-    scene2D.resetScene()
-    scene3D.resetScene()
+    resetScene()
   },
 })
 
 const functions = {
   wait: async (config: any) => await scene.wait(config),
-  show: (config: any) => scene.add(config),
+  show: (config: any) => {
+    if (config.animating) {
+      config.animating = false
+    }
+    return scene.add(config)
+  },
   render: (mode: '3D' | '2D' = '2D') => {
     if (mode == '3D') {
       scene2D.hide()
@@ -104,6 +117,8 @@ const functions = {
       scene = scene2D
     }
   },
+  createButton: (config: any) => createButton(config),
+  createSlider: (config: any) => createSlider(config),
 }
 
 const helpers = {
@@ -130,7 +145,7 @@ const AnimObjects: { [key: string]: AnimObjectsImports } = {
     async () => await import('@AnimObjects2D/Point.ts'),
     async () => await import('@AnimObjects3D/Point3D.ts'),
     {
-      Properties: async () => await import('@enums/auxiliary.ts'),
+      Properties: async () => await import('@enums/mixins.ts'),
       Transitions: async () => await import('@enums/transitions.ts'),
     },
   ],
@@ -139,7 +154,7 @@ const AnimObjects: { [key: string]: AnimObjectsImports } = {
     async () => await import('@AnimObjects3D/Line3D.ts'),
     {
       Lines: async () => await import('@enums/AnimObjects2D.ts'),
-      Properties: async () => await import('@enums/auxiliary.ts'),
+      Properties: async () => await import('@enums/mixins.ts'),
       Transitions: async () => await import('@enums/transitions.ts'),
     },
   ],
@@ -148,7 +163,7 @@ const AnimObjects: { [key: string]: AnimObjectsImports } = {
     async () => await import('@AnimObjects3D/NumberPlane3D.ts'),
     {
       NumberPlanes: async () => await import('@enums/AnimObjects3D.ts'),
-      Properties: async () => await import('@enums/auxiliary.ts'),
+      Properties: async () => await import('@enums/mixins.ts'),
       Octants: async () => await import('@enums/AnimObjects3D.ts'),
       Transitions: async () => await import('@enums/transitions.ts'),
     },
@@ -158,7 +173,7 @@ const AnimObjects: { [key: string]: AnimObjectsImports } = {
     async () => await import('@AnimObjects3D/Text3D.ts'),
     {
       TextStyle: async () => await import('@enums/AnimObjects2D.ts'),
-      Properties: async () => await import('@enums/auxiliary.ts'),
+      Properties: async () => await import('@enums/mixins.ts'),
       Transitions: async () => await import('@enums/transitions.ts'),
       Fonts: async () => await import('@enums/miscellaneous.ts'),
     },
@@ -346,10 +361,12 @@ createApp({
   UserControls,
   UserSVGs,
   UserSliders,
+  UserButtons,
   editor,
   code,
   error,
   logger,
   svgData,
   sliders,
+  buttons,
 }).mount()

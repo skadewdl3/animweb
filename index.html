@@ -101,6 +101,12 @@
           </div>
       </div>
     </template>
+    <template id="user-buttons-template">
+      <div @vue:mounted="button.updateElement()" v-for="button in buttons.buttons" :id="button.id" :class="button.id"
+        class="user-button-container" :style="{top: `${button.y}px`, left: `${button.x}px`}">
+        <button class="user-button">{{ button.text }}</button>
+      </div>
+    </template>
     <div id="app" style="
             position: absolute;
             top: 2rem;
@@ -114,5 +120,6 @@
     <script class="user-imports"></script>
     <div class="user-svgs" style="position: absolute; top: 0; left: 0; z-index: 1" v-scope="UserSVGs()"></div>
     <div class="user-sliders" style="position: absolute; top: 0; left: 0; z-index: 2" v-scope="UserSliders()"></div>
+    <div class="user-buttons" style="position: absolute; top: 0; left: 0; z-index: 2" v-scope="UserButtons()"></div>
   </body>
 </html>
