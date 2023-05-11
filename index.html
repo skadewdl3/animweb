@@ -107,6 +107,16 @@
         <button class="user-button">{{ button.text }}</button>
       </div>
     </template>
+    <template id="user-prompts-template">
+      <div @vue:mounted="prompt.updateElement()" v-for="prompt in prompts.prompts" :id="prompt.id" :class="prompt.id"
+        class="user-prompt-container" :style="{top: `${prompt.y}px`, left: `${prompt.x}px`}">
+        <button class="user-prompt]">{{ prompt.text }}</button>
+        <div class="user-prompt-title">{{ prompt.title }}</div>
+        <div class="user-prompt-description">{{ prompt.description }}</div>
+        <input type="text" :placeholder="prompt.placeholder || ''" :defaultValue="prompt.value || ''">
+        <button class="user-button user-prompt-submit-btn">Submit</button>
+      </div>
+    </template>
     <div id="app" style="
             position: absolute;
             top: 2rem;
