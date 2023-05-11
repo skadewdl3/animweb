@@ -150,6 +150,22 @@ export interface LinearTransformProps {
   duration: number
 }
 
+// ComplexPlane
+export interface ComplexPlaneProps extends AnimObject2DProps {
+  stepX?: number
+  stepY?: number
+  step?: number
+  width?: number
+  height?: number
+  x?: number
+  y?: number
+  origin?: { x: number; y: number }
+  showTicks?: boolean
+  grid?: boolean
+  xGrid?: boolean
+  yGrid?: boolean
+}
+
 // Vector
 
 export interface VectorProps extends AnimObject2DProps {

@@ -18,7 +18,7 @@ import {
   NumberPlaneProps,
   VectorProps,
   LinearTransformProps,
-} from '@/interfaces/AnimObjects2D'
+} from '@interfaces/AnimObjects2D'
 import Vector from './Vector'
 
 export default class NumberPlane extends AnimObject {
@@ -288,13 +288,11 @@ export default class NumberPlane extends AnimObject {
 
   draw(p: p5) {
     this.planeComponents.forEach((name: string) => {
-      //@ts-ignore
-      this[name].forEach((o: AnimObject) => o.draw(p))
+      ;(this as any)[name].forEach((o: AnimObject) => o.draw(p))
     })
 
     this.drawnComponents.forEach((name: string) => {
-      //@ts-ignore
-      this[name].forEach((o: AnimObject) => o.draw(p))
+      ;(this as any)[name].forEach((o: AnimObject) => o.draw(p))
     })
   }
 

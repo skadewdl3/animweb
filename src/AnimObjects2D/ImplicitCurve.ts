@@ -2,8 +2,10 @@ import p5 from 'p5'
 import Color from '@auxiliary/Color'
 import Colors from '@helpers/Colors'
 import AnimObject from '@/core/AnimObject2D'
-import { roundOff } from '@helpers/miscellaneous'
 import { ImplicitCurveProps } from '@/interfaces/AnimObjects2D'
+import { createSVG, removeSVG } from '@/helpers/addSVG'
+// @ts-ignore
+import createKDTree from 'static-kdtree'
 
 export default class ImplicitCurve extends AnimObject {
   definition: string = ''
@@ -18,6 +20,7 @@ export default class ImplicitCurve extends AnimObject {
   )
   graphicsBuffer: any
   shouldRedraw: boolean = true
+  svgEl?: SVGElement
 
   constructor(config: ImplicitCurveProps) {
     super(config.scene)
@@ -41,6 +44,7 @@ export default class ImplicitCurve extends AnimObject {
     if (config.thickness) this.thickness = config.thickness
     if (config.color) this.color = config.color
     if (config.sampleRate) this.sampleRate = config.sampleRate / 100
+    this.calculateQuadtree()
   }
 
   calculateQuadtree() {
@@ -61,29 +65,43 @@ export default class ImplicitCurve extends AnimObject {
         id: this.id,
       })
 
+      let points: Array<[number, number]> = []
+
       this.webWorker.onmessage = ({ data }) => {
         this.quadTree = JSON.parse(data)
         this.calculatingQuadtree = false
         this.webWorker.terminate()
-      }
-    }
-  }
-
-  drawQuadtree(p: p5, q: any) {
-    if (q.ne) {
-      this.drawQuadtree(p, q.ne)
-      this.drawQuadtree(p, q.nw)
-      this.drawQuadtree(p, q.se)
-      this.drawQuadtree(p, q.sw)
-    } else {
-      if (q.contours) {
-        q.contours.forEach((contour: any) => {
-          this.graphicsBuffer.line(
-            contour.x1,
-            contour.y1,
-            contour.x2,
-            contour.y2
-          )
+        let svg = [
+          `<svg width="${this.scene.width}" height="${this.scene.height}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="`,
+        ]
+        let c = (q: any) => {
+          if (q.ne) {
+            c(q.ne)
+            c(q.nw)
+            c(q.se)
+            c(q.sw)
+          } else {
+            if (q.contours) {
+              q.contours.forEach((contour: any) => {
+                points.push([contour.x1, contour.y1], [contour.x2, contour.y2])
+                svg.push(
+                  `M${contour.x1} ${contour.y1} L${contour.x2} ${contour.y2} `
+                )
+              })
+            }
+          }
+        }
+        c(this.quadTree)
+        svg.push(
+          '" stroke-width="1" fill="transparent" stroke="transparent"></path></svg>'
+        )
+        createSVG(svg.join(''), {
+          id: this.id,
+          x: 0,
+          y: 0,
+        }).then((el) => {
+          this.svgEl = el
+          this.remove = () => removeSVG(this.id)
         })
       }
     }
@@ -91,25 +109,5 @@ export default class ImplicitCurve extends AnimObject {
 
   draw(p: p5) {
     if (this.transition) this.transition()
-    if (!this.graphicsBuffer) {
-      this.graphicsBuffer = p.createGraphics(
-        this.scene.width,
-        this.scene.height
-      )
-    }
-    this.graphicsBuffer.stroke(this.color.rgba)
-    this.graphicsBuffer.strokeWeight(this.thickness)
-    if (this.quadTree && this.shouldRedraw) {
-      this.drawQuadtree(p, this.quadTree.ne)
-      this.drawQuadtree(p, this.quadTree.nw)
-      this.drawQuadtree(p, this.quadTree.se)
-      this.drawQuadtree(p, this.quadTree.sw)
-      this.shouldRedraw = false
-    } else {
-      if (!this.calculatingQuadtree) this.calculateQuadtree()
-    }
-    p.tint(255, roundOff(this.color.rgbaVals[3] * 255, 2))
-    p.image(this.graphicsBuffer, 0, 0)
-    this.graphicsBuffer.noStroke()
   }
 }

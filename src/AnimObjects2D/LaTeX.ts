@@ -35,6 +35,32 @@ export default class LaTeX extends AnimObject {
       let uses = svgElement.querySelectorAll('use')
       svgElement.style.transform = `scale(${(this.size * 1.8) / 16})`
       svgElement.style.transformOrigin = `0 0`
+      svgElement.querySelectorAll('rect').forEach((rect: SVGRectElement) => {
+        let rectPath = document.createElement('path')
+        console.log(getComputedStyle(rect))
+        let x = rect.getAttribute('x')
+          ? parseFloat(rect.getAttribute('x') || '0')
+          : 0
+        let y = rect.getAttribute('y')
+          ? parseFloat(rect.getAttribute('y') || '0')
+          : 0
+        let width = rect.getAttribute('width')
+          ? parseFloat(rect.getAttribute('width') || '0')
+          : 0
+        let height = rect.getAttribute('height')
+          ? parseFloat(rect.getAttribute('height') || '0')
+          : 0
+
+        rectPath.setAttribute(
+          'd',
+          `M${x} ${y} h${width} v${height} h-${width} v-${height}`
+        )
+        rectPath.setAttribute('fill', 'transparent')
+        rectPath.setAttribute('stroke', 'transparent')
+        rectPath.setAttribute('stroke-width', '1rem')
+        rect.parentElement?.appendChild(rectPath)
+        rect.remove()
+      })
       uses.forEach((use: any) => {
         let path = svgElement.querySelector(use.getAttribute('xlink:href'))
         path.style.fill = 'transparent'

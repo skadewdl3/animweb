@@ -179,7 +179,7 @@ const AnimObjects: { [key: string]: AnimObjectsImports } = {
   ],
   Surface: [async () => await import('@AnimObjects3D/Surface.ts')],
   ComplexPlane: [
-    undefined,
+    async () => await import('@AnimObjects2D/ComplexPlane2D.ts'),
     async () => await import('@AnimObjects3D/ComplexPlane3D.ts'),
     {
       ComplexPlanes: async () => await import('@enums/AnimObjects3D.ts'),
