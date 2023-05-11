@@ -99,7 +99,12 @@ const editor = reactive({
 
 const functions = {
   wait: async (config: any) => await scene.wait(config),
-  show: (config: any) => scene.add(config),
+  show: (config: any) => {
+    if (config.animating) {
+      config.animating = false
+    }
+    return scene.add(config)
+  },
   render: (mode: '3D' | '2D' = '2D') => {
     if (mode == '3D') {
       scene2D.hide()

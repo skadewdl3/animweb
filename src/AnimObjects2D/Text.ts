@@ -18,12 +18,12 @@ export default class Text extends AnimObject {
 
   constructor(config: TextProps) {
     super(config.scene)
-    this.x = config.x
-    this.y = config.y
+    this.x = config.x || 0
+    this.y = config.y || 0
     config.text && (this.text = config.text.toString())
 
     if (config.color) this.color = config.color
-    if (config.size) this.size = config.size
+    if (config.size) this.size = config.size > 40 ? 40 : config.size
     if (config.style) {
       this.style = config.style
     }
@@ -34,11 +34,16 @@ export default class Text extends AnimObject {
       }
     }
     if (config.font) this.font = config.font
-    createSVG(textToSVGPolygons(this.text, { size: this.size }), {
-      id: this.id,
-      y: this.parentData.origin.x + this.y,
-      x: this.parentData.origin.y + this.x,
-    }).then((el) => {
+    createSVG(
+      textToSVGPolygons(this.text, {
+        size: this.size,
+      }),
+      {
+        id: this.id,
+        y: this.parentData.origin.x + this.y,
+        x: this.parentData.origin.y + this.x,
+      }
+    ).then((el) => {
       this.svgEl = el
       this.remove = () => removeSVG(this.id)
     })
@@ -53,7 +58,7 @@ export default class Text extends AnimObject {
       p.textFont('sans-serif')
       p.textSize(this.size)
       p.textAlign(p.LEFT, p.TOP)
-      p.text(this.text, this.x, this.y)
+      p.text(this.text.toString(), this.x, this.y)
     }
   }
 }

@@ -346,9 +346,7 @@ const Create = <Object extends AnimObject>(
             easing: 'easeInOutSine',
             duration: (3 * config.duration) / 4 || 1500,
             direction: 'alternate',
-            translateY: [0, 1],
-            // translateX: [0, ],
-            // delay: anime.stagger(100, { direction: 'reverse' }),
+            translateY: [0, object.size < 20 ? 0 : 2],
             loop: false,
             complete() {
               ;(object.svgEl as SVGElement).style.transformOrigin = '50% 50%'
@@ -364,9 +362,13 @@ const Create = <Object extends AnimObject>(
                   end()
                 },
               })
+              if (object.size < 20) {
+                end()
+                return
+              }
               anime({
                 targets: `#${object.id}`,
-                scale: [1, 0.97],
+                scale: [1, 0.974],
                 easing: 'easeInOutSine',
                 duration: config.duration / 5 || 500,
                 loop: false,
