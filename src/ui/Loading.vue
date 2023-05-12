@@ -12,6 +12,12 @@ const interval = setInterval(() => {
 }, 500)
 
 onMounted(() => {
+  anime({
+    targets: '.loading-container',
+    opacity: [0, 1],
+    duration: 1000,
+    easing: 'easeInOutQuad'
+  })
   import('@/load.ts').then((module) => {
     module.default()
     anime({
@@ -52,6 +58,7 @@ onUnmounted(() => {
   background-image: radial-gradient(circle, rgba(52,31,151,1) 44%, rgba(9,132,227,1) 86%);
   width: 100%;
   height: 100vh;
+  opacity: 0;
 }
 
 .loading-text {
