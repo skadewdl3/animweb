@@ -58,7 +58,6 @@ import { buttons } from './reactives/buttons'
 import { prompts } from './reactives/prompts'
 
 // Styles
-import './styles/main.css'
 import './styles/slider.css'
 import './styles/button.css'
 

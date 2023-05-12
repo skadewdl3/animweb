@@ -1,20 +1,3 @@
-* {
-  border: 0;
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  outline: none !important;
-}
-
-html {
-  font-size: 10px;
-}
-
-body {
-  font-size: inherit;
-  font-family: sans-serif, monospace;
-}
-
 .cm-editor {
   font-family: monospace;
   font-size: 2rem;

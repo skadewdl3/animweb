@@ -33,17 +33,17 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <div class="loading-container z-100">
-    <div class="loading-text">
-      <div class="loading-title">
-        <span>AnimWeb is Loading</span><span>{{ '.'.repeat(ellipsis) }}</span>
-      </div>
-      <div class="loading-description">
-        <span>AnimWeb is a web-based animation tool for interactive mathematical animations.</span>
-        <span>We are working on speeding up the loading process.</span>
+    <div class="loading-container z-100">
+      <div class="loading-text">
+        <div class="loading-title">
+          <span>AnimWeb is Loading</span><span>{{ '.'.repeat(ellipsis) }}</span>
+        </div>
+        <div class="loading-description">
+          <span>AnimWeb is a web-based animation tool for interactive mathematical animations.</span>
+          <span>We are working on speeding up the loading process.</span>
+        </div>
       </div>
     </div>
-  </div>
 </template>
 
 <style>
@@ -61,6 +61,7 @@ onUnmounted(() => {
   left: 50%;
   transform: translate(-50%, -100%);
   text-align: center;
+  font-family: sans-serif;
 }
 
 .loading-title {
