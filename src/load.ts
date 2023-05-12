@@ -106,7 +106,7 @@ const resetScene = (clearDebuggingData = false) => {
 export const editor: EditorReactive = reactive<EditorReactive>({
   editor: null,
   create() {
-    let defaultCode = `// import AnimObjects here\nawait use()\n\n//... and code your animation here\n`
+    let defaultCode = `// Code your animation here\n`
     // @ts-ignore
     this.editor = new EditorView({
       //@ts-ignore
