@@ -1,6 +1,6 @@
 import { Watchables } from '@/enums/mixins'
 import { v4 as uuid } from 'uuid'
-import { sliders } from '@/ui/slider'
+import { sliders } from '@/ui/sliders'
 import { SliderProps } from '@/interfaces/mixins'
 //@ts-ignore
 import debounce from 'lodash.debounce'
@@ -128,7 +128,7 @@ export default class CreateSlider {
     let slider = new Slider(config, this)
     sliders.addSlider(slider)
     this.sliders.push(slider)
-    return slider
+    return sliders.getSlider(slider.id)
   }
 }
 
@@ -136,5 +136,5 @@ export const createSlider = (config: SliderProps = {}) => {
   let slider = new Slider(config)
   sliders.addSlider(slider)
 
-  return slider
+  return sliders.getSlider(slider.id)
 }

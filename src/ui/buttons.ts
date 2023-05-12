@@ -7,6 +7,9 @@ export const buttons = reactive({
     this.buttons.push(button)
     console.log(button)
   },
+  getButton(id: string) {
+    return this.buttons.find((button: Button) => button.id === id)
+  },
   removeButton(id: string) {
     this.buttons = this.buttons.filter((button: Button) => button.id !== id)
   },

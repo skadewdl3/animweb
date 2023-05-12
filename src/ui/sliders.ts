@@ -10,6 +10,9 @@ export const sliders = reactive({
   removeSlider(id: string) {
     this.sliders = this.sliders.filter((slider: Slider) => slider.id !== id)
   },
+  getSlider(id: string) {
+    return this.sliders.find((slider: Slider) => slider.id === id)
+  },
   clear() {
     this.sliders = []
   },

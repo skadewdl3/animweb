@@ -309,12 +309,17 @@ const Create = <Object extends AnimObject>(
       onStart() {
         object.redraw = false
         object.animating = true
+        anime({
+          targets: `#${object.id}`,
+          opacity: [0, 1]
+        })
       },
       onEnd() {
         anime({
           targets: `#${object.id}`,
           opacity: [1, 0],
         })
+        object.show = true
         object.redraw = true
         object.animating = false
       },
@@ -335,6 +340,7 @@ const Create = <Object extends AnimObject>(
             loop: false,
             complete() {
               end()
+              object.show = true
             },
           })
           executeTransition = false
