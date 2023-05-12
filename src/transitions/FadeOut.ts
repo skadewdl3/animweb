@@ -169,8 +169,40 @@ const FadeOut = <Object extends AnimObject>(
     object.lines.forEach((line) => resetColor(line))
     fadeOutTransitions(object.lines, config)
   } else if (object instanceof ImplicitCurve) {
-    resetColor(object)
-    object.transition = fadeOutTransition(object, config)
+    console.log('thsi ran')
+    let executeTransition = true
+    object.transition = createTransition({
+      onStart() {
+        anime({
+          targets: `#${object.id}`,
+          opacity: [0, 1],
+          duration: 500,
+        })
+        object.animating = true
+      },
+      onEnd() {
+        object.animating = false
+      },
+      onProgress({ end }: TransitionProgressProps) {
+        if (object.svgEl && executeTransition) {
+          object.show = false
+          anime({
+            targets: `#${object.id}`,
+            easing: 'easeInOutSine',
+            opacity: [1, 0],
+            duration: config.duration || 1500,
+            direction: 'alternate',
+            loop: false,
+            complete() {
+              end()
+            },
+          })
+          executeTransition = false
+        }
+      },
+      object,
+    })
+
   } else if (object instanceof Text) {
     let executeTransition = true
     let tx = createTransition({

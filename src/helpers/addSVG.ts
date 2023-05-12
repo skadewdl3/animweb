@@ -1,5 +1,5 @@
 import { SVGData } from '@/interfaces/helpers'
-import { svgData } from '@/ui/svg'
+import { svgData } from '@/reactives/svg'
 
 export const removeSVG = (identifier: string) => {
   svgData.svgs = svgData.svgs.filter((s: any) => {

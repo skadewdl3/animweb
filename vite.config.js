@@ -4,9 +4,11 @@ import dynamicImport from 'vite-plugin-dynamic-import'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import { fileURLToPath, URL } from "url";
 import viteCompression from 'vite-plugin-compression'
+import vue from '@vitejs/plugin-vue'
 
 export default defineConfig({
   plugins: [
+    vue(),
     topLevelAwait({
       // The export name of top-level await promise for each chunk module
       promiseExportName: "__tla",
@@ -30,6 +32,7 @@ export default defineConfig({
       { find: '@helpers', replacement: fileURLToPath(new URL('./src/helpers', import.meta.url)) },
       { find: '@transitions', replacement: fileURLToPath(new URL('./src/transitions', import.meta.url)) },
       { find: '@interfaces', replacement: fileURLToPath(new URL('./src/interfaces', import.meta.url)) },
+      { find: '@reactives', replacement: fileURLToPath(new URL('./src/reactives', import.meta.url)) },
       { find: '@ui', replacement: fileURLToPath(new URL('./src/ui', import.meta.url)) },
       { find: '@AnimObjects2D', replacement: fileURLToPath(new URL('./src/AnimObjects2D', import.meta.url)) },
       { find: '@AnimObjects3D', replacement: fileURLToPath(new URL('./src/AnimObjects3D', import.meta.url)) },

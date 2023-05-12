@@ -170,8 +170,39 @@ const FadeIn = <Object extends AnimObject>(
     object.lines.forEach((line) => resetColor(line))
     fadeInTransitions(object.lines, config)
   } else if (object instanceof ImplicitCurve) {
-    resetColor(object)
-    object.transition = fadeInTransition(object, config)
+    let executeTransition = true
+    object.transition = createTransition({
+      onStart() {
+        object.animating = true
+        object.redraw = false
+      },
+      onEnd() {
+        anime({
+          targets: `#${object.id}`,
+          opacity: [1, 0],
+        })
+        object.redraw = true
+        object.animating = false
+      },
+      onProgress({ end }: TransitionProgressProps) {
+        if (object.svgEl && executeTransition) {
+          anime({
+            targets: `#${object.id} path`,
+            easing: 'easeInOutSine',
+            stroke: object.color.rgba,
+            fill: object.color.rgba,
+            duration: config.duration || 1500,
+            direction: 'alternate',
+            loop: false,
+            complete() {
+              end()
+            },
+          })
+          executeTransition = false
+        }
+      },
+      object,
+    })
   } else if (object instanceof Vector) {
     resetColor(object)
     object.transition = fadeInTransition(object, config)

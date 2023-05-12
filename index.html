@@ -6,120 +6,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>AnimWeb - Create Beautiful Math Animations, Anywhere</title>
     <script type="module" async defer src="/src/main.ts"></script>
+    <style>
+      * {
+        border: 0;
+        padding: 0;
+        margin: 0;
+        box-sizing: border-box;
+        outline: none !important;
+      }
+    
+      html {
+        font-size: 10px;
+      }
+    
+      body {
+        font-size: inherit;
+        font-family: sans-serif, monospace;
+      }
+    </style>
   </head>
-  <body>
+  <body style="position: relative">
     <div style="overflow: hidden; height: 0">
       <div id="measure-vh" style="position: fixed; height: 100vh"></div>
     </div>
-    <template id="user-controls" class="user-controls">
-      <div @vue:mounted="editor.create()" style="
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                padding-bottom: 1rem;
-        "
-      >
-        <p style="font-family: sans-serif; font-size: 3rem" class="code-title"
-          :style="{visibility: code.hidden ? 'hidden' : 'visible'}">
-          Code
-        </p>
-        <div style="display: flex; align-items: center; justify-content: center">
-          <button class="btn btn-play" @click="editor.run()">Play</button>
-          <button class="btn btn-clear" @click="editor.clear()">Clear</button>
-          <button v-if="!code.hidden" class="btn btn-hide-code" @click="code.hide()">
-            Hide Code
-          </button>
-          <button v-if="code.hidden" class="btn btn-show-code" @click="code.show()">
-            Show Code
-          </button>
-        </div>
-      </div>
-      <div class="code-error" :class="{hidden: error.hidden}">
-        <div class="code-error-message">
-          {{ error.type }}: {{ error.message }}
-        </div>
-        <div class="code-error-line">
-          {{!isNaN(error.lineNumber) ? 'at line' : ''}} {{
-          !isNaN(error.lineNumber) ? error.lineNumber : '' }}
-        </div>
-      </div>
-      <div :class="{hidden: code.hidden}" class="codemirror-editor-container"></div>
-      <div class="logger">
-        <div v-for="log in logger.logs" class="log" style="
-                    border-radius: 0.5rem;
-                    overflow: hidden;
-                    font-size: 1.6rem;
-                    margin: 0.5rem 0;
-                    width: 100%;
-          "
-        >
-          <div
-            class="logger-complex-content"
-            v-if="log.type === 'complex'"
-            style="padding: 0.5rem 1rem"
-          >
-            {{ log.string }}
-          </div>
-          <div class="logger-color-content" v-if="log.type === 'color'" :style="{background: log.rgba}"
-            style="padding: 0.5rem 1rem">
-            <div class="logger-color-name">
-              {{ log.title }} - {{ log.rgba }}
-            </div>
-            <!-- <div class="logger-color-patch" :style="{background: log.rgba}" style="width: 10px; height: 10px;"></div> -->
-          </div>
-          <div class="logger-matrix-content" v-if="log.type === 'matrix'"></div>
-          <div class="logger-array-content" v-if="log.type === 'array'">
-            {{ JSON.stringify(log.content) }}
-          </div>
-          <div class="logger-object-content" v-if="log.type === 'string'">
-            {{ log.content }}
-          </div>
-          <div class="logger-object-content" v-if="log.type === 'number'">
-            {{ log.content }}
-          </div>
-          <div class="logger-object-content" v-if="log.type === 'object'">
-            {{ JSON.stringify(log.content) }}
-          </div>
-        </div>
-      </div>
-    </template>
-    <template id="user-svgs-template">
-      <div @vue:mounted="svgItem.updateElement()" v-for="svgItem in svgData.svgs" :style="svgItem.styles" :id="svgItem.id"
-        :class="svgItem.id"
-        v-html="svgItem.svg">
-      </div>
-    </template>
-    <template id="user-sliders-template">
-      <div @vue:mounted="slider.updateElement()" v-for="slider in sliders.sliders" :id="slider.id" :class="slider.id"
-        class="slider" :style="{top: `${slider.y}px`, left: `${slider.x}px`}">
-        <div class="slider-input-container">
-          <input type="range" class="slider-bar" :min="slider.min" :max="slider.max" :step="slider.step" :value="slider.value">
-          <input type="text" class="slider-textbox">
-          </div>
-          <div class="slider-title-container">
-            <span class="slider-title">{{ slider.title }}</span>
-          </div>
-      </div>
-    </template>
-    <template id="user-buttons-template">
-      <div @vue:mounted="button.updateElement()" v-for="button in buttons.buttons" :id="button.id" :class="button.id"
-        class="user-button-container" :style="{top: `${button.y}px`, left: `${button.x}px`}">
-        <button class="user-button">{{ button.text }}</button>
-      </div>
-    </template>
-    <div id="app" style="
-            position: absolute;
-            top: 2rem;
-            right: 1rem;
-            min-width: 40%;
-            max-width: 40%;
-            z-index: 2;
+<div id="app" style="
+            width: 100%;
+            position: relative;
       "
-      v-scope="UserControls()"
     ></div>
+    <div id="loading" style="width: 100%; width: 95vh"></div>
     <script class="user-imports"></script>
-    <div class="user-svgs" style="position: absolute; top: 0; left: 0; z-index: 1" v-scope="UserSVGs()"></div>
-    <div class="user-sliders" style="position: absolute; top: 0; left: 0; z-index: 2" v-scope="UserSliders()"></div>
-    <div class="user-buttons" style="position: absolute; top: 0; left: 0; z-index: 2" v-scope="UserButtons()"></div>
   </body>
 </html>

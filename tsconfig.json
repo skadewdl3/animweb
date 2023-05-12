@@ -23,6 +23,7 @@
       "@helpers/*": ["./src/helpers/*"],
       "@interfaces/*": ["./src/interfaces/*"],
       "@transitions/*": ["./src/transitions/*"],
+      "@reactives/*": ["./src/reactives/*"],
       "@ui/*": ["./src/ui/*"],
       "@workers/*": ["./src/workers/*"],
       "@enums/*": ["./src/enums/*"],

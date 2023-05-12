@@ -1,17 +1,12 @@
 import p5 from 'p5'
-import Color from '@auxiliary/Color'
-import Colors from '@helpers/Colors'
 import AnimObject from '@/core/AnimObject2D'
 import { ImplicitCurveProps } from '@/interfaces/AnimObjects2D'
 import { createSVG, removeSVG } from '@/helpers/addSVG'
-// @ts-ignore
-import createKDTree from 'static-kdtree'
 
 export default class ImplicitCurve extends AnimObject {
   definition: string = ''
   quadTree?: any
   thickness: number = 1
-  color: Color = Colors.black
   sampleRate: number = 6
   calculatingQuadtree: boolean = false
   webWorker: Worker = new Worker(
@@ -21,6 +16,10 @@ export default class ImplicitCurve extends AnimObject {
   graphicsBuffer: any
   shouldRedraw: boolean = true
   svgEl?: SVGElement
+  contours: Array<{ x1: number; y1: number; x2: number; y2: number }> = []
+  animating?: boolean = false
+  redraw: boolean = true
+  show: boolean = true
 
   constructor(config: ImplicitCurveProps) {
     super(config.scene)
@@ -65,36 +64,25 @@ export default class ImplicitCurve extends AnimObject {
         id: this.id,
       })
 
-      let points: Array<[number, number]> = []
-
       this.webWorker.onmessage = ({ data }) => {
-        this.quadTree = JSON.parse(data)
+        this.contours = JSON.parse(data)
         this.calculatingQuadtree = false
-        this.webWorker.terminate()
         let svg = [
-          `<svg width="${this.scene.width}" height="${this.scene.height}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="`,
+          `<svg width="${this.scene.width}" height="${this.scene.height}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">`,
         ]
-        let c = (q: any) => {
-          if (q.ne) {
-            c(q.ne)
-            c(q.nw)
-            c(q.se)
-            c(q.sw)
-          } else {
-            if (q.contours) {
-              q.contours.forEach((contour: any) => {
-                points.push([contour.x1, contour.y1], [contour.x2, contour.y2])
-                svg.push(
-                  `M${contour.x1} ${contour.y1} L${contour.x2} ${contour.y2} `
-                )
-              })
-            }
+        for (let contour of this.contours) {
+          let leftPoint = { x: contour.x1, y: contour.y1 }
+          let rightPoint = { x: contour.x2, y: contour.y2 }
+          if (contour.x1 > contour.x2) {
+            leftPoint = { x: contour.x2, y: contour.y2 }
+            rightPoint = { x: contour.x1, y: contour.y1 }
           }
+          svg.push(
+            `<path d="M${leftPoint.x} ${leftPoint.y} L${rightPoint.x} ${rightPoint.y}" stroke-width="${this.thickness}" fill="transparent" stroke="transparent"></path> `
+          )
         }
-        c(this.quadTree)
-        svg.push(
-          '" stroke-width="1" fill="transparent" stroke="transparent"></path></svg>'
-        )
+
+        svg.push('</svg>')
         createSVG(svg.join(''), {
           id: this.id,
           x: 0,
@@ -109,5 +97,22 @@ export default class ImplicitCurve extends AnimObject {
 
   draw(p: p5) {
     if (this.transition) this.transition()
+    if (!this.animating && this.redraw && this.contours.length != 0) {
+      if (!this.graphicsBuffer)
+        this.graphicsBuffer = p.createGraphics(
+          this.scene.width,
+          this.scene.height
+        )
+      this.graphicsBuffer.strokeWeight(this.thickness)
+      this.graphicsBuffer.stroke(this.color.rgba)
+      this.graphicsBuffer.noFill()
+      for (let contour of this.contours) {
+        this.graphicsBuffer.line(contour.x1, contour.y1, contour.x2, contour.y2)
+      }
+      this.redraw = false
+    }
+    if (this.show && this.graphicsBuffer) {
+      p.image(this.graphicsBuffer, 0, 0)
+    }
   }
 }

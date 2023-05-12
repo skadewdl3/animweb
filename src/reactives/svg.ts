@@ -1,8 +1,9 @@
-import { reactive } from 'petite-vue'
+import { reactive } from 'vue'
 import { SVGData } from '@/interfaces/helpers'
 import { wait } from '@/helpers/miscellaneous'
+import { SVGReactive } from '@/interfaces/ui'
 
-export const svgData = reactive({
+export const svgData: SVGReactive = reactive<SVGReactive>({
   svgs: [],
   async addSVG(svg: string, data: SVGData) {
     let svgItem = {

@@ -13,3 +13,12 @@ export interface ButtonProps {
   x?: number
   y?: number
 }
+
+export interface PromptProps {
+  title?: string
+  description?: string
+  placeholder?: string
+  x?: number
+  y?: number
+  value?: string
+}

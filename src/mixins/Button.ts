@@ -3,9 +3,9 @@ import { v4 as uuid } from 'uuid'
 import { ButtonProps } from '@/interfaces/mixins'
 //@ts-ignore
 import debounce from 'lodash.debounce'
-import { buttons } from '@/ui/button'
+import { buttons } from '@/reactives/buttons'
 import { throwError } from '@/helpers/miscellaneous'
-import error from '@/ui/error'
+import error from '@/reactives/error'
 
 export class Button {
   private watcher: any
@@ -114,12 +114,12 @@ export default class CreateButton {
     let button = new Button(config, this)
     buttons.addButton(button)
     this.buttons.push(button)
-    return button
+    return buttons.getButton(button.id)
   }
 }
 
 export const createButton = (config: ButtonProps) => {
   let button = new Button(config)
   buttons.addButton(button)
-  return button
+  return buttons.getButton(button.id)
 }
