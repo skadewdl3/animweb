@@ -6,6 +6,7 @@ import { ImplicitCurveProps } from '@/interfaces/AnimObjects2D'
 import { createSVG, removeSVG } from '@/helpers/addSVG'
 // @ts-ignore
 import createKDTree from 'static-kdtree'
+import { roundOff } from '@/helpers/miscellaneous'
 
 export default class ImplicitCurve extends AnimObject {
   definition: string = ''
@@ -21,6 +22,7 @@ export default class ImplicitCurve extends AnimObject {
   graphicsBuffer: any
   shouldRedraw: boolean = true
   svgEl?: SVGElement
+  contours: Array<{ x1: number; y1: number; x2: number; y2: number }> = []
 
   constructor(config: ImplicitCurveProps) {
     super(config.scene)
@@ -61,40 +63,29 @@ export default class ImplicitCurve extends AnimObject {
         stepX: this.parentData.stepX,
         stepY: this.parentData.stepY,
         maxDepth: this.sampleRate,
-        minDepth: 6,
+        minDepth: 0,
         id: this.id,
       })
 
-      let points: Array<[number, number]> = []
-
       this.webWorker.onmessage = ({ data }) => {
-        this.quadTree = JSON.parse(data)
+        this.contours = JSON.parse(data)
         this.calculatingQuadtree = false
-        this.webWorker.terminate()
         let svg = [
-          `<svg width="${this.scene.width}" height="${this.scene.height}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"><path d="`,
+          `<svg width="${this.scene.width}" height="${this.scene.height}" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">`,
         ]
-        let c = (q: any) => {
-          if (q.ne) {
-            c(q.ne)
-            c(q.nw)
-            c(q.se)
-            c(q.sw)
-          } else {
-            if (q.contours) {
-              q.contours.forEach((contour: any) => {
-                points.push([contour.x1, contour.y1], [contour.x2, contour.y2])
-                svg.push(
-                  `M${contour.x1} ${contour.y1} L${contour.x2} ${contour.y2} `
-                )
-              })
-            }
+        for (let contour of this.contours) {
+          let leftPoint = { x: contour.x1, y: contour.y1 }
+          let rightPoint = { x: contour.x2, y: contour.y2 }
+          if (contour.x1 > contour.x2) {
+            leftPoint = { x: contour.x2, y: contour.y2 }
+            rightPoint = { x: contour.x1, y: contour.y1 }
           }
+          svg.push(
+            `<path d="M${leftPoint.x} ${leftPoint.y} L${rightPoint.x} ${rightPoint.y}" stroke-width="1" fill="transparent" stroke="transparent"></path> `
+          )
         }
-        c(this.quadTree)
-        svg.push(
-          '" stroke-width="1" fill="transparent" stroke="transparent"></path></svg>'
-        )
+
+        svg.push('</svg>')
         createSVG(svg.join(''), {
           id: this.id,
           x: 0,

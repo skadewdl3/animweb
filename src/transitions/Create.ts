@@ -309,13 +309,19 @@ const Create = <Object extends AnimObject>(
       onProgress: ({ end }: TransitionProgressProps) => {
         if (object.svgEl && executeTransition) {
           // @ts-ignore
-          object.svgEl.querySelector('path').style.stroke = 'black'
           anime({
             targets: `#${object.id} path`,
             strokeDashoffset: [anime.setDashoffset, 0],
             easing: 'easeInOutSine',
-            duration: config.duration || 1500,
-            direction: 'alternate',
+            stroke: object.color.rgba,
+            duration: config.duration || 150,
+            direction: 'normal',
+            delay: function (el, i) {
+              console.log(i)
+              return (
+                i * (((config.duration || 150) * 10) / object.contours.length)
+              )
+            },
             loop: false,
             complete() {
               end()
