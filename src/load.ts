@@ -24,9 +24,9 @@ import { AnimObject, Scene } from '@interfaces/core'
 import code from '@reactives/code'
 import logger from '@reactives/logger'
 import error from '@reactives/error'
-import { svgData, UserSVGs } from './reactives/svg'
-import { sliders, UserSliders } from './reactives/sliders'
-import { buttons, UserButtons } from './reactives/buttons'
+import { svgData } from './reactives/svg'
+import { sliders } from './reactives/sliders'
+import { buttons } from './reactives/buttons'
 
 // Libraries
 import { EditorView, basicSetup } from 'codemirror'
@@ -43,7 +43,7 @@ import './styles/main.css'
 import './styles/slider.css'
 import './styles/button.css'
 import { EditorReactive } from './interfaces/ui'
-import App from './ui/App.vue'
+import App from '@/ui/App.vue'
 
 declare global {
   interface Window {

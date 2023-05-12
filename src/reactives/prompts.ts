@@ -14,6 +14,7 @@ export const prompts: PromptsReactive = reactive<PromptsReactive>({
   clear() {
     this.prompts = []
   },
+  getPrompt() {},
 })
 
 export const UserPrompts = () => {
