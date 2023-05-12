@@ -364,8 +364,6 @@ const loader = createApp(Loading)
 loader.mount('#loading')
 
 import('@/load.ts').then((module) => {
-  console.log(module)
-  console.log(module.default)
   module.default()
   loader.unmount()
 })
