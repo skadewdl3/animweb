@@ -1,7 +1,8 @@
 import { Slider } from '@/mixins/Slider'
-import { reactive } from 'petite-vue'
+import { reactive } from 'vue'
+import { SlidersReactive } from '@interfaces/ui'
 
-export const sliders = reactive({
+export const sliders: SlidersReactive = reactive<SlidersReactive>({
   sliders: [],
   addSlider(slider: Slider) {
     this.sliders.push(slider)

@@ -21,17 +21,17 @@ import { getElement, getInlineCode, throwError } from './helpers/miscellaneous'
 import { AnimObject, Scene } from '@interfaces/core'
 
 // UI
-import code from './ui/code'
-import logger from './ui/logger'
-import error from './ui/error'
-import { svgData, UserSVGs } from './ui/svg'
-import { sliders, UserSliders } from './ui/sliders'
-import { buttons, UserButtons } from './ui/buttons'
+import code from '@reactives/code'
+import logger from '@reactives/logger'
+import error from '@reactives/error'
+import { svgData, UserSVGs } from './reactives/svg'
+import { sliders, UserSliders } from './reactives/sliders'
+import { buttons, UserButtons } from './reactives/buttons'
 
 // Libraries
 import { EditorView, basicSetup } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
-import { createApp, reactive } from 'petite-vue'
+import { createApp, reactive } from 'vue'
 import AnimObject2D from './core/AnimObject2D'
 
 // Mixins
@@ -42,6 +42,8 @@ import { createSlider } from './mixins/Slider'
 import './styles/main.css'
 import './styles/slider.css'
 import './styles/button.css'
+import { EditorReactive } from './interfaces/ui'
+import App from './ui/App.vue'
 
 declare global {
   interface Window {
@@ -69,10 +71,11 @@ const resetScene = (clearDebuggingData = false) => {
   scene3D.resetScene()
 }
 
-const editor = reactive({
+export const editor: EditorReactive = reactive<EditorReactive>({
   editor: null,
   create() {
     let defaultCode = `// import AnimObjects here\nawait use()\n\n//... and code your animation here\n`
+    // @ts-ignore
     this.editor = new EditorView({
       //@ts-ignore
       parent: document.querySelector('.codemirror-editor-container'),
@@ -357,16 +360,19 @@ const UserControls = () => {
   }
 }
 
-createApp({
-  UserControls,
-  UserSVGs,
-  UserSliders,
-  UserButtons,
-  editor,
-  code,
-  error,
-  logger,
-  svgData,
-  sliders,
-  buttons,
-}).mount()
+// createApp({
+//   UserControls,
+//   UserSVGs,
+//   UserSliders,
+//   UserButtons,
+//   editor,
+//   code,
+//   error,
+//   logger,
+//   svgData,
+//   sliders,
+//   buttons,
+// }).mount()
+
+createApp(App).mount('#app')
+

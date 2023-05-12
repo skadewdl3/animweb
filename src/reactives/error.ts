@@ -1,6 +1,7 @@
-import { reactive } from 'petite-vue'
+import { reactive } from 'vue'
+import { ErrorReactive } from '@/interfaces/ui'
 
-const error = reactive({
+const error: ErrorReactive = reactive<ErrorReactive>({
   hidden: true,
   message: '',
   lineNumber: 0,

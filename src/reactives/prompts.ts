@@ -1,7 +1,8 @@
 import { Prompt } from '@/mixins/Prompt'
-import { reactive } from 'petite-vue'
+import { reactive } from 'vue'
+import { PromptsReactive } from '@/interfaces/ui'
 
-export const prompts = reactive({
+export const prompts: PromptsReactive = reactive<PromptsReactive>({
   prompts: [],
   addPrompt(prompt: Prompt) {
     this.prompts.push(prompt)

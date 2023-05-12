@@ -1,6 +1,6 @@
 import { Watchables } from '@/enums/mixins'
 import { v4 as uuid } from 'uuid'
-import { sliders } from '@/ui/sliders'
+import { sliders } from '@/reactives/sliders'
 import { SliderProps } from '@/interfaces/mixins'
 //@ts-ignore
 import debounce from 'lodash.debounce'

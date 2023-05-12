@@ -1,9 +1,10 @@
-import { reactive } from 'petite-vue'
+import { reactive } from 'vue'
 import Color from '@auxiliary/Color'
 import Complex from '@auxiliary/Complex'
 import Matrix from '@auxiliary/Matrix'
+import { LoggerReactive } from '@/interfaces/ui'
 
-const logger = reactive({
+const logger: LoggerReactive = reactive<LoggerReactive>({
   logs: [],
   logComplex(complex: Complex) {
     logger.logs.push({

@@ -1,7 +1,8 @@
 import { Button } from '@/mixins/Button'
-import { reactive } from 'petite-vue'
+import { reactive } from 'vue'
+import { ButtonsReactive } from '@/interfaces/ui'
 
-export const buttons = reactive({
+export const buttons: ButtonsReactive = reactive<ButtonsReactive>({
   buttons: [],
   addButton(button: Button) {
     this.buttons.push(button)

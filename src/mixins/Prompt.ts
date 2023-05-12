@@ -1,5 +1,5 @@
-import { prompts } from '@/ui/prompts'
-import { PromptProps } from '@/interfaces/mixins'
+import { prompts } from '@reactives/prompts'
+import { PromptProps } from '@interfaces/mixins'
 
 import { v4 as uuid } from 'uuid'
 
