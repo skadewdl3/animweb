@@ -363,7 +363,4 @@ import Loading from './ui/Loading.vue'
 const loader = createApp(Loading)
 loader.mount('#loading')
 
-import('@/load.ts').then((module) => {
-  module.default()
-  loader.unmount()
-})
+export default loader
