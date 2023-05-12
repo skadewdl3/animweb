@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { editor } from '@/main'
+import { editor } from '@/load'
 import code from '@/reactives/code'
 import error from '@/reactives/error'
 import { onMounted } from 'vue'
