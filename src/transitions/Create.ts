@@ -306,9 +306,20 @@ const Create = <Object extends AnimObject>(
   } else if (object instanceof ImplicitCurve) {
     let executeTransition = true
     let tx = createTransition({
+      onStart() {
+        object.redraw = false
+        object.animating = true
+      },
+      onEnd() {
+        anime({
+          targets: `#${object.id}`,
+          opacity: [1, 0],
+        })
+        object.redraw = true
+        object.animating = false
+      },
       onProgress: ({ end }: TransitionProgressProps) => {
         if (object.svgEl && executeTransition) {
-          // @ts-ignore
           anime({
             targets: `#${object.id} path`,
             strokeDashoffset: [anime.setDashoffset, 0],
@@ -317,7 +328,6 @@ const Create = <Object extends AnimObject>(
             duration: config.duration || 150,
             direction: 'normal',
             delay: function (el, i) {
-              console.log(i)
               return (
                 i * (((config.duration || 150) * 10) / object.contours.length)
               )
@@ -331,11 +341,6 @@ const Create = <Object extends AnimObject>(
         }
       },
       endCondition: () => false,
-      onEnd() {
-        setTimeout(() => {
-          object.svgEl?.classList.add('hidden')
-        }, 100)
-      },
       object,
     })
     object.transition = tx
