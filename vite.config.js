@@ -5,6 +5,7 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import { fileURLToPath, URL } from "url";
 import viteCompression from 'vite-plugin-compression'
 import vue from '@vitejs/plugin-vue'
+import path from "path";
 
 export default defineConfig({
   plugins: [
@@ -39,6 +40,14 @@ export default defineConfig({
       { find: '@AnimObjects3D', replacement: fileURLToPath(new URL('./src/AnimObjects3D', import.meta.url)) },
       { find: '@workers', replacement: fileURLToPath(new URL('./src/workers', import.meta.url)) },
       { find: '@enums', replacement: fileURLToPath(new URL('./src/enums', import.meta.url)) },
+      { find: '@styles', replacement: fileURLToPath(new URL('./src/styles', import.meta.url)) },
     ],
   },
+  css: {
+    preprocessorOptions: {
+      stylus: {
+        additionalData: `@import "${path.resolve(__dirname, 'src/styles/variables.styl')}"`
+      }
+    }
+  }
 });

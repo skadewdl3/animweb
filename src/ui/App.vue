@@ -31,18 +31,15 @@ import { svgData } from '@/reactives/svg'
   </div>
 </template>
 
-<style>
-.user-ui-component {
-  position: absolute;
-  top: 0;
-  left: 0;
-}
+<style lang="stylus">
+.user-ui-component
+  position absolute
+  top 0
+  left 0
 
-.z-1 {
-  z-index: 1;
-}
+.z-1
+  z-index 1
 
-.z-2 {
-  z-index: 2;
-}
+.z-2
+  z-index 2
 </style>

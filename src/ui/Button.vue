@@ -23,4 +23,24 @@ onMounted(() => {
   </div>
 </template>
 
-<style></style>
+<style lang="stylus">
+.user-button-container
+  position absolute
+
+.user-button
+  padding 0.5rem 1rem
+  font-size 1.6rem
+  border-radius 0.5rem
+  background #0984e3
+  border solid 0.1rem #0984e3
+  color #fff
+  cursor pointer
+  transition all .2s ease-in-out
+  white-space nowrap
+  &:hover
+    color #0984e3
+    background #fff
+  &:active
+    transition transform .1s ease-in-out
+    transform translateY(0.2rem)
+</style>

@@ -28,6 +28,8 @@
     "mathjax-full": "^3.2.2",
     "mathjs": "^11.7.0",
     "p5": "^1.6.0",
+    "stylus": "^0.59.0",
+    "stylus-loader": "^7.1.0",
     "three": "^0.151.3",
     "troika-three-text": "^0.47.1",
     "uuid": "^9.0.0",

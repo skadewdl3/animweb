@@ -52,36 +52,30 @@ onUnmounted(() => {
     </div>
 </template>
 
-<style>
-.loading-container {
-  position: fixed;
-  background-image: radial-gradient(circle, rgba(52,31,151,1) 44%, rgba(9,132,227,1) 86%);
-  width: 100%;
-  height: 100vh;
-  opacity: 0;
-}
+<style lang="stylus">
+.loading-container
+  position fixed
+  background-image loadingGradient
+  width: 100%
+  height 100vh
+  opacity 0
 
-.loading-text {
-  color: #fff;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -100%);
-  text-align: center;
-  font-family: sans-serif;
-}
+.loading-text
+  color #fff
+  position absolute
+  top 50%
+  left 50%
+  transform translate(-50%, -100%)
+  text-align center
+  font-family sans-serif
 
-.loading-title {
-  font-size: 5rem;
-  margin-bottom: 1rem;
-}
+.loading-title
+  font-size 5rem
+  margin-bottom 1rem
 
-.loading-description {
-  font-size: 2rem;
-}
+.loading-description
+  font-size 2rem
 
-
-.z-100 {
-  z-index: 100;
-}
+.z-100
+  z-index 100
 </style>
