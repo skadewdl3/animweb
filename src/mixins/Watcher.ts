@@ -3,7 +3,7 @@ import { Properties, Watchables } from '@/enums/mixins'
 import { v4 as uuid } from 'uuid'
 import CreateSlider, { Slider } from './Slider'
 import CreateButton, { Button } from './Button'
-import CreatePrompt from './Prompt'
+import CreatePrompt, { Prompt } from './Prompt'
 
 export class Watcher {
   private listeners: { [id: string]: Function } = {}
@@ -12,13 +12,12 @@ export class Watcher {
   private target: any
   sliders: Array<Slider> = []
   buttons: Array<Button> = []
+  prompts: Array<Prompt> = []
   private independent: boolean = false
   tempValue?: any
 
   get value() {
-    return this.independent
-      ? this.tempValue
-      : this.target[this.property as string]
+    return this.tempValue
   }
 
   set value(val: any) {
