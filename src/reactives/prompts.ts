@@ -16,9 +16,3 @@ export const prompts: PromptsReactive = reactive<PromptsReactive>({
   },
   getPrompt() {},
 })
-
-export const UserPrompts = () => {
-  return {
-    $template: '#user-prompts-template',
-  }
-}

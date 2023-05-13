@@ -75,6 +75,7 @@ import { EditorView, basicSetup } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
 import { createApp, reactive } from 'vue'
 import { createPrompt } from './mixins/Prompt'
+import { watch } from './mixins/Watcher'
 
 declare global {
   interface Window {
@@ -155,6 +156,7 @@ const functions = {
   createButton: (config: any) => createButton(config),
   createSlider: (config: any) => createSlider(config),
   createPrompt: (config: any) => createPrompt(config),
+  watch: (config: any) => watch(config),
   roundOff,
   degToRad,
   radToDeg,

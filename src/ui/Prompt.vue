@@ -20,7 +20,6 @@ onMounted(() => {
 <template>
   <div :id="prompt.id" :class="prompt.id" class="user-prompt-container"
     :style="{ top: `${prompt.y}px`, left: `${prompt.x}px` }">
-    <button class="user-prompt]">{{ prompt.text }}</button>
     <div class="user-prompt-title">{{ prompt.title }}</div>
     <div class="user-prompt-description">{{ prompt.description }}</div>
     <input type="text" :placeholder="prompt.placeholder || ''" :defaultValue="prompt.value || ''">

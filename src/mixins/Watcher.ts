@@ -3,32 +3,53 @@ import { Properties, Watchables } from '@/enums/mixins'
 import { v4 as uuid } from 'uuid'
 import CreateSlider, { Slider } from './Slider'
 import CreateButton, { Button } from './Button'
+import CreatePrompt from './Prompt'
 
 export class Watcher {
   private listeners: { [id: string]: Function } = {}
-  private property: Watchables
+  private property?: Watchables
   private id: string = uuid()
   private target: any
   sliders: Array<Slider> = []
   buttons: Array<Button> = []
-  value: any
+  private independent: boolean = false
+  tempValue?: any
 
-  constructor(target: any, property: Watchables) {
-    this.property = property
-    this.value = target[property]
-    this.target = target
-    target.watchables[this.id] = this
-    let watcher = this
+  get value() {
+    return this.independent
+      ? this.tempValue
+      : this.target[this.property as string]
+  }
 
-    Object.defineProperty(target, property, {
-      get() {
-        return watcher.value
-      },
-      set(value) {
-        watcher.value = value
-        watcher.executeListeners()
-      },
-    })
+  set value(val: any) {
+    if (!this.independent) {
+      this.target[this.property as string] = val
+    } else {
+      this.tempValue = val
+      this.executeListeners()
+    }
+  }
+
+  constructor(target: any, property?: Watchables) {
+    if (!property) {
+      this.independent = true
+      this.tempValue = target
+    } else {
+      this.target = target
+      this.property = property
+      this.value = target[property]
+      target.watchables[this.id] = this
+      let watcher = this
+      Object.defineProperty(target, property, {
+        get() {
+          return watcher.value
+        },
+        set(value) {
+          watcher.value = value
+          watcher.executeListeners()
+        },
+      })
+    }
   }
 
   onChange(callback: Function) {
@@ -47,18 +68,19 @@ export class Watcher {
 
   executeMutation(mutation: Function) {
     mutation(this)
-    this.target[this.property] = this.value
+    if (!this.independent) {
+      this.target[this.property as string] = this.value
+    }
   }
 
   destroy() {
     for (let listener in this.listeners) {
       delete this.listeners[listener]
     }
-    this.sliders.forEach((slider: any) => slider.destroy())
   }
 }
 
-applyMixins(Watcher, [CreateSlider, CreateButton])
+applyMixins(Watcher, [CreateSlider, CreateButton, CreatePrompt])
 
 export default class CreateWatcher {
   watch(property: Properties) {
@@ -71,4 +93,8 @@ export default class CreateWatcher {
       return undefined
     }
   }
+}
+
+export const watch = (value: any) => {
+  return new Watcher(value)
 }
