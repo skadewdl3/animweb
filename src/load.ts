@@ -74,6 +74,7 @@ import { javascript } from '@codemirror/lang-javascript'
 import { createApp, reactive } from 'vue'
 import { createPrompt } from './mixins/Prompt'
 import { watch } from './mixins/Watcher'
+import { SendOutlined } from '@ant-design/icons-vue'
 
 declare global {
   interface Window {
@@ -294,7 +295,9 @@ Object.defineProperty(window, 'showError', {
 })
 
 const mountApp = () => {
-  createApp(App).mount('#app')
+  const app = createApp(App)
+  app.component('icon-submit', SendOutlined)
+  app.mount('#app')
 }
 
 export default mountApp
