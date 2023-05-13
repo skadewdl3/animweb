@@ -35,8 +35,17 @@ export class Prompt {
     watcher && (this.watcher = watcher)
     this.title = config.title || ''
     config.description && (this.description = config.description)
-    this.x = config.x || 0
-    this.y = config.y || 0
+    if (config.x && !isNaN(config.x)) {
+      this.x = config.x
+    } else {
+      this.x = 0
+    }
+
+    if (config.y && !isNaN(config.y)) {
+      this.y = config.y
+    } else {
+      this.y = 0
+    }
     this.watcher = watcher
     if (watcher) {
       this.property = watcher.property

@@ -37,6 +37,7 @@ onMounted(() => {
     border solid 0.1rem #ccc
     border-radius 0.5rem
     padding 1rem
+    position absolute
 
   &-title-container
     display flex
@@ -50,7 +51,8 @@ onMounted(() => {
     margin-bottom 0.5rem
 
   &-description
-    max-width 40rem
+    max-width 80rem
+    min-width 30rem
     font-size 1.5rem
     margin-bottom 1rem
 
