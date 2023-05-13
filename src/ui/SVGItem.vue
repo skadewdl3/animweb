@@ -9,8 +9,12 @@ const props = defineProps({
   }
 })
 
+console.log
+
 onMounted(() => {
   props.svgItem.updateElement()
+  console.log(props.svgItem)
+  console.log('hi mom')
 })
 
 </script>

@@ -25,6 +25,7 @@ export default defineConfig({
     viteCompression()
   ],
   resolve: {
+    extensions: ['.js', '.ts', '.css'],
     alias: [
       { find: '@', replacement: fileURLToPath(new URL('./src', import.meta.url)) },
       { find: '@core', replacement: fileURLToPath(new URL('./src/core', import.meta.url)) },

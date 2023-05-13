@@ -3,6 +3,7 @@ import Button from '@ui/Button.vue'
 import Controls from '@ui/Controls.vue'
 import Prompt from '@ui/Prompt.vue'
 import Slider from '@ui/Slider.vue'
+import SVGItem from './SVGItem.vue'
 
 import { buttons } from '@/reactives/buttons'
 import { prompts } from '@/reactives/prompts'
@@ -14,7 +15,7 @@ import { svgData } from '@/reactives/svg'
 <template>
   <Controls />
   <div class="user-ui-component z-1 user-svgs">
-    <SVGItem v-for="svgItem in svgData.svgs" :svg="svgItem" />
+    <SVGItem v-for="svgItem in svgData.svgs" :svgItem="svgItem" />
   </div>
 
   <div class="user-ui-component user-sliders z-2">
