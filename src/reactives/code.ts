@@ -9,6 +9,10 @@ const code: CodeReactive = reactive<CodeReactive>({
   hide() {
     code.hidden = true
   },
+  toggle() {
+    code.hidden = !code.hidden
+    console.log(this.hidden)
+  },
 })
 
 export default code

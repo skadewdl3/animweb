@@ -2,7 +2,7 @@
 import { editor } from '@/load'
 import code from '@/reactives/code'
 import error from '@/reactives/error'
-import { onMounted } from 'vue'
+import { onMounted, Transition } from 'vue'
 
 onMounted(() => {
   editor.create()
@@ -10,31 +10,19 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="user-controls-wrapper" style="position: absolute;
-            top: 2rem;
-            right: 1rem;
-            min-width: 40%;
-            max-width: 40%;
-            z-index: 2;">
-    <div style="
-			display: flex;
-			align-items: center;
-			justify-content: space-between;
-			padding-bottom: 1rem;
-		">
-      <p style="font-family: sans-serif; font-size: 3rem" class="code-title"
+  <div class="user-controls-wrapper">
+    <div class="user-controls-buttons-container">
+      <p class="code-title"
         :style="{ visibility: code.hidden ? 'hidden' : 'visible' }">
         Code
       </p>
-      <div style="display: flex; align-items: center; justify-content: center">
-        <button class="btn btn-play" @click="editor.run()">Play</button>
-        <button class="btn btn-clear" @click="editor.clear()">Clear</button>
-        <button v-if="!code.hidden" class="btn btn-hide-code" @click="code.hide()">
-          Hide Code
-        </button>
-        <button v-if="code.hidden" class="btn btn-show-code" @click="code.show()">
-          Show Code
-        </button>
+      <div class="code-controls">
+        <button class="code-button" @click="editor.run()">Play</button>
+        <button class="code-button" @click="editor.clear()">Clear</button>
+          <button  class="code-button code-visibility-button" @click="code.toggle">
+              <span :class="{goup: !code.hidden}">Show Code</span>
+              <span :class="{godown: code.hidden}">Hide Code</span>
+          </button>
       </div>
     </div>
     <div class="code-error" :class="{ hidden: error.hidden }">
@@ -48,4 +36,65 @@ onMounted(() => {
   </div>
 </template>
 
-<style></style>
+<style lang="stylus">
+.user-controls
+  &-wrapper
+    position absolute
+    top 2rem
+    right 1rem
+    width 40%
+    z-index 2
+  &-buttons-container
+    display flex
+    align-items center
+    justify-content space-between
+    padding-bottom 1rem
+
+.code
+  &-title
+    font-family sans-serif
+    font-size 2rem
+    font-weight bold
+
+  &-controls
+    display flex
+    align-items center
+    justify-content flex-end
+    width 100%
+
+  &-button
+    // a blue button that becomes white with blue border on hovering and goes slightly down on pressing
+    background-color #007bff
+    border solid 0.1rem #007bff
+    border-radius 0.25rem
+    color white
+    cursor pointer
+    font-family sans-serif
+    font-size 1.5rem
+    padding 0.5rem 1rem
+    transition all 0.2s ease-in-out
+    margin-right 1rem
+    &:hover
+      background-color white
+      border solid 0.1rem #007bff
+      color #007bff
+    &:active
+      transform translateY(0.1rem)
+
+.code-visibility-button
+  width 10rem
+  height 3rem
+  white-space nowrap
+  overflow hidden
+  position relative
+  span
+    position absolute
+    transform translate(-50%, -50%)
+    transition transform .2s ease-in-out
+
+.goup
+  transform translate(-50%, -900%)!important
+
+.godown
+  transform translate(-50%, 900%)!important
+</style>

@@ -33,6 +33,7 @@ export interface CodeReactive {
   hidden: boolean
   show: Function
   hide: Function
+  toggle: Function
 }
 
 export interface LoggerReactive extends UIReactive {
