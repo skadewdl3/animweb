@@ -13,15 +13,15 @@ onMounted(() => {
   <div class="user-controls-wrapper">
     <div class="user-controls-buttons-container">
       <p class="code-title"
-        :style="{ visibility: code.hidden ? 'hidden' : 'visible' }">
+        :class="{ 'goright-code': code.hidden }">
         Code
       </p>
       <div class="code-controls">
         <button class="code-button" @click="editor.run()">Play</button>
         <button class="code-button" @click="editor.clear()">Clear</button>
           <button  class="code-button code-visibility-button" @click="code.toggle">
-              <span :class="{goup: !code.hidden}">Show Code</span>
-              <span :class="{godown: code.hidden}">Hide Code</span>
+              <span :class="{godown: !code.hidden}">Show Code</span>
+              <span :class="{goup: code.hidden}">Hide Code</span>
           </button>
       </div>
     </div>
@@ -32,7 +32,7 @@ onMounted(() => {
         {{ !isNaN(error.lineNumber) ? error.lineNumber : '' }}
       </div>
     </div>
-    <div :class="{ hidden: code.hidden }" class="codemirror-editor-container"></div>
+    <div :class="{ 'goright-code': code.hidden }" class="codemirror-editor-container"></div>
   </div>
 </template>
 
@@ -49,12 +49,18 @@ onMounted(() => {
     align-items center
     justify-content space-between
     padding-bottom 1rem
+    position relative
 
 .code
   &-title
     font-family sans-serif
+    position absolute
+    top 50%
+    left 0
+    transform translateY(-50%)
     font-size 2rem
     font-weight bold
+    transition all .2s ease-in-out
 
   &-controls
     display flex
@@ -97,4 +103,13 @@ onMounted(() => {
 
 .godown
   transform translate(-50%, 900%)!important
+
+.goright-code
+  opacity 0
+  transform translateY(-10%)!important
+
+.codemirror-editor-container
+  position absolute
+  width 100%
+  transition all .2s ease-in-out
 </style>
