@@ -2,8 +2,8 @@ import p5 from 'p5'
 import AnimObject2D from '@/core/AnimObject2D'
 import Line from '@AnimObjects2D/Line'
 import Color from '@auxiliary/Color'
-import { derivative } from 'mathjs'
-import { evaluate } from '@helpers/miscellaneous'
+import { apply, derivative } from 'mathjs'
+import { applyMixins, evaluate, parseDefinition } from '@helpers/miscellaneous'
 import Point from '@AnimObjects2D/Point'
 import { Transitions } from '@/enums/transitions'
 import { Transition } from '@core/Transition'
@@ -13,6 +13,7 @@ import {
   CurveProps,
 } from '@interfaces/AnimObjects2D'
 import { Lines } from '@/enums/AnimObjects2D'
+import { AnchorPoint } from '@/mixins/miscellaneous'
 
 export default class Curve extends AnimObject2D {
   y: string
@@ -38,17 +39,7 @@ export default class Curve extends AnimObject2D {
     scene,
   }: CurveProps) {
     super(scene)
-    let temp = definition
-    let parts = temp.split('=')
-    if (parts.length == 1) this.y = definition
-    else {
-      temp = parts[0]
-      for (let part of parts) {
-        if (part == parts[0]) continue
-        temp = `${temp} - (${part})`
-      }
-      this.y = temp
-    }
+    this.y = parseDefinition(definition)
     this.sampleRate = sampleRate
     this.domain = domain
     this.range = range
@@ -101,7 +92,6 @@ export default class Curve extends AnimObject2D {
   addAnchorPoint(config: CurveAnchorPointProps): Point {
     let x = config.x
     let y = evaluate(this.y, { x, y: 0 })
-    console.log(x, y)
     let transition = Transition(
       config.transition ? config.transition : Transitions.None
     )
@@ -120,6 +110,7 @@ export default class Curve extends AnimObject2D {
       }),
       config.transitionOptions ? config.transitionOptions : {}
     )
+    applyMixins(point, [AnchorPoint])
     this.anchorPoints.push(point as Point)
     console.log(this.anchorPoints)
     return point as Point
@@ -162,8 +153,7 @@ export default class Curve extends AnimObject2D {
       this.transition()
     }
     this.iterables.forEach((name: string) => {
-      
-      (this as any)[name].forEach((o: AnimObject2D) => o.draw(p))
+      ;(this as any)[name].forEach((o: AnimObject2D) => o.draw(p))
     })
   }
 }

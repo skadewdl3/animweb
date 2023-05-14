@@ -164,11 +164,33 @@ export function applyMixins(derivedCtor: any, constructors: any[]) {
   constructors.forEach((baseCtor) => {
     Object.getOwnPropertyNames(baseCtor.prototype).forEach((name) => {
       Object.defineProperty(
-        derivedCtor.prototype,
+        derivedCtor.prototype || Object.getPrototypeOf(derivedCtor),
         name,
         Object.getOwnPropertyDescriptor(baseCtor.prototype, name) ||
           Object.create(null)
       )
     })
   })
+}
+
+export const parseDefinition = (definition: string) => {
+  let temp = definition
+  let parts = temp.split('=')
+  if (parts.length == 1) return definition
+  else {
+    temp = parts[0]
+    for (let part of parts) {
+      if (part == parts[0]) continue
+      temp = `${temp} - (${part})`
+    }
+    return temp
+  }
+}
+
+export const isNearlyEqual = (
+  a: number,
+  b: number,
+  epsilon = Number.EPSILON
+) => {
+  return Math.abs(a - b) < epsilon
 }

@@ -2,7 +2,12 @@ import { evaluate } from 'mathjs'
 import p5 from 'p5'
 import { v4 as uuid } from 'uuid'
 import AnimObject from '@/core/AnimObject2D'
-import { roundOff, rangePerFrame } from '@helpers/miscellaneous'
+import {
+  roundOff,
+  rangePerFrame,
+  parseDefinition,
+  isNearlyEqual,
+} from '@helpers/miscellaneous'
 import Matrix from '@auxiliary/Matrix'
 import { createTransition } from '@core/Transition'
 import { PointProps, LinearTransformProps } from '@/interfaces/AnimObjects2D'
@@ -51,6 +56,38 @@ class Point extends AnimObject {
         return (
           roundOff(this.x, 1) === roundOff(newX, 1) &&
           roundOff(this.y, 1) === roundOff(newY, 1)
+        )
+      },
+      object: this,
+    })
+  }
+
+  moveAlong({
+    definition,
+    duration = 1,
+    x,
+  }: {
+    definition: string
+    duration?: number
+    x: number
+  }) {
+    let def = parseDefinition(definition)
+    let newX = x
+    let newY = -evaluate(def, { x, y: 0 })
+    let xSpeed = rangePerFrame(newX - this.x, duration)
+
+    this.transition = createTransition({
+      onProgress: () => {
+        this.x += xSpeed
+        this.y = -evaluate(def, { x: this.x, y: 0 })
+      },
+      onEnd: () => {
+        this.x = newX
+        this.y = newY
+      },
+      endCondition: () => {
+        return (
+          isNearlyEqual(this.x, newX, 0.01) && isNearlyEqual(this.y, newY, 0.01)
         )
       },
       object: this,
