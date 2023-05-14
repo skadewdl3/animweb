@@ -1,10 +1,25 @@
+@import url('https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.13.4/theme/3024-night.css');
+
 .cm-editor
-  font-family monospace
+  font-family serif
   font-size 2rem
   background #fff
   border-radius 1rem
   outline none
-
+  border solid 0.1rem #ccc
+// .cm-line
+//   span
+//     color #000!important
+.cm-scroller
+  border-radius 1rem
+.cm-gutterElement
+  background #fff
+  padding 0 1rem!important;
+.cm-foldGutter
+  .cm-gutterElement
+    display none
+.cm-activeLineGutter
+  background #fff!important
 .btn
   cursor pointer
   padding 0.5rem 1rem

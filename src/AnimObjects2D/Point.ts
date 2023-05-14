@@ -36,54 +36,24 @@ class Point extends AnimObject {
     }
   }
 
-  moveTo({ x, duration = 1 }: { x: number; duration?: number }): Promise<void> {
-    let transitionQueueItem = {
-      id: uuid(),
-    }
-    let queued = false
-    return new Promise((resolve, reject) => {
-      let y = evaluate(this.definition, { x })
-      let newX = this.parentData.origin.x + x * this.parentData.stepX
-      let newY = this.parentData.origin.y - y * this.parentData.stepY
-      let speed = rangePerFrame(Math.abs(this.x - newX), duration)
-      this.transition = () => {
-        this.scene.enqueueTransition(transitionQueueItem)
-        queued = true
-        if (roundOff(this.x, 0) < roundOff(newX, 0)) {
-          if (this.x + speed > newX) {
-            this.x = newX
-            this.y = newY
-            this.transition = null
-            this.scene.dequeueTransition(transitionQueueItem)
-            resolve()
-          } else {
-            this.x = this.x + speed
-            this.y =
-              this.parentData.origin.y -
-              evaluate(this.definition, {
-                x: (this.x - this.parentData.origin.x) / this.parentData.stepX,
-              }) *
-                this.parentData.stepY
-          }
-        }
-        if (roundOff(this.x, 0) > roundOff(newX, 0)) {
-          if (this.x - speed < newX) {
-            this.x = newX
-            this.y = newY
-            this.transition = null
-            this.scene.dequeueTransition(transitionQueueItem)
-            resolve()
-          } else {
-            this.x = this.x - speed
-            this.y =
-              this.parentData.origin.y -
-              evaluate(this.definition, {
-                x: (this.x - this.parentData.origin.x) / this.parentData.stepX,
-              }) *
-                this.parentData.stepY
-          }
-        }
-      }
+  // make point move along the curve
+  moveTo({ x, duration = 1 }: { x: number; duration?: number }) {
+    let newX = x
+    let newY = -evaluate(this.definition, { x, y: 0 })
+    let xSpeed = rangePerFrame(newX - this.x, duration)
+
+    this.transition = createTransition({
+      onProgress: () => {
+        this.x += xSpeed
+        this.y = -evaluate(this.definition, { x: this.x, y: 0 })
+      },
+      endCondition: () => {
+        return (
+          roundOff(this.x, 1) === roundOff(newX, 1) &&
+          roundOff(this.y, 1) === roundOff(newY, 1)
+        )
+      },
+      object: this,
     })
   }
 

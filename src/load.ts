@@ -114,6 +114,8 @@ export const editor: EditorReactive = reactive<EditorReactive>({
       doc: defaultCode,
       extensions: [basicSetup, javascript(), EditorView.lineWrapping],
     })
+    console.log(this.editor)
+    // this.editor.setOption('theme', '3024-night')
   },
   run() {
     resetScene(true)
