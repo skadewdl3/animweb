@@ -1,4 +1,4 @@
-const heightCompensation = (window.outerHeight - window.innerHeight) / 4
+const heightCompensation = (window.outerHeight - window.innerHeight) / 10
 // const heightCompensation = 0
 
 export const Width = {
@@ -10,9 +10,9 @@ export const Width = {
 }
 
 export const Height = {
-  full: window.innerHeight  - heightCompensation,
-  half: (window.innerHeight  - heightCompensation) / 2,
+  full: window.innerHeight - heightCompensation,
+  half: (window.innerHeight - heightCompensation) / 2,
   percent(x: number): number {
-    return (x * (window.innerHeight  - heightCompensation)) / 100
+    return (x * (window.innerHeight - heightCompensation)) / 100
   },
 }

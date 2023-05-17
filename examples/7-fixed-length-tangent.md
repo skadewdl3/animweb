@@ -6,11 +6,11 @@ Create(plane)
 
 await wait(3000)
 
-var sinx = await plane.plot({ definition: 'y = sin(x)', transition: Transitions.Create, color: Colors.Green(), thickness: 5 })
+var sinx = Create(plane.plot({ definition: 'y = sin(x)', color: Colors.green, thickness: 5 }))
 
 await wait()
 
-var tangent = await sinx.addAnchorLine({ x: 0, transition: Transitions.Create, color: Colors.Orange(), thickness: 3, length: 4 })
+var tangent = Create(sinx.addAnchorLine({ x: 0, color: Colors.orange, thickness: 3, length: 4 }))
 await wait()
 tangent.moveTo({ x: 10, duration: 5 })
 await wait()

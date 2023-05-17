@@ -1,42 +1,12 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
-import { editor } from '@reactives/editor.ts'
 
-const disabled = ref(true)
-
-onMounted(() => {
-  editor.create()
-  if (window) {
-    import('./../core/main').then(module => {
-      module.default()
-      // @ts-ignore
-      if (window.WebAnim) {
-        console.log('ready')
-        disabled.value = false
-      }
-    })
-  }
-})
 </script>
 
 <template>
-  <Controls :disabled="disabled" />
-  <Interactables :disabled="disabled" />
+work in progress on landing page. Check out the following links:
+
+<ul>
+  <li><NuxtLink to="/animate">Animate page</NuxtLink></li>
+  <li><NuxtLink to="/login">Login page</NuxtLink></li>
+</ul>
 </template>
-
-<style lang="stylus">
-*
-  box-sizing border-box
-  margin 0
-  padding 0
-  border 0
-  outline none!important
-
-html
-  font-size 10px;
-
-body
-  font-size inherit;
-  font-family sans-serif
-
-</style>

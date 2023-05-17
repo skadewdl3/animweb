@@ -46,7 +46,7 @@ Now, click the play button - and Voila! We have a lin on the screen.
 
 4. But our lines looks very boring right now, and it's not animated either. So let's snazz it up a bit. Modify the line code to the following:
 
-`var line = Line({ form: Lines.SlopePoint, slope: 1, point: {x: 0, y: 0}, color: Colors.Green(), thickness: 5 })`
+`var line = Line({ form: Lines.SlopePoint, slope: 1, point: {x: 0, y: 0}, color: Colors.green, thickness: 5 })`
 
 5. Now to actually animate a line, we can use a **Transition**. AnimWeb uses Transitions to do all kinds of animations. Here, let's use the Create transition to animate our line.
    Modify the scene.add line to the following:
@@ -59,25 +59,7 @@ Hit play - and **BOOM**! You just created your own math animation in under 3 lin
 
 For more examples, you can refer to the examples folder (if it's not there, I'll add it soon 😅)
 
-# Recording Animations
-
-1. AnimWeb enables you to export your animation to a variety of formats (WEBM, GIF, PNG, JPG).
-
-2. To record an animation, first code the animation in the code-editor. For this example, we'll simply use the preivious line animation.
-
-3. Now, before hitting play, click the **Red Recorder Button** on the top-left of the screen. Now, AnimWeb will start capturing your animation. Go ahead and hit play, and let's AnimWeb work it's magic.
-
-https://user-images.githubusercontent.com/43989259/226200032-08f8781c-3e7d-4dfb-838d-0a84ddebe8bc.mp4
-
-4. You might notice that your animations are sluggish when recording. This is because AnimWeb doesn't record your screen, but the actual frames of animations. This leads to a much higher quality export. If you want to test your animations, you can always play them without recording.
-
-5. Once the animation has completed, you must click the **Red Recording Button** in the top-left, again - to stop the recording. Once you do so, your exported animation wil automatically download.
-
-[animweb-animation (6).webm](https://user-images.githubusercontent.com/43989259/226200074-3a8f0ec3-bae3-458e-b2d3-ace4d7ebf269.webm)
-
-(Pro tip - Prefer exporting files in the WEBM format since it's much faster than other formats. Exporting in the GIF format take around 2-3 minutes after stopping recording to encode.)
-
-# AnimWeb API
+# AnimWeb API (more docs coming soon...)
 
 1. Scene
 
