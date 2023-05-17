@@ -1,32 +1,31 @@
 <script setup lang="ts">
 import Button from '@ui/Button.vue'
-import Controls from '@ui/Controls.vue'
 import Prompt from '@ui/Prompt.vue'
 import Slider from '@ui/Slider.vue'
-import SVGItem from './SVGItem.vue'
+import SVGItem from '@ui/SVGItem.vue'
 
 import { buttons } from '@reactives/buttons.ts'
 import { prompts } from '@reactives/prompts.ts'
 import { sliders } from '@reactives/sliders.ts'
 import { svgData } from '@reactives/svg.ts'
 
+const props = defineProps(['disabled'])
 </script>
 
 <template>
-  <Controls />
-  <div class="user-ui-component z-1 user-svgs">
+  <div v-if="!props.disabled" class="user-ui-component z-1 user-svgs">
     <SVGItem v-for="svgItem in svgData.svgs" :svgItem="svgItem" />
   </div>
 
-  <div class="user-ui-component user-sliders z-2">
+  <div v-if="!props.disabled" class="user-ui-component user-sliders z-2">
     <Button v-for="button in buttons.buttons" :button="button" />
   </div>
 
-  <div class="user-ui-component user-buttons z-2">
+  <div v-if="!props.disabled" class="user-ui-component user-buttons z-2">
     <Prompt v-for="prompt in prompts.prompts" :prompt="prompt" />
   </div>
 
-  <div class="user-ui-component user-prompts z-2">
+  <div v-if="!props.disabled" class="user-ui-component user-prompts z-2">
     <Slider v-for="slider in sliders.sliders" :slider="slider" />
   </div>
 </template>

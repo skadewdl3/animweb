@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import code from '@reactives/code.ts'
-import error from '@reactives/error.ts'
 import { onMounted, ref } from 'vue'
 import { editor } from '@reactives/editor.ts'
 
@@ -23,6 +21,7 @@ onMounted(() => {
 
 <template>
   <Controls :disabled="disabled" />
+  <Interactables :disabled="disabled" />
 </template>
 
 <style lang="stylus">

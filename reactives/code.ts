@@ -16,6 +16,7 @@ const code: CodeReactive = reactive<CodeReactive>({
   },
   toggleMode() {
     code.mode = code.mode == '2D' ? '3D' : '2D'
+    window.WebAnim.render(code.mode)
   },
 })
 
