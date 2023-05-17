@@ -73,7 +73,9 @@ scene3D.hide()
 let scene: Scene = scene2D
 scene = scene2D
 
-export const resetScene = (clearDebuggingData = false) => {
+const resetScene = (clearDebuggingData = false) => {
+  if (!window) return
+
   clearDebuggingData && error.hide()
   clearDebuggingData && logger.clear()
   svgData.clear()
@@ -210,6 +212,7 @@ export default () => {
     ...transitions,
     ...auxiliary,
     ...enums,
+    resetScene
   }
 
   Object.defineProperty(window, 'camera', {
