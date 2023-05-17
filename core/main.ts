@@ -37,34 +37,34 @@ import { Transitions } from '@enums/transitions.ts'
 
 // Helpers
 import Colors from '@helpers/Colors.ts'
-import { roundOff, degToRad, radToDeg } from '@helpers/miscellaneous'
-import { Width, Height } from '@/helpers/Dimensions'
+import { roundOff, degToRad, radToDeg } from '@helpers/miscellaneous.ts'
+import { Width, Height } from '@/helpers/Dimensions.ts'
 
 // Interfaces
-import { AnimObject, Scene } from '@interfaces/core'
+import { AnimObject, Scene } from '@interfaces/core.ts'
 
 // Mixins
-import { createButton } from '@mixins/Button'
-import { createSlider } from '@mixins/Slider'
+import { createButton } from '@mixins/Button.ts'
+import { createSlider } from '@mixins/Slider.ts'
 
 // Reactives
-import logger from '@reactives/logger'
-import error from '@reactives/error'
-import { svgData } from '@reactives/svg'
-import { sliders } from '@reactives/sliders'
-import { buttons } from '@reactives/buttons'
-import { prompts } from '@reactives/prompts'
+import logger from '@reactives/logger.ts'
+import error from '@reactives/error.ts'
+import { svgData } from '@reactives/svg.ts'
+import { sliders } from '@reactives/sliders.ts'
+import { buttons } from '@reactives/buttons.ts'
+import { prompts } from '@reactives/prompts.ts'
 
 // Transitions
 import FadeIn from '@transitions/FadeIn.ts'
 import FadeOut from '@transitions/FadeOut.ts'
 import Create from '@transitions/Create.ts'
-import Create3D from '@transitions/Create3D'
-import FadeIn3D from '@transitions/FadeIn3D'
-import FadeOut3D from '@transitions/FadeOut3D'
+import Create3D from '@transitions/Create3D.ts'
+import FadeIn3D from '@transitions/FadeIn3D.ts'
+import FadeOut3D from '@transitions/FadeOut3D.ts'
 
-import { createPrompt } from '@mixins/Prompt'
-import { watch } from '@mixins/Watcher'
+import { createPrompt } from '@mixins/Prompt.ts'
+import { watch } from '@mixins/Watcher.ts'
 
 let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0)
 let scene3D = new Scene3D(Width.full, Height.full, Colors.gray0)
