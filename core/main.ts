@@ -1,5 +1,5 @@
 // Core
-import Scene2D from ' Scene2D'
+import Scene2D from './Scene2D'
 import Scene3D from './Scene3D'
 import AnimObject2D from './AnimObject2D'
 import AnimObject3D from './AnimObject3D'
