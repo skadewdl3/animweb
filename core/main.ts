@@ -1,8 +1,8 @@
 // Core
-import Scene2D from '@core/Scene2D'
-import Scene3D from '@core/Scene3D'
-import AnimObject2D from '@core/AnimObject2D'
-import AnimObject3D from '@core/AnimObject3D'
+import Scene2D from './Scene2D'
+import Scene3D from './Scene3D'
+import AnimObject2D from './AnimObject2D'
+import AnimObject3D from './AnimObject3D'
 
 // AnimObjects2D
 import Point from '@AnimObjects2D/Point.ts'
