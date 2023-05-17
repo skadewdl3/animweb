@@ -1,18 +1,18 @@
 import p5 from 'p5'
-import AnimObject from '@/core/AnimObject2D'
-import Colors from '@helpers/Colors'
+import AnimObject from '@core/AnimObject2D.ts'
+import Colors from '@helpers/Colors.ts'
 import {
   degToRad,
   getQuadrant,
   radToDeg,
   rangePerFrame,
   roundOff,
-} from '@helpers/miscellaneous'
-import Matrix from '@auxiliary/Matrix'
-import { LinearTransformProps } from '@interfaces/AnimObjects2D'
-import { createTransition } from '@core/Transition'
-import { VectorProps } from '@/interfaces/AnimObjects2D'
-import { Vectors } from '@/enums/AnimObjects2D'
+} from '@helpers/miscellaneous.ts'
+import Matrix from '@auxiliary/Matrix.ts'
+import { LinearTransformProps } from '@interfaces/AnimObjects2D.ts'
+import { createTransition } from '@core/Transition.ts'
+import { VectorProps } from '@interfaces/AnimObjects2D.ts'
+import { Vectors } from '@enums/AnimObjects2D.ts'
 
 
 export default class Vector extends AnimObject {

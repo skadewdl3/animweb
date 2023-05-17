@@ -1,6 +1,6 @@
-import { Button } from '@/mixins/Button'
+import { Button } from '@mixins/Button.ts'
 import { reactive } from 'vue'
-import { ButtonsReactive } from '@/interfaces/ui'
+import { ButtonsReactive } from '@interfaces/ui.ts'
 
 export const buttons: ButtonsReactive = reactive<ButtonsReactive>({
   buttons: [],

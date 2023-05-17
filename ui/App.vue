@@ -5,10 +5,10 @@ import Prompt from '@ui/Prompt.vue'
 import Slider from '@ui/Slider.vue'
 import SVGItem from './SVGItem.vue'
 
-import { buttons } from '@/reactives/buttons'
-import { prompts } from '@/reactives/prompts'
-import { sliders } from '@/reactives/sliders'
-import { svgData } from '@/reactives/svg'
+import { buttons } from '@reactives/buttons.ts'
+import { prompts } from '@reactives/prompts.ts'
+import { sliders } from '@reactives/sliders.ts'
+import { svgData } from '@reactives/svg.ts'
 
 </script>
 

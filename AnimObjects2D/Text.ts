@@ -1,9 +1,9 @@
 import p5 from 'p5'
-import AnimObject from '@/core/AnimObject2D'
-import { textToSVGPolygons } from '@helpers/TextToSVG'
-import { createSVG, removeSVG } from '@helpers/addSVG'
-import { TextProps } from '@/interfaces/AnimObjects2D'
-import { TextStyle } from '@/enums/AnimObjects2D'
+import AnimObject from '@core/AnimObject2D.ts'
+import { textToSVGPolygons } from '@helpers/TextToSVG.ts'
+import { createSVG, removeSVG } from '@helpers/addSVG.ts'
+import { TextProps } from '@interfaces/AnimObjects2D.ts'
+import { TextStyle } from '@enums/AnimObjects2D.ts'
 
 export default class Text extends AnimObject {
   text: string = ''

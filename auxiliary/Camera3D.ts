@@ -4,9 +4,10 @@ import {
   Clock as ThreeClock,
 } from 'three'
 import { v4 as uuid } from 'uuid'
-import { rangePerFrame, roundOff } from '@helpers/miscellaneous'
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
-import { CameraAxes } from '@/enums/miscellaneous'
+import { rangePerFrame, roundOff } from '@helpers/miscellaneous.ts'
+// @ts-ignore
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
+import { CameraAxes } from '@enums/miscellaneous.ts'
 
 export default class Camera {
   camera: ThreePerspectiveCamera

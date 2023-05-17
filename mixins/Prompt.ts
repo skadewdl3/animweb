@@ -1,12 +1,12 @@
-import { prompts } from '@reactives/prompts'
-import { PromptProps } from '@interfaces/mixins'
+import { prompts } from '@reactives/prompts.ts'
+import { PromptProps } from '@interfaces/mixins.ts'
 
 import { v4 as uuid } from 'uuid'
-import { Watcher } from './Watcher'
-import { Properties } from '@/enums/mixins'
+import { Watcher } from './Watcher.ts'
+import { Properties } from '@enums/mixins.ts'
 //@ts-ignore
 import debounce from 'lodash.debounce'
-import error from '@/reactives/error'
+import error from '@reactives/error.ts'
 
 export class Prompt {
   id: string

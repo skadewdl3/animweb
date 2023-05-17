@@ -1,6 +1,6 @@
-import { Prompt } from '@/mixins/Prompt'
+import { Prompt } from '@mixins/Prompt.ts'
 import { reactive } from 'vue'
-import { PromptsReactive } from '@/interfaces/ui'
+import { PromptsReactive } from '@interfaces/ui.ts'
 
 export const prompts: PromptsReactive = reactive<PromptsReactive>({
   prompts: [],

@@ -1,9 +1,9 @@
-import { applyMixins, throwError } from '@/helpers/miscellaneous'
-import { Properties, Watchables } from '@/enums/mixins'
+import { applyMixins, throwError } from '@helpers/miscellaneous.ts'
+import { Properties, Watchables } from '@enums/mixins.ts'
 import { v4 as uuid } from 'uuid'
-import CreateSlider, { Slider } from './Slider'
-import CreateButton, { Button } from './Button'
-import CreatePrompt, { Prompt } from './Prompt'
+import CreateSlider, { Slider } from './Slider.ts'
+import CreateButton, { Button } from './Button.ts'
+import CreatePrompt, { Prompt } from './Prompt.ts'
 
 export class Watcher {
   private listeners: { [id: string]: Function } = {}

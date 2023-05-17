@@ -8,17 +8,17 @@ The Scene itself cannot be animated, but every AnimObject can be animated.
 P.S - A function declared inside a class is called a method
 */
 
-// const p5 = window.p5
 import p5 from 'p5'
-import AnimObject from '@/core/AnimObject2D'
-import Color from '@auxiliary/Color'
-import Colors from '@helpers/Colors'
-import Constants from '@helpers/Constants'
+import AnimObject from '@core/AnimObject2D.ts'
+import Color from '@auxiliary/Color.ts'
+import Colors from '@helpers/Colors.ts'
+import Constants from '@helpers/Constants.ts'
 import { v4 as uuid } from 'uuid'
-import { wait } from '@helpers/miscellaneous'
-import { TransitionQueueItem } from '@/interfaces/transitions'
-import { RenderingModes } from '@/enums/miscellaneous'
-import { createSketch } from '@helpers/sketch'
+import { wait } from '@helpers/miscellaneous.ts'
+import { TransitionQueueItem } from '@interfaces/transitions.ts'
+import { RenderingModes } from '@enums/miscellaneous.ts'
+import { createSketch } from '@helpers/sketch.ts'
+
 
 export default class Scene2D {
   height: number

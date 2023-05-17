@@ -5,23 +5,24 @@ import { fileURLToPath, URL } from 'url'
 
 export default defineNuxtConfig({
   alias: {
-    '@': './',
-    '@layouts': './layouts',
-    '@pages': './pages',
-    '@components': './components',
-    '@assets': './assets',
-    '@AnimObjects2D': './AnimObjects2D',
-    '@AnimObjects3D': './AnimObjects3D',
-    '@auxiliary': './auxiliary',
-    '@core': './core',
-    '@enums': './enums',
-    '@interfaces': './interfaces',
-    '@mixins': './mixins',
-    '@reactives': './reactives',
-    '@helpers': './helpers',
-    '@workers': './workers',
-    '@styles': './styles',
-    '@ui': './ui',
+    '@': '.',
+    '@layouts': path.resolve(__dirname, './layouts'),
+    '@pages': path.resolve(__dirname, './pages'),
+    '@transitions': path.resolve(__dirname, './transitions'),
+    '@components': path.resolve(__dirname, './components'),
+    '@assets': path.resolve(__dirname, './assets'),
+    '@AnimObjects2D': path.resolve(__dirname, './AnimObjects2D'),
+    '@AnimObjects3D': path.resolve(__dirname, './AnimObjects3D'),
+    '@auxiliary': path.resolve(__dirname, './auxiliary'),
+    '@core': path.resolve(__dirname, './core'),
+    '@enums': path.resolve(__dirname, './enums'),
+    '@interfaces': path.resolve(__dirname, './interfaces'),
+    '@mixins': path.resolve(__dirname, './mixins'),
+    '@reactives': path.resolve(__dirname, './reactives'),
+    '@helpers': path.resolve(__dirname, './helpers'),
+    '@workers': path.resolve(__dirname, './workers'),
+    '@styles': path.resolve(__dirname, './styles'),
+    '@ui': path.resolve(__dirname, './ui'),
   },
   routeRules: {
     '/': { ssr: true },
@@ -33,64 +34,72 @@ export default defineNuxtConfig({
       alias: [
         {
           find: '@',
-          replacement: fileURLToPath(new URL('./', import.meta.url)),
+          replacement: path.resolve(__dirname, '.'),
         },
         {
+          find: '@layouts',
+          replacement: path.resolve(__dirname, 'layouts'),
+        },
+        {
+          find: '@pages',
+          replacement: path.resolve(__dirname, 'pages'),
+        },
+        {
+          find: '@components',
+          replacement: path.resolve(__dirname, 'components'),
+        },
+        // create aliases for auxiliary, helpers, transitions, mixins, interfaces, reactives, ui, AnimObjects2D, AnimObjects3D, enums, styles, workers
+        {
           find: '@core',
-          replacement: fileURLToPath(new URL('./core', import.meta.url)),
+          replacement: path.resolve(__dirname, 'core'),
         },
         {
           find: '@auxiliary',
-          replacement: fileURLToPath(new URL('./auxiliary', import.meta.url)),
+          replacement: path.resolve(__dirname, 'auxiliary'),
         },
         {
           find: '@helpers',
-          replacement: fileURLToPath(new URL('./helpers', import.meta.url)),
+          replacement: path.resolve(__dirname, 'helpers'),
         },
         {
           find: '@transitions',
-          replacement: fileURLToPath(new URL('./transitions', import.meta.url)),
+          replacement: path.resolve(__dirname, 'transitions'),
+        },
+        {
+          find: '@mixins',
+          replacement: path.resolve(__dirname, 'mixins'),
         },
         {
           find: '@interfaces',
-          replacement: fileURLToPath(new URL('./interfaces', import.meta.url)),
+          replacement: path.resolve(__dirname, 'interfaces'),
         },
         {
           find: '@reactives',
-          replacement: fileURLToPath(new URL('./reactives', import.meta.url)),
+          replacement: path.resolve(__dirname, 'reactives'),
         },
         {
           find: '@ui',
-          replacement: fileURLToPath(new URL('./ui', import.meta.url)),
+          replacement: path.resolve(__dirname, 'ui'),
         },
         {
           find: '@AnimObjects2D',
-          replacement: fileURLToPath(
-            new URL('./AnimObjects2D', import.meta.url)
-          ),
+          replacement: path.resolve(__dirname, 'AnimObjects2D'),
         },
         {
           find: '@AnimObjects3D',
-          replacement: fileURLToPath(
-            new URL('./AnimObjects3D', import.meta.url)
-          ),
-        },
-        {
-          find: '@workers',
-          replacement: fileURLToPath(new URL('./workers', import.meta.url)),
+          replacement: path.resolve(__dirname, 'AnimObjects3D'),
         },
         {
           find: '@enums',
-          replacement: fileURLToPath(new URL('./enums', import.meta.url)),
+          replacement: path.resolve(__dirname, 'enums'),
         },
         {
           find: '@styles',
-          replacement: fileURLToPath(new URL('./styles', import.meta.url)),
+          replacement: path.resolve(__dirname, 'styles'),
         },
-
         {
-          find: '@mixins',
-          replacement: fileURLToPath(new URL('./mixins', import.meta.url)),
+          find: '@workers',
+          replacement: path.resolve(__dirname, 'workers'),
         },
       ],
     },

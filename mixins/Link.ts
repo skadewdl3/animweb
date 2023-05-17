@@ -1,6 +1,6 @@
-import { Linkables, Properties } from '@/enums/mixins'
-import { Watcher } from './Watcher'
-import { throwError } from '@/helpers/miscellaneous'
+import { Linkables, Properties } from '@enums/mixins.ts'
+import { Watcher } from './Watcher.ts'
+import { throwError } from '@helpers/miscellaneous.ts'
 
 export class Link {
   watcher: Watcher

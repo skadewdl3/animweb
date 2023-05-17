@@ -1,8 +1,8 @@
 import { basicSetup, EditorView } from 'codemirror'
 import { javascript } from '@codemirror/lang-javascript'
-import { EditorReactive } from '@/interfaces/ui'
+import { EditorReactive } from '@interfaces/ui.ts'
 import { reactive } from 'vue'
-import { getInlineCode, getElement } from '@/helpers/miscellaneous'
+import { getInlineCode, getElement } from '@helpers/miscellaneous.ts'
 
 const resetScene = (c?: boolean) => {}
 

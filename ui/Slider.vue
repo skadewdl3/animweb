@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Slider } from '@/mixins/Slider';
+import { Slider } from '@mixins/Slider.ts';
 import { onMounted } from 'vue';
 
 

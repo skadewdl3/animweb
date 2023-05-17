@@ -1,8 +1,8 @@
 // Core
-import Scene2D from './Scene2D'
-import Scene3D from './Scene3D'
-import AnimObject2D from './AnimObject2D'
-import AnimObject3D from './AnimObject3D'
+import Scene2D from './Scene2D.ts'
+import Scene3D from './Scene3D.ts'
+import AnimObject2D from './AnimObject2D.ts'
+import AnimObject3D from './AnimObject3D.ts'
 
 // AnimObjects2D
 import Point from '@AnimObjects2D/Point.ts'
@@ -38,7 +38,7 @@ import { Transitions } from '@enums/transitions.ts'
 // Helpers
 import Colors from '@helpers/Colors.ts'
 import { roundOff, degToRad, radToDeg } from '@helpers/miscellaneous.ts'
-import { Width, Height } from '@/helpers/Dimensions.ts'
+import { Width, Height } from '@helpers/Dimensions.ts'
 
 // Interfaces
 import { AnimObject, Scene } from '@interfaces/core.ts'

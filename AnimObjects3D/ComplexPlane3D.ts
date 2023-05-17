@@ -1,15 +1,15 @@
-import AnimObject3D from '@core/AnimObject3D'
-import Constants from '@helpers/Constants'
-import Line3D from '@AnimObjects3D/Line3D'
-import Point3D from '@AnimObjects3D/Point3D'
-import Surface from '@AnimObjects3D/Surface'
+import AnimObject3D from '@core/AnimObject3D.ts'
+import Constants from '@helpers/Constants.ts'
+import Line3D from '@AnimObjects3D/Line3D.ts'
+import Point3D from '@AnimObjects3D/Point3D.ts'
+import Surface from '@AnimObjects3D/Surface.ts'
 import {
   PointPlotProps,
   SurfacePlotProps,
   MeshData,
   ComplexPlane3DProps,
-} from '@/interfaces/AnimObjects3D'
-import { Octants, ComplexPlanes } from '@/enums/AnimObjects3D'
+} from '@interfaces/AnimObjects3D.ts'
+import { Octants, ComplexPlanes } from '@enums/AnimObjects3D.ts'
 
 export default class ComplexPlane3D extends AnimObject3D {
   form: ComplexPlanes = ComplexPlanes.upper

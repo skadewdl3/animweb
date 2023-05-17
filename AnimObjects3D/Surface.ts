@@ -1,5 +1,6 @@
-import { mergeBufferGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils'
-import AnimObject3D from '@core/AnimObject3D'
+// @ts-ignore
+import { mergeBufferGeometries } from 'three/addons/utils/BufferGeometryUtils.js'
+import AnimObject3D from '@core/AnimObject3D.ts'
 import {
   BufferGeometry as ThreeBufferGeometry,
   BufferAttribute as ThreeBufferAttribute,
@@ -10,9 +11,9 @@ import {
   EdgesGeometry as ThreeEdgesGeometry,
   Mesh as ThreeMesh,
 } from 'three'
-import error from '@/reactives/error'
-import { MeshData, SurfaceProps } from '@/interfaces/AnimObjects3D'
-import { throwError } from '@/helpers/miscellaneous'
+import error from '@reactives/error.ts'
+import { MeshData, SurfaceProps } from '@interfaces/AnimObjects3D.ts'
+import { throwError } from '@helpers/miscellaneous.ts'
 
 export default class Surface extends AnimObject3D {
   filled: boolean = false

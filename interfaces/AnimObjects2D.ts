@@ -1,8 +1,8 @@
-import Color from '@/auxiliary/Color'
-import { AnimObject2DProps } from './core'
-import { TransitionProps } from './transitions'
-import { Lines, Vectors, TextStyle } from '@/enums/AnimObjects2D'
-import { Transitions } from '@/enums/transitions'
+import Color from '@auxiliary/Color.ts'
+import { AnimObject2DProps } from './core.ts'
+import { TransitionProps } from './transitions.ts'
+import { Lines, Vectors, TextStyle } from '@enums/AnimObjects2D.ts'
+import { Transitions } from '@enums/transitions.ts'
 // Point
 export interface PointProps extends AnimObject2DProps {
   x: number

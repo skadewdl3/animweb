@@ -1,10 +1,10 @@
-import AnimObject3D from '@core/AnimObject3D'
+import AnimObject3D from '@core/AnimObject3D.ts'
 import {
   Mesh as ThreeMesh,
   BoxGeometry as ThreeBoxGeometry,
   MeshBasicMaterial as ThreeMeshBasicMaterial,
 } from 'three'
-import { CubeProps } from '@/interfaces/AnimObjects3D'
+import { CubeProps } from '@interfaces/AnimObjects3D.ts'
 
 export default class Cube extends AnimObject3D {
   constructor(config: CubeProps) {

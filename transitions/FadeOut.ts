@@ -1,18 +1,18 @@
-import AnimObject from '@/core/AnimObject2D'
-import Curve from '@AnimObjects2D/Curve'
-import Point from '@AnimObjects2D/Point'
-import Line from '@AnimObjects2D/Line'
-import NumberPlane from '@AnimObjects2D/NumberPlane'
-import ImplicitCurve from '@AnimObjects2D/ImplicitCurve'
-import Text from '@AnimObjects2D/Text'
-import Constants from '@helpers/Constants'
-import { wait, rangePerFrame } from '@helpers/miscellaneous'
-import { TransitionProgressProps } from '@interfaces/transitions'
-import { TransitionTypes } from '@/enums/transitions'
-import { createTransition } from '@core/Transition'
+import AnimObject from '@core/AnimObject2D.ts'
+import Curve from '@AnimObjects2D/Curve.ts'
+import Point from '@AnimObjects2D/Point.ts'
+import Line from '@AnimObjects2D/Line.ts'
+import NumberPlane from '@AnimObjects2D/NumberPlane.ts'
+import ImplicitCurve from '@AnimObjects2D/ImplicitCurve.ts'
+import Text from '@AnimObjects2D/Text.ts'
+import Constants from '@helpers/Constants.ts'
+import { wait, rangePerFrame } from '@helpers/miscellaneous.ts'
+import { TransitionProgressProps } from '@interfaces/transitions.ts'
+import { TransitionTypes } from '@enums/transitions.ts'
+import { createTransition } from '@core/Transition.ts'
 import { v4 as uuid } from 'uuid'
 import anime from 'animejs'
-import LaTeX from '@AnimObjects2D/LaTeX'
+import LaTeX from '@AnimObjects2D/LaTeX.ts'
 
 const resetColor = (object: AnimObject) => {
   object.color.setAlpha(object.maxAlpha)
@@ -20,7 +20,7 @@ const resetColor = (object: AnimObject) => {
 }
 
 const resetColors = (arr: Array<AnimObject>) => {
-  arr.forEach((object) => resetColor(object))
+  arr.forEach(object => resetColor(object))
 }
 
 const fadeOutTransition = (
@@ -135,18 +135,18 @@ const FadeOut = <Object extends AnimObject>(
     resetColors(object.yGrid)
     resetColors(object.xGrid)
     resetColors(object.points)
-    object.curves.forEach((curve) => {
+    object.curves.forEach(curve => {
       resetColors(curve.lines)
     })
-    object.implicitCurves.forEach((implicitCurve) => {
+    object.implicitCurves.forEach(implicitCurve => {
       resetColor(implicitCurve)
     })
 
     fadeOutTransitions(object.points, config, totalDuration / 3)
-    object.curves.forEach((curve) => {
+    object.curves.forEach(curve => {
       fadeOutTransitions(curve.lines, config, totalDuration / 3)
     })
-    object.implicitCurves.forEach((implicitCurve) => {
+    object.implicitCurves.forEach(implicitCurve => {
       if (implicitCurve instanceof ImplicitCurve) {
         implicitCurve.transition = fadeOutTransition(
           implicitCurve,
@@ -166,7 +166,7 @@ const FadeOut = <Object extends AnimObject>(
       })
     })
   } else if (object instanceof Curve) {
-    object.lines.forEach((line) => resetColor(line))
+    object.lines.forEach(line => resetColor(line))
     fadeOutTransitions(object.lines, config)
   } else if (object instanceof ImplicitCurve) {
     console.log('thsi ran')
@@ -204,50 +204,55 @@ const FadeOut = <Object extends AnimObject>(
       },
       object
     )
-
   } else if (object instanceof Text) {
     let executeTransition = true
-    let tx = createTransition({
-      onProgress: ({ end }: TransitionProgressProps) => {
-        if (object.svgEl && executeTransition) {
-          anime({
-            targets: `#${object.id} path`,
-            opacity: 0,
-            easing: 'easeInOutSine',
-            duration: 1500,
-            direction: 'alternate',
-            loop: false,
-            complete() {
-              end()
-            },
-          })
-          executeTransition = false
-        }
+    let tx = createTransition(
+      {
+        onProgress: ({ end }: TransitionProgressProps) => {
+          if (object.svgEl && executeTransition) {
+            anime({
+              targets: `#${object.id} path`,
+              opacity: 0,
+              easing: 'easeInOutSine',
+              duration: 1500,
+              direction: 'alternate',
+              loop: false,
+              complete() {
+                end()
+              },
+            })
+            executeTransition = false
+          }
+        },
+        endCondition: () => false,
       },
-      endCondition: () => false,
-    }, object)
+      object
+    )
     object.transition = tx
   } else if (object instanceof LaTeX) {
     let executeTransition = true
-    let tx = createTransition({
-      onProgress: ({ end }: TransitionProgressProps) => {
-        if (object.svgEl && executeTransition) {
-          anime({
-            targets: `#${object.id} path`,
-            opacity: 0,
-            easing: 'easeInOutSine',
-            duration: 1500,
-            direction: 'alternate',
-            loop: false,
-            complete() {
-              end()
-            },
-          })
-          executeTransition = false
-        }
+    let tx = createTransition(
+      {
+        onProgress: ({ end }: TransitionProgressProps) => {
+          if (object.svgEl && executeTransition) {
+            anime({
+              targets: `#${object.id} path`,
+              opacity: 0,
+              easing: 'easeInOutSine',
+              duration: 1500,
+              direction: 'alternate',
+              loop: false,
+              complete() {
+                end()
+              },
+            })
+            executeTransition = false
+          }
+        },
+        endCondition: () => false,
       },
-      endCondition: () => false,
-    }, object)
+      object
+    )
     object.transition = tx
 
     // console.log(object)

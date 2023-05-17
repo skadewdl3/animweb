@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { editor } from '@/load'
-import code from '@/reactives/code'
-import error from '@/reactives/error'
-import { onMounted, Transition } from 'vue'
+import { editor } from '@reactives/editor.ts'
+import code from '@reactives/code.ts'
+import error from '@reactives/error.ts'
+import { onMounted } from 'vue'
 
 onMounted(() => {
   editor.create()

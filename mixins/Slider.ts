@@ -1,7 +1,7 @@
-import { Watchables } from '@/enums/mixins'
+import { Watchables } from '@enums/mixins.ts'
 import { v4 as uuid } from 'uuid'
-import { sliders } from '@/reactives/sliders'
-import { SliderProps } from '@/interfaces/mixins'
+import { sliders } from '@reactives/sliders.ts'
+import { SliderProps } from '@interfaces/mixins.ts'
 //@ts-ignore
 import debounce from 'lodash.debounce'
 
@@ -102,7 +102,7 @@ export class Slider {
   }
 
   executeSlideListener(id: string) {
-    this.slideListeners = this.slideListeners.filter((listener) => {
+    this.slideListeners = this.slideListeners.filter(listener => {
       if (listener.id == id) {
         listener.listener()
         return false

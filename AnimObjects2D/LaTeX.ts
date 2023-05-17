@@ -1,7 +1,7 @@
 import p5 from 'p5'
-import AnimObject from '@/core/AnimObject2D'
-import { createSVG, removeSVG } from '@helpers/addSVG'
-import { LaTeXProps } from '@/interfaces/AnimObjects2D'
+import AnimObject from '@core/AnimObject2D.ts'
+import { createSVG, removeSVG } from '@helpers/addSVG.ts'
+import { LaTeXProps } from '@interfaces/AnimObjects2D.ts'
 
 export default class LaTeX extends AnimObject {
   latex: string = ''

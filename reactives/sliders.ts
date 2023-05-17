@@ -1,6 +1,6 @@
-import { Slider } from '@/mixins/Slider'
+import { Slider } from '@mixins/Slider.ts'
 import { reactive } from 'vue'
-import { SlidersReactive } from '@interfaces/ui'
+import { SlidersReactive } from '@interfaces/ui.ts'
 
 export const sliders: SlidersReactive = reactive<SlidersReactive>({
   sliders: [],

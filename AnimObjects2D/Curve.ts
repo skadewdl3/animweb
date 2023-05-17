@@ -1,19 +1,23 @@
 import p5 from 'p5'
-import AnimObject2D from '@/core/AnimObject2D'
-import Line from '@AnimObjects2D/Line'
-import Color from '@auxiliary/Color'
+import AnimObject2D from '@core/AnimObject2D.ts'
+import Line from '@AnimObjects2D/Line.ts'
+import Color from '@auxiliary/Color.ts'
 import { apply, derivative } from 'mathjs'
-import { applyMixins, evaluate, parseDefinition } from '@helpers/miscellaneous'
-import Point from '@AnimObjects2D/Point'
-import { Transitions } from '@/enums/transitions'
-import { Transition } from '@core/Transition'
+import {
+  applyMixins,
+  evaluate,
+  parseDefinition,
+} from '@helpers/miscellaneous.ts'
+import Point from '@AnimObjects2D/Point.ts'
+import { Transitions } from '@enums/transitions.ts'
+import { Transition } from '@core/Transition.ts'
 import {
   CurveAnchorPointProps,
   CurveAnchorLineProps,
   CurveProps,
-} from '@interfaces/AnimObjects2D'
-import { Lines } from '@/enums/AnimObjects2D'
-import { AnchorPoint } from '@/mixins/miscellaneous'
+} from '@interfaces/AnimObjects2D.ts'
+import { Lines } from '@enums/AnimObjects2D.ts'
+import { AnchorPoint } from '@mixins/miscellaneous.ts'
 
 export default class Curve extends AnimObject2D {
   y: string

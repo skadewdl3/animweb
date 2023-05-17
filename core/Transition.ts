@@ -1,10 +1,11 @@
-import { TransitionProps, TransitionChain } from '@/interfaces/transitions'
-import { Transitions } from '@/enums/transitions'
-import FadeIn from '@/transitions/FadeIn'
-import FadeOut from '@/transitions/FadeOut'
-import Create from '@/transitions/Create'
+// import { TransitionProps, TransitionChain } from '@interfaces/transitions'
+import { Transitions } from '@enums/transitions.ts'
+
+import FadeIn from '@transitions/FadeIn.ts'
+import FadeOut from '@transitions/FadeOut.ts'
+import Create from '@transitions/Create.ts'
 import { v4 as uuid } from 'uuid'
-import AnimObject2D from './AnimObject2D'
+import AnimObject2D from './AnimObject2D.ts'
 
 export const Transition = (type: Transitions) => {
   switch (type) {

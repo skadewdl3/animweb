@@ -1,12 +1,12 @@
-import AnimObject from '@/core/AnimObject2D'
+import AnimObject from '@core/AnimObject2D.ts'
 import p5 from 'p5'
 import { evaluate, derivative } from 'mathjs'
-import Matrix from '@auxiliary/Matrix'
-import { rangePerFrame, roundOff } from '@helpers/miscellaneous'
-import Constants from '@helpers/Constants'
-import { createTransition } from '@core/Transition'
-import { Lines } from '@/enums/AnimObjects2D'
-import { LineProps, LinearTransformProps } from '@/interfaces/AnimObjects2D'
+import Matrix from '@auxiliary/Matrix.ts'
+import { rangePerFrame, roundOff } from '@helpers/miscellaneous.ts'
+import Constants from '@helpers/Constants.ts'
+import { createTransition } from '@core/Transition.ts'
+import { Lines } from '@enums/AnimObjects2D.ts'
+import { LineProps, LinearTransformProps } from '@interfaces/AnimObjects2D.ts'
 
 export default class Line extends AnimObject {
   y: Function = (x: number) => {

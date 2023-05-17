@@ -13,14 +13,14 @@ import {
   WebGLRenderer as ThreeWebGLRenderer,
   AmbientLight as ThreeAmbientLight,
 } from 'three'
-import Camera from '@auxiliary/Camera3D'
-import AnimObject3D from '@core/AnimObject3D'
-import Color from '@auxiliary/Color'
-import Colors from '@helpers/Colors'
+import Camera from '@auxiliary/Camera3D.ts'
+import AnimObject3D from '@core/AnimObject3D.ts'
+import Color from '@auxiliary/Color.ts'
+import Colors from '@helpers/Colors.ts'
 import { v4 as uuid } from 'uuid'
-import { wait } from '@helpers/miscellaneous'
-import { TransitionQueueItem } from '@/interfaces/transitions'
-import { RenderingModes } from '@/enums/miscellaneous'
+import { wait } from '@helpers/miscellaneous.ts'
+import { TransitionQueueItem } from '@interfaces/transitions.ts'
+import { RenderingModes } from '@enums/miscellaneous.ts'
 
 export default class Scene3D {
   height: number

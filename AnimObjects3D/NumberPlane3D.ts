@@ -1,16 +1,16 @@
-import AnimObject3D from '@core/AnimObject3D'
-import Constants from '@helpers/Constants'
-import Line3D from '@AnimObjects3D/Line3D'
-import Point3D from '@AnimObjects3D/Point3D'
-import Surface from '@AnimObjects3D/Surface'
-import Text3D from '@AnimObjects3D/Text3D'
+import AnimObject3D from '@core/AnimObject3D.ts'
+import Constants from '@helpers/Constants.ts'
+import Line3D from '@AnimObjects3D/Line3D.ts'
+import Point3D from '@AnimObjects3D/Point3D.ts'
+import Surface from '@AnimObjects3D/Surface.ts'
+import Text3D from '@AnimObjects3D/Text3D.ts'
 import {
   NumberPlane3DProps,
   PointPlotProps,
   SurfacePlotProps,
   MeshData,
-} from '@/interfaces/AnimObjects3D'
-import { Octants, NumberPlanes } from '@/enums/AnimObjects3D'
+} from '@interfaces/AnimObjects3D.ts'
+import { Octants, NumberPlanes } from '@enums/AnimObjects3D.ts'
 
 export default class NumberPlane3D extends AnimObject3D {
   form: NumberPlanes = NumberPlanes.upper

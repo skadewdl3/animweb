@@ -7,11 +7,12 @@ AnimObject3D will never be used directly, but only as a parent to Point, Line, N
 */
 
 import { v4 as uuidv4 } from 'uuid'
-import Color from '@auxiliary/Color'
-import Colors from '@helpers/Colors'
-import Scene3D from '@core/Scene3D'
 import { Mesh as ThreeMesh } from 'three'
-import { Watcher } from '@/interfaces/core'
+import Color from '@auxiliary/Color.ts'
+import Colors from '@helpers/Colors.ts'
+import { Watcher } from '@interfaces/core.ts'
+import Scene3D from './Scene3D.ts'
+
 
 export default class AnimObject3D {
   id: string // A unique identifier created for every AnimObject3D. Used to identify which AnimObject3D to remove when Scene.remove is called

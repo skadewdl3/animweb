@@ -8,14 +8,13 @@ AnimObject will never be used directly, but only as a parent to Point, Line, Num
 
 import p5 from 'p5'
 import { v4 as uuidv4 } from 'uuid'
-import Color from '@auxiliary/Color'
-import Colors from '@helpers/Colors'
-import { Watcher } from '@/interfaces/core'
-import { Scene } from '@/interfaces/core'
-import Scene2D from './Scene2D'
-import { applyMixins } from '@/helpers/miscellaneous'
-import CreateWatcher from '@/mixins/Watcher'
-import CreateLink from '@/mixins/Link'
+import Color from '@auxiliary/Color.ts'
+import Colors from '@helpers/Colors.ts'
+import { Watcher } from '@interfaces/core.ts'
+import Scene2D from './Scene2D.ts'
+import { applyMixins } from '@helpers/miscellaneous.ts'
+import CreateWatcher from '@mixins/Watcher.ts'
+import CreateLink from '@mixins/Link.ts'
 
 /*
 AnimObjects can observe properties by specifying the type of property

@@ -1,6 +1,6 @@
 // @ts-nocheck
 import { create, all } from 'mathjs'
-import Constants from '@/helpers/Constants'
+import Constants from '@helpers/Constants.ts'
 const math = create(all)
 
 export const wait = (ms: number) => {

@@ -1,7 +1,7 @@
 import p5 from 'p5'
-import AnimObject from '@/core/AnimObject2D'
-import { ImplicitCurveProps } from '@/interfaces/AnimObjects2D'
-import { createSVG, removeSVG } from '@/helpers/addSVG'
+import AnimObject from '@core/AnimObject2D.ts'
+import { ImplicitCurveProps } from '@interfaces/AnimObjects2D.ts'
+import { createSVG, removeSVG } from '@helpers/addSVG.ts'
 
 export default class ImplicitCurve extends AnimObject {
   definition: string = ''

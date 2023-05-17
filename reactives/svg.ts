@@ -1,7 +1,7 @@
 import { reactive } from 'vue'
-import { SVGData } from '@/interfaces/helpers'
-import { wait } from '@/helpers/miscellaneous'
-import { SVGReactive } from '@/interfaces/ui'
+import { SVGData } from '@interfaces/helpers.ts'
+import { wait } from '@helpers/miscellaneous.ts'
+import { SVGReactive } from '@interfaces/ui.ts'
 
 export const svgData: SVGReactive = reactive<SVGReactive>({
   svgs: [],

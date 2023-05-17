@@ -1,11 +1,11 @@
-import Color from '@auxiliary/Color'
-import { TransitionProps } from '@/interfaces/transitions'
-import { Transitions } from '@/enums/transitions'
-import Scene2D from '@/core/Scene2D'
-import Scene3D from '@/core/Scene3D'
-import AnimObject2D from '@/core/AnimObject2D'
-import AnimObject3D from '@/core/AnimObject3D'
-import { Watchables } from '@/enums/mixins'
+import Color from '@auxiliary/Color.ts'
+import { TransitionProps } from '@interfaces/transitions.ts'
+import { Transitions } from '@enums/transitions.ts'
+import Scene2D from '@core/Scene2D.ts'
+import Scene3D from '@core/Scene3D.ts'
+import AnimObject2D from '@core/AnimObject2D.ts'
+import AnimObject3D from '@core/AnimObject3D.ts'
+import { Watchables } from '@enums/mixins.ts'
 // Scene
 export type Scene = Scene2D | Scene3D
 export type AnimObject = AnimObject2D | AnimObject3D

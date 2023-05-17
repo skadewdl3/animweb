@@ -1,4 +1,4 @@
-import { AnimObject } from '@/interfaces/core'
+import { AnimObject } from '@interfaces/core.ts'
 
 export interface TransitionQueueItem {
   id: string
@@ -17,4 +17,3 @@ export interface TransitionProps {
 }
 
 export type TransitionChain = Array<TransitionProps>
-

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Prompt } from '@/mixins/Prompt';
+import { Prompt } from '@mixins/Prompt.ts';
 import { onMounted } from 'vue';
 
 

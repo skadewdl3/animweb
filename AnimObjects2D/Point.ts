@@ -1,15 +1,15 @@
 import { evaluate } from 'mathjs'
 import p5 from 'p5'
-import AnimObject from '@/core/AnimObject2D'
+import AnimObject from '@core/AnimObject2D.ts'
 import {
   roundOff,
   rangePerFrame,
   parseDefinition,
   isNearlyEqual,
-} from '@helpers/miscellaneous'
-import Matrix from '@auxiliary/Matrix'
-import { createTransition } from '@core/Transition'
-import { PointProps, LinearTransformProps } from '@/interfaces/AnimObjects2D'
+} from '@helpers/miscellaneous.ts'
+import Matrix from '@auxiliary/Matrix.ts'
+import { createTransition } from '@core/Transition.ts'
+import { PointProps, LinearTransformProps } from '@interfaces/AnimObjects2D.ts'
 
 class Point extends AnimObject {
   x: number

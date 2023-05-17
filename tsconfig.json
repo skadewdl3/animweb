@@ -3,7 +3,7 @@
   "extends": "./.nuxt/tsconfig.json",
   "compilerOptions": {
     "paths": {
-      "@/*": ["./*"],
+      "@*": ["./*"],
       "@components/*": ["./components/*"],
       "@pages/*": ["./pages/*"],
       "@layouts/*": ["./layouts/*"],

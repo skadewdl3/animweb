@@ -1,11 +1,11 @@
-import AnimObject3D from '@core/AnimObject3D'
+import AnimObject3D from '@core/AnimObject3D.ts'
 import {
   LineBasicMaterial as ThreeLineBasicMaterial,
   Vector3 as ThreeVector3,
   BufferGeometry as ThreeBufferGeometry,
   Line as ThreeLine,
 } from 'three'
-import { Line3DProps } from '@/interfaces/AnimObjects3D'
+import { Line3DProps } from '@interfaces/AnimObjects3D.ts'
 
 export default class Line3D extends AnimObject3D {
   constructor(config: Line3DProps) {

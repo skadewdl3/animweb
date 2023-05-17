@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { ErrorReactive } from '@/interfaces/ui'
+import { ErrorReactive } from '@interfaces/ui.ts'
 
 const error: ErrorReactive = reactive<ErrorReactive>({
   hidden: true,

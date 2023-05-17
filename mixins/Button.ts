@@ -1,11 +1,11 @@
-import { Watchables } from '@/enums/mixins'
+import { Watchables } from '@enums/mixins.ts'
 import { v4 as uuid } from 'uuid'
-import { ButtonProps } from '@/interfaces/mixins'
+import { ButtonProps } from '@interfaces/mixins.ts'
 //@ts-ignore
 import debounce from 'lodash.debounce'
-import { buttons } from '@/reactives/buttons'
-import { throwError } from '@/helpers/miscellaneous'
-import error from '@/reactives/error'
+import { buttons } from '@reactives/buttons.ts'
+import { throwError } from '@helpers/miscellaneous.ts'
+import error from '@reactives/error.ts'
 
 export class Button {
   private watcher: any
@@ -72,7 +72,7 @@ export class Button {
   }
 
   private executeClickListener(id: string) {
-    let listener = this.clickLiseners.find((listener) => listener.id == id)
+    let listener = this.clickLiseners.find(listener => listener.id == id)
     if (listener) {
       if (!this.independent) {
         this.watcher.executeMutation((o: any) => {

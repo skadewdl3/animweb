@@ -1,16 +1,16 @@
-import AnimObject from '@/core/AnimObject2D'
+import AnimObject from '@core/AnimObject2D.ts'
 import p5 from 'p5'
-import Point from './Point'
-import Curve from './Curve'
-import Line from './Line'
-import { Lines } from '@/enums/AnimObjects2D'
-import { Transition } from '@core/Transition'
-import { Transitions } from '@/enums/transitions'
-import { RenderingModes } from '@/enums/miscellaneous'
-import Constants from '@helpers/Constants'
-import ImplicitCurve from './ImplicitCurve'
+import Point from './Point.ts'
+import Curve from './Curve.ts'
+import Line from './Line.ts'
+import { Lines } from '@enums/AnimObjects2D.ts'
+import { Transition } from '@core/Transition.ts'
+import { Transitions } from '@enums/transitions.ts'
+import { RenderingModes } from '@enums/miscellaneous.ts'
+import Constants from '@helpers/Constants.ts'
+import ImplicitCurve from './ImplicitCurve.ts'
 import { matrix } from 'mathjs'
-import Matrix from '@auxiliary/Matrix'
+import Matrix from '@auxiliary/Matrix.ts'
 import {
   PointPlotProps,
   ImplicitCurvePlotProps,
@@ -18,8 +18,8 @@ import {
   NumberPlaneProps,
   VectorProps,
   LinearTransformProps,
-} from '@interfaces/AnimObjects2D'
-import Vector from './Vector'
+} from '@interfaces/AnimObjects2D.ts'
+import Vector from './Vector.ts'
 
 export default class NumberPlane extends AnimObject {
   stepX: number

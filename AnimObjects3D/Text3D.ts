@@ -1,7 +1,7 @@
-import AnimObject3D from '@core/AnimObject3D'
+import AnimObject3D from '@core/AnimObject3D.ts'
 // @ts-ignore
 import { Text } from 'troika-three-text'
-import { Text3DProps } from '@/interfaces/AnimObjects3D'
+import { Text3DProps } from '@interfaces/AnimObjects3D.ts'
 
 export default class Text3D extends AnimObject3D {
   text: string

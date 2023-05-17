@@ -1,5 +1,5 @@
 import { reactive } from 'vue'
-import { CodeReactive } from '@/interfaces/ui'
+import { CodeReactive } from '@interfaces/ui.ts'
 
 const code: CodeReactive = reactive<CodeReactive>({
   hidden: false,

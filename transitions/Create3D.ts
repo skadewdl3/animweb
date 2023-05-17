@@ -1,10 +1,10 @@
-import Line3D from '@/AnimObjects3D/Line3D'
-import NumberPlane3D from '@/AnimObjects3D/NumberPlane3D'
-import Point3D from '@/AnimObjects3D/Point3D'
-import AnimObject3D from '@/core/AnimObject3D'
-import { createTransition3D } from '@/core/Transition'
-import { isNearlyEqual, rangePerFrame } from '@/helpers/miscellaneous'
-import { TransitionProgressProps } from '@/interfaces/transitions'
+import Line3D from '@AnimObjects3D/Line3D.ts'
+import NumberPlane3D from '@AnimObjects3D/NumberPlane3D.ts'
+import Point3D from '@AnimObjects3D/Point3D.ts'
+import AnimObject3D from '@core/AnimObject3D.ts'
+import { createTransition3D } from '@core/Transition.ts'
+import { isNearlyEqual, rangePerFrame } from '@helpers/miscellaneous.ts'
+import { TransitionProgressProps } from '@interfaces/transitions.ts'
 import { Vector3 } from 'three'
 
 const Create3D = <Object extends AnimObject3D>(

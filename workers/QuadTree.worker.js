@@ -1,5 +1,5 @@
 import { parse } from 'mathjs'
-import { roundOff } from '@/helpers/miscellaneous'
+import { roundOff } from '@helpers/miscellaneous.ts'
 
 class Quadrant {
   value = 0

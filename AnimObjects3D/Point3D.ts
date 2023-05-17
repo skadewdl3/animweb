@@ -1,10 +1,10 @@
-import AnimObject3D from '@core/AnimObject3D'
+import AnimObject3D from '@core/AnimObject3D.ts'
 import {
   SphereGeometry as ThreeSphereGeometry,
   MeshBasicMaterial as ThreeMeshBasicMaterial,
   Mesh as ThreeMesh,
 } from 'three'
-import { Point3DProps } from '@/interfaces/AnimObjects3D'
+import { Point3DProps } from '@interfaces/AnimObjects3D.ts'
 
 export default class Point3D extends AnimObject3D {
   mesh: any

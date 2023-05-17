@@ -1,6 +1,6 @@
-import { AnimObject3DProps } from './core'
-import Color from '@/auxiliary/Color'
-import { ComplexPlanes, NumberPlanes, Octants } from '@/enums/AnimObjects3D'
+import { AnimObject3DProps } from './core.ts'
+import Color from '@auxiliary/Color.ts'
+import { ComplexPlanes, NumberPlanes, Octants } from '@enums/AnimObjects3D.ts'
 
 // Point
 export interface Point3DProps extends AnimObject3DProps {

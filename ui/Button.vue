@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Button } from '@/mixins/Button';
+import { Button } from '@mixins/Button.ts';
 import { onMounted } from 'vue';
 
 const props: {

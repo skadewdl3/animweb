@@ -1,8 +1,8 @@
 import { reactive } from 'vue'
-import Color from '@auxiliary/Color'
-import Complex from '@auxiliary/Complex'
-import Matrix from '@auxiliary/Matrix'
-import { LoggerReactive } from '@/interfaces/ui'
+import Color from '@auxiliary/Color.ts'
+import Complex from '@auxiliary/Complex.ts'
+import Matrix from '@auxiliary/Matrix.ts'
+import { LoggerReactive } from '@interfaces/ui.ts'
 
 const logger: LoggerReactive = reactive<LoggerReactive>({
   logs: [],

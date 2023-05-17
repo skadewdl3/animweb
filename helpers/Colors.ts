@@ -10,7 +10,7 @@ They can be used as follows -
 3. Colors.white - some colors dont have any accents.
 */
 
-import Color from '@auxiliary/Color'
+import Color from '@auxiliary/Color.ts'
 
 const blues = {
   blue: '#58c4dd',
