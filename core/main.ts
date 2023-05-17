@@ -1,5 +1,5 @@
 // Core
-import Scene2D from './Scene2D'
+import Scene2D from ' Scene2D'
 import Scene3D from './Scene3D'
 import AnimObject2D from './AnimObject2D'
 import AnimObject3D from './AnimObject3D'
@@ -39,7 +39,6 @@ import { Transitions } from '@enums/transitions.ts'
 import Colors from '@helpers/Colors.ts'
 import { roundOff, degToRad, radToDeg } from '@helpers/miscellaneous'
 import { Width, Height } from '@/helpers/Dimensions'
-import { getElement, getInlineCode, throwError } from '@helpers/miscellaneous'
 
 // Interfaces
 import { AnimObject, Scene } from '@interfaces/core'
@@ -55,9 +54,6 @@ import { svgData } from '@reactives/svg'
 import { sliders } from '@reactives/sliders'
 import { buttons } from '@reactives/buttons'
 import { prompts } from '@reactives/prompts'
-
-// Styles
-import '@styles/main.styl'
 
 // Transitions
 import FadeIn from '@transitions/FadeIn.ts'
