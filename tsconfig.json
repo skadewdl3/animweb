@@ -1,0 +1,25 @@
+{
+  // https://nuxt.com/docs/guide/concepts/typescript
+  "extends": "./.nuxt/tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./*"],
+      "@components/*": ["./components/*"],
+      "@pages/*": ["./pages/*"],
+      "@layouts/*": ["./layouts/*"],
+      "@AnimObjects2D/*": ["./AnimObjects2D/*"],
+      "@AnimObjects3D/*": ["./AnimObjects3D/*"],
+      "@auxiliary/*": ["./auxiliary/*"],
+      "@core/*": ["./core/*"],
+      "@helpers/*": ["./helpers/*"],
+      "@interfaces/*": ["./interfaces/*"],
+      "@transitions/*": ["./transitions/*"],
+      "@reactives/*": ["./reactives/*"],
+      "@ui/*": ["./ui/*"],
+      "@workers/*": ["./workers/*"],
+      "@enums/*": ["./enums/*"],
+      "@mixins/*": ["./mixins/*"]
+    },
+    "allowImportingTsExtensions": true
+  }
+}
