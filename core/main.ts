@@ -1,6 +1,5 @@
 // Core
 import Scene2D from './Scene2D.ts'
-// import Scene3D from './Scene3D.ts'
 import AnimObject2D from './AnimObject2D.ts'
 import AnimObject3D from './AnimObject3D.ts'
 
@@ -67,7 +66,6 @@ import { createPrompt } from '@mixins/Prompt.ts'
 import { watch } from '@mixins/Watcher.ts'
 
 let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0)
-// let scene3D = new Scene3D(Width.full, Height.full, Colors.gray0)
 let scene3D: any
 
 scene2D.show()
@@ -78,10 +76,11 @@ scene = scene2D
 const init3DScene = (): Promise<void> => {
   return new Promise((resolve, reject) => {
     if (scene3D) resolve(scene3D)
-    else import('./Scene3D.ts').then(module => {
-      scene3D = new module.default(Width.full, Height.full, Colors.gray0)
-      resolve(scene3D)
-    })
+    else
+      import('./Scene3D.ts').then(module => {
+        scene3D = new module.default(Width.full, Height.full, Colors.gray0)
+        resolve(scene3D)
+      })
   })
 }
 
@@ -126,7 +125,10 @@ export default () => {
     degToRad,
     radToDeg,
     resetScene,
-    init3DScene
+    init3DScene,
+    scene3DInitialised() {
+      return Boolean(scene3D)
+    },
   }
 
   const enums = {
