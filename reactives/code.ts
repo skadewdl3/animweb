@@ -14,8 +14,9 @@ const code: CodeReactive = reactive<CodeReactive>({
     code.hidden = !code.hidden
     console.log(this.hidden)
   },
-  toggleMode() {
+  async toggleMode() {
     code.mode = code.mode == '2D' ? '3D' : '2D'
+    if (code.mode == '3D') await window.WebAnim.init3DScene()
     window.WebAnim.render(code.mode)
   },
 })

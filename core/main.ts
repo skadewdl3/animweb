@@ -1,6 +1,6 @@
 // Core
 import Scene2D from './Scene2D.ts'
-import Scene3D from './Scene3D.ts'
+// import Scene3D from './Scene3D.ts'
 import AnimObject2D from './AnimObject2D.ts'
 import AnimObject3D from './AnimObject3D.ts'
 
@@ -67,11 +67,23 @@ import { createPrompt } from '@mixins/Prompt.ts'
 import { watch } from '@mixins/Watcher.ts'
 
 let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0)
-let scene3D = new Scene3D(Width.full, Height.full, Colors.gray0)
+// let scene3D = new Scene3D(Width.full, Height.full, Colors.gray0)
+let scene3D: any
+
 scene2D.show()
-scene3D.hide()
+scene3D?.hide()
 let scene: Scene = scene2D
 scene = scene2D
+
+const init3DScene = (): Promise<void> => {
+  return new Promise((resolve, reject) => {
+    if (scene3D) resolve(scene3D)
+    else import('./Scene3D.ts').then(module => {
+      scene3D = new module.default(Width.full, Height.full, Colors.gray0)
+      resolve(scene3D)
+    })
+  })
+}
 
 const resetScene = (clearDebuggingData = false) => {
   if (!window) return
@@ -85,6 +97,7 @@ const resetScene = (clearDebuggingData = false) => {
   scene2D.resetScene()
   scene3D.resetScene()
 }
+
 export default () => {
   const functions = {
     wait: async (config: any) => await scene.wait(config),
@@ -112,6 +125,8 @@ export default () => {
     roundOff,
     degToRad,
     radToDeg,
+    resetScene,
+    init3DScene
   }
 
   const enums = {
@@ -139,17 +154,17 @@ export default () => {
     Create: (object: AnimObject, config: any) => {
       return scene == scene2D
         ? (scene as Scene2D).add(Create(object as AnimObject2D, config))
-        : (scene as Scene3D).add(Create3D(object as AnimObject3D, config))
+        : (scene as any).add(Create3D(object as AnimObject3D, config))
     },
     FadeIn: (object: AnimObject, config: any) => {
       return scene == scene2D
         ? (scene as Scene2D).add(FadeIn(object as AnimObject2D, config))
-        : (scene as Scene3D).add(FadeIn3D(object as AnimObject3D, config))
+        : (scene as any).add(FadeIn3D(object as AnimObject3D, config))
     },
     FadeOut: (object: AnimObject, config: any) => {
       return scene == scene2D
         ? (scene as Scene2D).add(FadeOut(object as AnimObject2D, config))
-        : (scene as Scene3D).add(FadeOut3D(object as AnimObject3D, config))
+        : (scene as any).add(FadeOut3D(object as AnimObject3D, config))
     },
   }
 
@@ -157,22 +172,22 @@ export default () => {
     Point: (config: any) => {
       return scene == scene2D
         ? new Point({ ...config, scene })
-        : new Point3D({ ...config, scene: scene as Scene3D })
+        : new Point3D({ ...config, scene: scene as any })
     },
     Line: (config: any) => {
       return scene == scene2D
         ? new Line({ ...config, scene })
-        : new Line3D({ ...config, scene: scene as Scene3D })
+        : new Line3D({ ...config, scene: scene as any })
     },
     NumberPlane: (config: any) => {
       return scene == scene2D
         ? new NumberPlane({ ...config, scene })
-        : new NumberPlane3D({ ...config, scene: scene as Scene3D })
+        : new NumberPlane3D({ ...config, scene: scene as any })
     },
     Text: (config: any) => {
       return scene == scene2D
         ? new Text({ ...config, scene })
-        : new Text3D({ ...config, scene: scene as Scene3D })
+        : new Text3D({ ...config, scene: scene as any })
     },
     Curve: (config: any) => {
       return new Curve({ ...config, scene })
@@ -183,7 +198,7 @@ export default () => {
     ComplexPlane: (config: any) => {
       return scene == scene2D
         ? new ComplexPlane2D({ ...config, scene })
-        : new ComplexPlane3D({ ...config, scene: scene as Scene3D })
+        : new ComplexPlane3D({ ...config, scene: scene as any })
     },
     LaTeX: (config: any) => {
       return new LaTeX({ ...config, scene })
@@ -201,7 +216,7 @@ export default () => {
       return new Vector({ ...config, scene })
     },
     Surface: (config: any) => {
-      return new Surface({ ...config, scene: scene as Scene3D })
+      return new Surface({ ...config, scene: scene as any })
     },
   }
 
@@ -212,7 +227,6 @@ export default () => {
     ...transitions,
     ...auxiliary,
     ...enums,
-    resetScene
   }
 
   Object.defineProperty(window, 'camera', {

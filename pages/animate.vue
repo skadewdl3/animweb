@@ -20,6 +20,9 @@ onMounted(() => {
 </script>
 
 <template>
+  <Head>
+    <Title>Animweb - Start creating your animation now!</Title>
+  </Head>
   <Controls :disabled="disabled" />
   <Interactables :disabled="disabled" />
 </template>
