@@ -1,6 +1,5 @@
 // Core
 import Scene2D from './Scene2D.ts'
-// import Scene3D from './Scene3D.ts'
 import AnimObject2D from './AnimObject2D.ts'
 import AnimObject3D from './AnimObject3D.ts'
 
@@ -16,12 +15,19 @@ import Vector from '@AnimObjects2D/Vector.ts'
 import ComplexPlane2D from '@AnimObjects2D/ComplexPlane2D.ts'
 
 // AnimObjects3D
-import Point3D from '@AnimObjects3D/Point3D.ts'
-import Line3D from '@AnimObjects3D/Line3D.ts'
-import Surface from '@AnimObjects3D/Surface.ts'
-import NumberPlane3D from '@AnimObjects3D/NumberPlane3D.ts'
-import ComplexPlane3D from '@AnimObjects3D/ComplexPlane3D.ts'
-import Text3D from '@AnimObjects3D/Text3D.ts'
+// import Point3D from '@AnimObjects3D/Point3D.ts'
+// import Line3D from '@AnimObjects3D/Line3D.ts'
+// import Surface from '@AnimObjects3D/Surface.ts'
+// import NumberPlane3D from '@AnimObjects3D/NumberPlane3D.ts'
+// import ComplexPlane3D from '@AnimObjects3D/ComplexPlane3D.ts'
+// import Text3D from '@AnimObjects3D/Text3D.ts'
+
+let Point3D: any
+let Line3D: any
+let Surface: any
+let NumberPlane3D: any
+let ComplexPlane3D: any
+let Text3D: any
 
 // Auxiliary
 import Color from '@auxiliary/Color.ts'
@@ -59,15 +65,17 @@ import { prompts } from '@reactives/prompts.ts'
 import FadeIn from '@transitions/FadeIn.ts'
 import FadeOut from '@transitions/FadeOut.ts'
 import Create from '@transitions/Create.ts'
-import Create3D from '@transitions/Create3D.ts'
-import FadeIn3D from '@transitions/FadeIn3D.ts'
-import FadeOut3D from '@transitions/FadeOut3D.ts'
+// import Create3D from '@transitions/Create3D.ts'
+// import FadeIn3D from '@transitions/FadeIn3D.ts'
+// import FadeOut3D from '@transitions/FadeOut3D.ts'
+let Create3D: any
+let FadeIn3D: any
+let FadeOut3D: any
 
 import { createPrompt } from '@mixins/Prompt.ts'
 import { watch } from '@mixins/Watcher.ts'
 
 let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0)
-// let scene3D = new Scene3D(Width.full, Height.full, Colors.gray0)
 let scene3D: any
 
 scene2D.show()
@@ -76,12 +84,31 @@ let scene: Scene = scene2D
 scene = scene2D
 
 const init3DScene = (): Promise<void> => {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     if (scene3D) resolve(scene3D)
-    else import('./Scene3D.ts').then(module => {
-      scene3D = new module.default(Width.full, Height.full, Colors.gray0)
+    else {
+      let scene3DModule = await import('./Scene3D.ts')
+      scene3D = new scene3DModule.default(Width.full, Height.full, Colors.gray0)
+      let point3DModule = await import('@AnimObjects3D/Point3D.ts')
+      Point3D = point3DModule.default
+      let line3DModule = await import('@AnimObjects3D/Line3D.ts')
+      Line3D = line3DModule.default
+      let surfaceModule = await import('@AnimObjects3D/Surface.ts')
+      Surface = surfaceModule.default
+      let numberPlane3DModule = await import('@AnimObjects3D/NumberPlane3D.ts')
+      NumberPlane3D = numberPlane3DModule.default
+      let complexPlane3DModule = await import('@AnimObjects3D/ComplexPlane3D.ts')
+      ComplexPlane3D = complexPlane3DModule.default
+      let text3DModule = await import('@AnimObjects3D/Text3D.ts')
+      Text3D = text3DModule.default
+      let create3DModule = await import('@transitions/Create3D.ts')
+      Create3D = create3DModule.default
+      let fadeIn3DModule = await import('@transitions/FadeIn3D.ts')
+      FadeIn3D = fadeIn3DModule.default
+      let fadeOut3DModule = await import('@transitions/FadeOut3D.ts')
+      FadeOut3D = fadeOut3DModule.default
       resolve(scene3D)
-    })
+    }
   })
 }
 
@@ -95,7 +122,7 @@ const resetScene = (clearDebuggingData = false) => {
   buttons.clear()
   prompts.clear()
   scene2D.resetScene()
-  scene3D.resetScene()
+  scene3D?.resetScene()
 }
 
 export default () => {
@@ -126,7 +153,10 @@ export default () => {
     degToRad,
     radToDeg,
     resetScene,
-    init3DScene
+    init3DScene,
+    scene3DInitialised() {
+      return Boolean(scene3D)
+    },
   }
 
   const enums = {

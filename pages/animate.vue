@@ -1,8 +1,6 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted } from 'vue'
 import { editor } from '@reactives/editor.ts'
-
-const disabled = ref(true)
 
 onMounted(() => {
   editor.create()
@@ -12,7 +10,7 @@ onMounted(() => {
       // @ts-ignore
       if (window.WebAnim) {
         console.log('ready')
-        disabled.value = false
+        editor.disabled = false
       }
     })
   }
@@ -23,8 +21,8 @@ onMounted(() => {
   <Head>
     <Title>Animweb - Start creating your animation now!</Title>
   </Head>
-  <Controls :disabled="disabled" />
-  <Interactables :disabled="disabled" />
+  <Controls :disabled="editor.disabled" />
+  <Interactables :disabled="editor.disabled" />
 </template>
 
 <style lang="stylus">

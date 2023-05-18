@@ -27,6 +27,7 @@ export interface EditorReactive extends UIReactive {
   editor: any
   create: Function
   run: Function
+  disabled: boolean
 }
 
 export interface CodeReactive {

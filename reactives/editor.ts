@@ -12,6 +12,7 @@ declare global {
 
 export const editor: EditorReactive = reactive<EditorReactive>({
   editor: null,
+  disabled: true,
   create() {
     let defaultCode = `var plane = Create(NumberPlane())
 await wait(2000)`
