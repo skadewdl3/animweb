@@ -3,6 +3,9 @@
 </script>
 
 <template>
+  <Head>
+    <Title>Animweb - Create Beautiful Math Animations, Anywhere</Title>
+  </Head>
 work in progress on landing page. Check out the following links:
 
 <ul>
