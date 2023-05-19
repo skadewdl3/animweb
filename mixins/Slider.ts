@@ -40,17 +40,9 @@ export class Slider {
     this.property = this.watcher ? watcher.property : null
     this.title = title || this.property || ''
     this.id = uuid()
-    console.log(value)
-    this.value =
-      typeof value == 'number'
-        ? value > this.max
-          ? this.max
-          : value < this.min
-          ? this.min
-          : value
-        : this.watcher
-        ? this.watcher.value
-        : this.min
+    // @ts-ignore
+    this.value = this.watcher ? this.watcher.value : value || 0
+    console.log(this.value)
   }
 
   inc() {

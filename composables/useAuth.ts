@@ -1,5 +1,10 @@
 import { getAuth } from 'firebase/auth'
-import { signInWithEmailAndPassword as _signInWithEmailAndPassword } from 'firebase/auth'
+import {
+  signInWithEmailAndPassword as _signInWithEmailAndPassword,
+  GoogleAuthProvider,
+  signInWithPopup,
+  createUserWithEmailAndPassword as _createUserWithEmailAndPassword,
+} from 'firebase/auth'
 
 export default () => {
   let user = undefined
@@ -11,7 +16,7 @@ export default () => {
     email: string,
     password: string
   ) => {
-    let user = await _signInWithEmailAndPassword(auth, email, password).catch(
+    user = await _signInWithEmailAndPassword(auth, email, password).catch(
       err => {
         throw err
       }
@@ -20,9 +25,32 @@ export default () => {
     else return undefined
   }
 
-  const signInWithGoogle = () => {}
+  const createUserWithEmailAndPassword = async (
+    email: string,
+    password: string,
+    username: string
+  ) => {
+    user = await _createUserWithEmailAndPassword(auth, email, password).catch(
+      err => {
+        throw err
+      }
+    )
+    if (user) return user
+    else return undefined
+  }
+
+  const signInWithGoogle = async () => {
+    let c = await signInWithPopup(auth, new GoogleAuthProvider())
+    console.log(c)
+  }
 
   const signOut = () => {}
 
-  return { signInWithEmailAndPassword, signInWithGoogle, user, signOut }
+  return {
+    signInWithEmailAndPassword,
+    signInWithGoogle,
+    createUserWithEmailAndPassword,
+    user,
+    signOut,
+  }
 }

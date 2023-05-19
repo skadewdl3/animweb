@@ -3,6 +3,7 @@ const auth = useAuth()
 
 const loginWithGoogle = async () => {
   let s  = await auth.signInWithEmailAndPassword('sohamk10@gmail.com', 'bruh1234')
+  // let s  = await auth.signInWithGoogle()
   console.log(s)
 }
 </script>

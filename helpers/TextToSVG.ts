@@ -59,10 +59,12 @@ export const textToSVGPolygons = (text: string, config: any = {}) => {
   })
 
   let svg = [
-    `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  width="${dimensions.width}"  height="${dimensions.height}" >`,
+    `<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink"  width="${dimensions.width}"  height="${dimensions.height}" ><path d="`,
   ]
+
+  let paths: string[] = []
+
   polygons.forEach(function (loops: any) {
-    svg.push('<path d="')
     loops.forEach(function (loop: any) {
       let start = loop[0]
       svg.push('M ' + start[0] + ' ' + start[1])
@@ -72,10 +74,9 @@ export const textToSVGPolygons = (text: string, config: any = {}) => {
       }
       svg.push('L ' + start[0] + ' ' + start[1])
     })
-    svg.push(
-      '" stroke-width="1" stroke="transparent" fill="transparent"></path>'
-    )
   })
+  svg.push(paths.join(''))
+  svg.push('" stroke-width="1" stroke="transparent" fill="transparent"></path>')
   svg.push('</svg>')
   return svg.join('')
 }
