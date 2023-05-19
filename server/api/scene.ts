@@ -1,5 +1,3 @@
-export default defineEventHandler(async event => {
-  const sceneSetup = await import('./../../core/main')
-  console.log(sceneSetup)
-  return sceneSetup.default
+export default defineEventHandler(event => {
+  return { bruh: 'yes' }
 })

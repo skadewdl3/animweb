@@ -5,9 +5,19 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 export default defineNuxtConfig({
   runtimeConfig: {
     firebaseAdminCredentials: {
-      projectId: process.env.FIREBASE_PROJECT_ID,
-      privateKey: process.env.FIREBASE_PRIVATE_KEY,
-      clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+      type: process.env.FIREBASE_TYPE,
+      service_account: process.env.FIREBASE_PROJECT_ID,
+      project_id: process.env.FIREBASE_PRIVATE_KEY,
+      private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID,
+      private_key: process.env.FIREBASE_PRIVATE_KEY,
+      client_email: process.env.FIREBASE_CLIENT_EMAIL,
+      client_id: process.env.FIREBASE_CLIENT_ID,
+      auth_uri: process.env.FIREBASE_AUTH_URI,
+      token_uri: process.env.FIREBASE_TOKEN_URI,
+      auth_provider_x509_cert_url:
+        process.env.FIREBASE_AUTH_PROVIDER_X509_CERT_URL,
+      client_x509_cert_url: process.env.FIREBASE_CLIENT_X509_CERT_URL,
+      universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN,
     },
     public: {
       firebaseCredentials: {
@@ -40,6 +50,7 @@ export default defineNuxtConfig({
     '@workers': path.resolve(__dirname, './workers'),
     '@styles': path.resolve(__dirname, './styles'),
     '@ui': path.resolve(__dirname, './ui'),
+    '@server': path.resolve(__dirname, './server'),
   },
   routeRules: {
     '/': { ssr: true },
@@ -54,6 +65,10 @@ export default defineNuxtConfig({
         {
           find: '@',
           replacement: path.resolve(__dirname, '.'),
+        },
+        {
+          find: '@server',
+          replacement: path.resolve(__dirname, 'server'),
         },
         {
           find: '@layouts',

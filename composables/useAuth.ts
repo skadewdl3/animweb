@@ -12,44 +12,64 @@ export default () => {
   const app = useApp()
   const auth = getAuth(app)
 
-  const signInWithEmailAndPassword = async (
-    email: string,
-    password: string
-  ) => {
+  const loginWithEmailAndPassword = async (email: string, password: string) => {
     user = await _signInWithEmailAndPassword(auth, email, password).catch(
       err => {
         throw err
       }
     )
-    if (user) return user
-    else return undefined
+    if (user) {
+    } else return undefined
   }
 
   const createUserWithEmailAndPassword = async (
     email: string,
-    password: string,
-    username: string
+    password: string
   ) => {
-    user = await _createUserWithEmailAndPassword(auth, email, password).catch(
+    let temp = (user = await _createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    ).catch(err => {
+      throw err
+    }))
+    if (temp) {
+      user = temp
+      return user
+    } else return undefined
+  }
+
+  const createUserWithGoogle = async () => {
+    let temp = await signInWithPopup(auth, new GoogleAuthProvider()).catch(
       err => {
         throw err
       }
     )
-    if (user) return user
-    else return undefined
+    if (temp) {
+      user = temp
+      return user
+    } else return undefined
   }
 
-  const signInWithGoogle = async () => {
-    let c = await signInWithPopup(auth, new GoogleAuthProvider())
-    console.log(c)
+  const loginWithGoogle = async () => {
+    let temp = await signInWithPopup(auth, new GoogleAuthProvider()).catch(
+      err => {
+        throw err
+      }
+    )
+    if (temp) {
+      user = temp
+      return user
+    } else return undefined
   }
 
   const signOut = () => {}
 
   return {
-    signInWithEmailAndPassword,
-    signInWithGoogle,
+    loginWithEmailAndPassword,
+    loginWithGoogle,
     createUserWithEmailAndPassword,
+    createUserWithGoogle,
     user,
     signOut,
   }
