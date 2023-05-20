@@ -116,6 +116,13 @@ const init3DScene = (): Promise<void> => {
   })
 }
 
+const destroyScenes = () => {
+  scene2D.destroy()
+  if (scene3D) {
+    scene3D.destroy()
+  }
+}
+
 const resetScene = (clearDebuggingData = false) => {
   if (!window) return
 
@@ -161,6 +168,7 @@ export default () => {
     scene3DInitialised() {
       return Boolean(scene3D)
     },
+    destroyScenes,
   }
 
   const enums = {

@@ -4,6 +4,7 @@ import {
   GoogleAuthProvider,
   signInWithPopup,
   createUserWithEmailAndPassword as _createUserWithEmailAndPassword,
+  signOut as _signOut,
 } from 'firebase/auth'
 
 export default () => {
@@ -13,12 +14,16 @@ export default () => {
   const auth = getAuth(app)
 
   const loginWithEmailAndPassword = async (email: string, password: string) => {
-    user = await _signInWithEmailAndPassword(auth, email, password).catch(
-      err => {
-        throw err
-      }
-    )
-    if (user) {
+    let { user: temp } = await _signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    ).catch(err => {
+      throw err
+    })
+    if (temp) {
+      user = temp
+      return user
     } else return undefined
   }
 
@@ -26,7 +31,7 @@ export default () => {
     email: string,
     password: string
   ) => {
-    let temp = (user = await _createUserWithEmailAndPassword(
+    let { user: temp } = (user = await _createUserWithEmailAndPassword(
       auth,
       email,
       password
@@ -40,11 +45,12 @@ export default () => {
   }
 
   const createUserWithGoogle = async () => {
-    let temp = await signInWithPopup(auth, new GoogleAuthProvider()).catch(
-      err => {
-        throw err
-      }
-    )
+    let { user: temp } = await signInWithPopup(
+      auth,
+      new GoogleAuthProvider()
+    ).catch(err => {
+      throw err
+    })
     if (temp) {
       user = temp
       return user
@@ -52,18 +58,26 @@ export default () => {
   }
 
   const loginWithGoogle = async () => {
-    let temp = await signInWithPopup(auth, new GoogleAuthProvider()).catch(
-      err => {
-        throw err
-      }
-    )
+    let { user: temp } = await signInWithPopup(
+      auth,
+      new GoogleAuthProvider()
+    ).catch(err => {
+      throw err
+    })
     if (temp) {
       user = temp
       return user
     } else return undefined
   }
 
-  const signOut = () => {}
+  const logout = async () => {
+    let temp = await _signOut(auth).catch(err => {
+      throw err
+    })
+
+    user = temp
+    return user
+  }
 
   return {
     loginWithEmailAndPassword,
@@ -71,6 +85,6 @@ export default () => {
     createUserWithEmailAndPassword,
     createUserWithGoogle,
     user,
-    signOut,
+    logout,
   }
 }

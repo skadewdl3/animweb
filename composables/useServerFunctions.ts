@@ -1,10 +1,10 @@
 export default () => {
-  const createUser = async (username: string, email: string) => {
+  const createUser = async (username: string, user: any) => {
     const { data } = await useFetch('/api/createUser', {
       method: 'POST',
       body: {
         username,
-        email,
+        user,
       },
     })
     return data

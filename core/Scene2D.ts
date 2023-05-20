@@ -33,6 +33,8 @@ export default class Scene2D {
   mode: RenderingModes = RenderingModes._2D
   id: string = uuid()
   hidden: boolean = false
+
+  shouldDestroy: Boolean = false
   fonts: {
     [fontName: string]: any
   } = {}
@@ -65,9 +67,9 @@ export default class Scene2D {
   updateSceneProps(obj: AnimObject) {
     if (obj.iterables.length != 0) {
       obj.scene = this
-      obj.iterables.forEach((name) => {
+      obj.iterables.forEach(name => {
         // @ts-ignore
-        obj[name].forEach((o) => this.updateSceneProps(o))
+        obj[name].forEach(o => this.updateSceneProps(o))
       })
     } else {
       obj.scene = this
@@ -110,15 +112,20 @@ export default class Scene2D {
     this.stopLoop()
   }
 
+  destroy() {
+    this.shouldDestroy = true
+  }
+
   /*
   draws each AnimObject onto the canvas
   the actual draw code is included inside the AnimObject.draw method
   Scene.draw just runs AnimObject.draw for every AnimObject in Scene.objects
   */
   draw(p: any) {
+    if (this.shouldDestroy) p.remove()
     p.clear()
     p.background(this.backgroundColor.rgba)
-    this.objects.forEach((obj) => obj.draw(p))
+    this.objects.forEach(obj => obj.draw(p))
   }
 
   async hide() {
@@ -161,6 +168,6 @@ export default class Scene2D {
   this is done by remove the AnimObject from Scene.objects
   */
   remove(obj: AnimObject) {
-    this.objects = this.objects.filter((o) => o.id != obj.id)
+    this.objects = this.objects.filter(o => o.id != obj.id)
   }
 }

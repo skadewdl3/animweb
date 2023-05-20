@@ -3,8 +3,7 @@ import { getFirestore } from 'firebase-admin/firestore'
 
 export default defineEventHandler(async event => {
   let app = useServerApp()
-  console.log(app)
-  return {
-    hi: 'mom',
-  }
+  let body = await readBody(event)
+  // create firestore entry
+  return 'hi'
 })

@@ -32,7 +32,7 @@ export default class Scene3D {
   scene: ThreeScene
   camera: Camera
   renderer: ThreeWebGLRenderer
-
+  requestAnimationFrameId: any = ''
   transitionQueue: Array<TransitionQueueItem> = []
   mode: RenderingModes = RenderingModes._3D
   id: string = uuid()
@@ -77,9 +77,9 @@ export default class Scene3D {
   updateSceneProps(obj: AnimObject3D) {
     if (obj.iterables.length != 0) {
       obj.scene = this
-      obj.iterables.forEach((name) => {
+      obj.iterables.forEach(name => {
         // @ts-ignore
-        obj[name].forEach((o) => this.updateSceneProps(o))
+        obj[name].forEach(o => this.updateSceneProps(o))
       })
     } else {
       obj.scene = this
@@ -143,7 +143,7 @@ export default class Scene3D {
 
   angle: number = 0
   draw() {
-    requestAnimationFrame(this.draw.bind(this))
+    this.requestAnimationFrameId = requestAnimationFrame(this.draw.bind(this))
 
     this.objects.forEach((o: AnimObject3D) => o.renderMeshes())
     this.objects.forEach((o: AnimObject3D) => o.update())
@@ -155,6 +155,11 @@ export default class Scene3D {
     this.camera.update()
 
     this.renderer.render(this.scene, this.camera.camera)
+  }
+
+  destroy() {
+    cancelAnimationFrame(this.requestAnimationFrameId)
+    this.renderer.domElement.remove()
   }
 
   async hide() {
@@ -201,6 +206,6 @@ export default class Scene3D {
   this is done by remove the AnimObject3D from Scene.objects
   */
   remove(obj: AnimObject3D) {
-    this.objects = this.objects.filter((o) => o.id != obj.id)
+    this.objects = this.objects.filter(o => o.id != obj.id)
   }
 }
