@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { v4 as uuid } from 'uuid';
+// @ts-ignore
+import {GoogleOutlined} from '@ant-design/icons-vue'
 
 const email = ref('')
 const password = ref('')
@@ -60,20 +62,26 @@ const logout = async () => {
   <div class="auth-ui-wrapper">
     <div class="auth-ui">
       <div class="register-ui" :class="{'go-left': mode == 'login'}">
+        <div class="login-ui-title"><span>Register</span></div>
         <input class="auth-ui-input" v-model="username" type="text" placeholder="username">
         <input class="auth-ui-input" v-model="email" type="text" placeholder="email">
         <input class="auth-ui-input" v-model="password" type="password" placeholder="password">
-        <button class="register-btn register-email" @click="registerWithEmail">Register</button>
+        <button class="auth-ui-btn register-btn register-email" @click="registerWithEmail">Register</button>
         <span>OR</span>
-        <button class="register-btn register-google" @click="registerWithGoogle">Register with google</button>
+        <button class="auth-ui-btn auth-ui-btn-google register-btn register-google" @click="registerWithGoogle">Register with google</button>
         <span @click="mode = 'login'">Already have an account ? Login</span>
       </div>
       <div class="login-ui" :class="{'go-right': mode == 'register'}">
+        <div class="login-ui-title"><span>Login</span></div>
         <input class="auth-ui-input" type="text" placeholder="username or email">
         <input class="auth-ui-input" v-model="password" type="password" placeholder="password">
-        <button class="login-btn login-email" @click="loginWithEmail">Login</button>
+        <button class="auth-ui-btn login-btn login-email" @click="loginWithEmail">Login</button>
         <span>OR</span>
-        <button class="login-btn login-google" @click="loginWithGoogle">Login with google</button>
+        <button class="auth-ui-btn auth-ui-btn-google login-btn login-google" @click="loginWithGoogle">
+        <span class="auth-ui-btn-icon">
+          <GoogleOutlined />
+        </span>
+          <span>Login with google</span></button>
         <span @click="mode = 'register'">Don't have an account ? Register</span>
       </div>
       <!-- <button class="logout-btn" @click="logout">Logout</button> -->
@@ -92,11 +100,9 @@ const logout = async () => {
 
 .auth-ui
   position relative
-  width 100%
-  height 20rem
+  height 40rem
   overflow hidden
   &-wrapper
-    // background red
     width 40rem
     position absolute
     top 50%
@@ -108,9 +114,39 @@ const logout = async () => {
     border solid 0.1rem #ccc
     display block
     border-radius 0.5rem
-    font-size 1.6rem
+    font-size 1.5rem
     padding 0.5rem 1rem
     width 100%
+    margin-bottom 0.5rem
+    transition all .2s ease-in-out
+
+    &:hover
+    &:active
+    &:focus
+      border solid 0.1rem primary_color
+
+  &-btn
+    padding 0.5rem 1rem
+    display flex
+    align-items center
+    justify-content space-between
+    font-size 1.6rem
+    border-radius 0.5rem
+    background primary_color
+    border solid 0.1rem primary_color
+    color #fff
+    cursor pointer
+    transition all .2s ease-in-out
+    white-space nowrap
+    &:hover
+      color primary_color
+      background #fff
+    &:active
+      transition transform .1s ease-in-out
+      transform translateY(0.2rem)
+    &-icon
+      margin-right 0.5rem
+      
 
 .register-ui
 .login-ui
@@ -123,6 +159,12 @@ const logout = async () => {
   align-items center
   justify-content center
   flex-direction column  
+
+  &-title
+    text-align left
+    width 100%
+    font-size 4rem
+    margin-bottom 1rem
   
 
 .go-right
