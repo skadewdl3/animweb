@@ -1,6 +1,8 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import path from 'path'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
+// @ts-ignore
+import topLevelAwait from 'vite-plugin-top-level-await'
 
 export default defineNuxtConfig({
   runtimeConfig: {
@@ -58,7 +60,9 @@ export default defineNuxtConfig({
     '/animate': { ssr: true },
   },
   vite: {
-    plugins: [nodePolyfills()],
+    plugins: [nodePolyfills({
+      protocolImports: true
+    }), topLevelAwait()],
     resolve: {
       extensions: ['.js', '.ts', '.css'],
       alias: [

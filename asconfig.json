@@ -7,7 +7,7 @@
       "debug": true
     },
     "release": {
-      "outFile": "wasm/release.wasm",
+      "outFile": "public/release.wasm",
       "textFile": "wasm/release.wat",
       "sourceMap": true,
       "optimizeLevel": 3,

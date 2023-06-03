@@ -22,16 +22,12 @@ import ComplexPlane2D from '@AnimObjects2D/ComplexPlane2D.ts'
 // import ComplexPlane3D from '@AnimObjects3D/ComplexPlane3D.ts'
 // import Text3D from '@AnimObjects3D/Text3D.ts'
 
-import { add } from '@/wasm/release.js'
-
 let Point3D: any
 let Line3D: any
 let Surface: any
 let NumberPlane3D: any
 let ComplexPlane3D: any
 let Text3D: any
-
-console.log('result: ', add(1, 2))
 
 // Auxiliary
 import Color from '@auxiliary/Color.ts'
@@ -70,6 +66,7 @@ import FadeIn from '@transitions/FadeIn.ts'
 import FadeOut from '@transitions/FadeOut.ts'
 import Create from '@transitions/Create.ts'
 import Morph from '@transitions/Morph.ts'
+import { add } from '@helpers/loadWASM.ts'
 // import Create3D from '@transitions/Create3D.ts'
 // import FadeIn3D from '@transitions/FadeIn3D.ts'
 // import FadeOut3D from '@transitions/FadeOut3D.ts'
@@ -77,6 +74,8 @@ let Create3D: any
 let FadeIn3D: any
 let FadeOut3D: any
 let Morph3D: any
+
+console.log(add(2, 3))
 
 import { createPrompt } from '@mixins/Prompt.ts'
 import { watch } from '@mixins/Watcher.ts'
