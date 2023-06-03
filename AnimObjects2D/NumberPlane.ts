@@ -297,25 +297,18 @@ export default class NumberPlane extends AnimObject {
   }
 
   point(config: PointPlotProps): Point {
-    let transition = Transition(
-      config.transition ? config.transition : Transitions.None
-    )
-    let transitionOptions = config.transitionOptions
-      ? config.transitionOptions
-      : {}
-    let point = transition(
-      new Point({
-        color: this.color.copy(),
-        ...config,
-        parentData: {
-          stepX: this.stepX,
-          stepY: this.stepY,
-          origin: this.origin,
-        },
-        scene: this.scene,
-      }),
-      transitionOptions
-    )
+    
+    let point = new Point({
+      color: this.color.copy(),
+      ...config,
+      parentData: {
+        stepX: this.stepX,
+        stepY: this.stepY,
+        origin: this.origin,
+      },
+      scene: this.scene,
+    })
+    
     this.points.push(point as Point)
     return point as Point
   }
