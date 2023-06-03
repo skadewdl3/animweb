@@ -2,14 +2,20 @@
   "name": "nuxt-app",
   "private": true,
   "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
+    "build": "npm run asbuild && nuxt build",
+    "dev": "npm run asbuild && nuxt dev",
+    "generate": "npm run asbuild && nuxt generate",
     "preview": "nuxt preview",
-    "postinstall": "nuxt prepare"
+    "postinstall": "nuxt prepare",
+    "test": "node tests",
+    "asbuild:debug": "asc assembly/index.ts --target debug",
+    "asbuild:release": "asc assembly/index.ts --target release",
+    "asbuild": "npm run asbuild:debug && npm run asbuild:release",
+    "start": "npx serve ."
   },
   "devDependencies": {
     "@types/node": "^18",
+    "assemblyscript": "^0.27.5",
     "nuxt": "^3.5.0"
   },
   "dependencies": {

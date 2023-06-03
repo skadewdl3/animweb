@@ -22,12 +22,16 @@ import ComplexPlane2D from '@AnimObjects2D/ComplexPlane2D.ts'
 // import ComplexPlane3D from '@AnimObjects3D/ComplexPlane3D.ts'
 // import Text3D from '@AnimObjects3D/Text3D.ts'
 
+import { add } from '@/wasm/release.js'
+
 let Point3D: any
 let Line3D: any
 let Surface: any
 let NumberPlane3D: any
 let ComplexPlane3D: any
 let Text3D: any
+
+console.log('result: ', add(1, 2))
 
 // Auxiliary
 import Color from '@auxiliary/Color.ts'
