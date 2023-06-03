@@ -21,12 +21,8 @@ export class Watcher {
   }
 
   set value(val: any) {
-    if (!this.independent) {
-      this.target[this.property as string] = val
-    } else {
-      this.tempValue = val
-      this.executeListeners()
-    }
+    this.tempValue = val
+    this.executeListeners()
   }
 
   constructor(target: any, property?: Watchables) {
@@ -44,6 +40,7 @@ export class Watcher {
           return watcher.value
         },
         set(value) {
+          console.log('setting')
           watcher.value = value
           watcher.executeListeners()
         },

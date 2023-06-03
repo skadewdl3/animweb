@@ -96,24 +96,18 @@ export default class Curve extends AnimObject2D {
   addAnchorPoint(config: CurveAnchorPointProps): Point {
     let x = config.x
     let y = evaluate(this.y, { x, y: 0 })
-    let transition = Transition(
-      config.transition ? config.transition : Transitions.None
-    )
-    let point = transition(
-      new Point({
-        ...config,
-        x,
-        y: -y,
-        definition: this.y,
-        parentData: {
-          origin: this.parentData.origin,
-          stepX: this.parentData.stepX,
-          stepY: this.parentData.stepY,
-        },
-        scene: this.scene,
-      }),
-      config.transitionOptions ? config.transitionOptions : {}
-    )
+    let point = new Point({
+      ...config,
+      x,
+      y: -y,
+      definition: this.y,
+      parentData: {
+        origin: this.parentData.origin,
+        stepX: this.parentData.stepX,
+        stepY: this.parentData.stepY,
+      },
+      scene: this.scene,
+    })
     applyMixins(point, [AnchorPoint])
     this.anchorPoints.push(point as Point)
     console.log(this.anchorPoints)
@@ -130,6 +124,7 @@ export default class Curve extends AnimObject2D {
     let transition = Transition(
       config.transition ? config.transition : Transitions.None
     )
+    console.log(derivative(rhs, 'x').evaluate({ x }))
     let line = transition(
       new Line({
         ...config,

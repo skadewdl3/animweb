@@ -65,12 +65,14 @@ import { prompts } from '@reactives/prompts.ts'
 import FadeIn from '@transitions/FadeIn.ts'
 import FadeOut from '@transitions/FadeOut.ts'
 import Create from '@transitions/Create.ts'
+import Morph from '@transitions/Morph.ts'
 // import Create3D from '@transitions/Create3D.ts'
 // import FadeIn3D from '@transitions/FadeIn3D.ts'
 // import FadeOut3D from '@transitions/FadeOut3D.ts'
 let Create3D: any
 let FadeIn3D: any
 let FadeOut3D: any
+let Morph3D: any
 
 import { createPrompt } from '@mixins/Prompt.ts'
 import { watch } from '@mixins/Watcher.ts'
@@ -97,7 +99,9 @@ const init3DScene = (): Promise<void> => {
       Surface = surfaceModule.default
       let numberPlane3DModule = await import('@AnimObjects3D/NumberPlane3D.ts')
       NumberPlane3D = numberPlane3DModule.default
-      let complexPlane3DModule = await import('@AnimObjects3D/ComplexPlane3D.ts')
+      let complexPlane3DModule = await import(
+        '@AnimObjects3D/ComplexPlane3D.ts'
+      )
       ComplexPlane3D = complexPlane3DModule.default
       let text3DModule = await import('@AnimObjects3D/Text3D.ts')
       Text3D = text3DModule.default
@@ -110,6 +114,13 @@ const init3DScene = (): Promise<void> => {
       resolve(scene3D)
     }
   })
+}
+
+const destroyScenes = () => {
+  scene2D.destroy()
+  if (scene3D) {
+    scene3D.destroy()
+  }
 }
 
 const resetScene = (clearDebuggingData = false) => {
@@ -157,6 +168,7 @@ export default () => {
     scene3DInitialised() {
       return Boolean(scene3D)
     },
+    destroyScenes,
   }
 
   const enums = {
@@ -195,6 +207,11 @@ export default () => {
       return scene == scene2D
         ? (scene as Scene2D).add(FadeOut(object as AnimObject2D, config))
         : (scene as any).add(FadeOut3D(object as AnimObject3D, config))
+    },
+    Morph: (object1: AnimObject, object2: AnimObject, config: any) => {
+      return scene == scene2D
+        ? Morph(object1 as AnimObject2D, object2 as AnimObject2D, config)
+        : undefined
     },
   }
 

@@ -14,6 +14,7 @@ export class Prompt {
   inputListeners: Array<{ id: string; listener: Function }> = []
   private watcher?: any
   description: string = ''
+  placeholder: string = ''
   title: string
   x: number
   y: number

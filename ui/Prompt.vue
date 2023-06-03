@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { Prompt } from '@mixins/Prompt.ts';
 import { onMounted } from 'vue';
+// @ts-ignore
+import { SendOutlined as SubmitIcon } from '@ant-design/icons-vue'
 
 
 const props = defineProps({
   prompt: {
-    type: Object,
+    type: Prompt,
     required: true
   }
 })
@@ -22,7 +24,7 @@ onMounted(() => {
     :style="{ top: `${prompt.y}px`, left: `${prompt.x}px` }">
     <div class="user-prompt-title-container">
       <div class="user-prompt-title">{{ prompt.title }}</div>
-      <button class="user-button user-prompt-submit-btn"><icon-submit /></button>
+      <button class="user-button user-prompt-submit-btn"><SubmitIcon /></button>
     </div>
     <div class="user-prompt-description">{{ prompt.description }}</div>
     <input class="user-prompt-input" type="text" :placeholder="prompt.placeholder || ''" :defaultValue="prompt.value || ''">

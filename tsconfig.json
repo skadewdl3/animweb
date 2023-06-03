@@ -18,6 +18,7 @@
       "@ui/*": ["./ui/*"],
       "@workers/*": ["./workers/*"],
       "@enums/*": ["./enums/*"],
+      "@server/*": ["./server/*"],
       "@mixins/*": ["./mixins/*"]
     },
     "allowImportingTsExtensions": true

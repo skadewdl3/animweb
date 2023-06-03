@@ -20,7 +20,7 @@ onMounted(() => {
     <div class="slider-input-container">
       <input type="range" class="slider-bar" :min="slider.min" :max="slider.max" :step="slider.step"
         :value="slider.value">
-      <input type="text" class="slider-textbox">
+      <input type="text" class="slider-textbox" :defaultValue="slider.value">
     </div>
     <div class="slider-title-container">
       <span class="slider-title">{{ slider.title }}</span>
