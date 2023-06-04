@@ -2,7 +2,7 @@
   "name": "nuxt-app",
   "private": true,
   "scripts": {
-    "build": "nuxt build",
+    "build": "wasm: copy && nuxt build",
     "dev": "concurrently \"npm run watch:wasm\" \"nuxt dev\"",
     "generate": "npm run asbuild && nuxt generate",
     "preview": "nuxt preview",
@@ -10,7 +10,7 @@
     "test": "node tests",
     "start": "npx serve .",
     "watch:wasm": "nodemon --watch wasm --ext rs --exec \"npm run wasm\"",
-    "wasm": "wasm-pack build wasm --target web && npm run wasm:copy",
+    "wasm": "wasm-pack build wasm --target web",
     "wasm:copy": "copy-files-from-to"
   },
   "devDependencies": {
@@ -23,7 +23,7 @@
   "copyFiles": [
     {
       "from": "./wasm/pkg/wasm_bg.wasm",
-      "to": "./public/wasm_bg.wasm"
+      "to": "./.nuxt/dist/client/_nuxt/wasm_bg.wasm"
     }
   ],
   "copyFilesSettings": {
