@@ -2,7 +2,7 @@
   "name": "nuxt-app",
   "private": true,
   "scripts": {
-    "build": "echo \"Building wasm code\" && npm run wasm && \"Building nuxt code\" && nuxt build",
+    "build": "npm run wasm && nuxt build",
     "dev": "concurrently \"npm run watch:wasm\" \"nuxt dev\"",
     "generate": "npm run asbuild && nuxt generate",
     "preview": "nuxt preview",
