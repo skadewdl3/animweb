@@ -2,13 +2,12 @@
   "name": "nuxt-app",
   "private": true,
   "scripts": {
-    "build": "nuxt build",
+    "build": "npm run wasm && nuxt build",
     "dev": "concurrently \"npm run watch:wasm\" \"nuxt dev\"",
     "generate": "npm run asbuild && nuxt generate",
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare",
     "test": "node tests",
-    "asbuild": "npm run asbuild:debug && npm run asbuild:release",
     "start": "npx serve .",
     "watch:wasm": "nodemon --watch wasm --ext rs --exec \"npm run wasm\"",
     "wasm": "cd wasm && wasm-pack build --target web && cd .."
