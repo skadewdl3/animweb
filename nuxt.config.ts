@@ -4,8 +4,6 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 // @ts-ignore
 import topLevelAwait from 'vite-plugin-top-level-await'
 // @ts-ignore
-import wasmPackPlugin from 'vite-plugin-wasm-pack'
-// @ts-ignore
 
 export default defineNuxtConfig({
   runtimeConfig: {
@@ -68,7 +66,6 @@ export default defineNuxtConfig({
         protocolImports: true,
       }),
       topLevelAwait(),
-      wasmPackPlugin('./wasm'),
     ],
     resolve: {
       extensions: ['.js', '.ts', '.css'],
