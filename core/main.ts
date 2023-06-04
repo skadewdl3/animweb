@@ -75,7 +75,8 @@ let FadeIn3D: any
 let FadeOut3D: any
 let Morph3D: any
 
-console.log(useWASM())
+let w = await useWASM()
+console.log(w.greet())
 import { watch } from '@mixins/Watcher.ts'
 
 let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0)

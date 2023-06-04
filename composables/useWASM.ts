@@ -1,12 +1,8 @@
 // @ts-ignore
 import init, { greet } from 'wasm'
 
-interface WASMExports {
-  greet: Function
-}
-
-export default () => {
-  init()
+export default async () => {
+  await init()
   return {
     greet,
   }
