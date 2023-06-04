@@ -15,19 +15,11 @@ extern {
     fn parseInt(s: f32) -> i32;
 }
 
-
-#[wasm_bindgen]
-pub fn greet() {
-    alert("Hello, wasm!");
-}
-
-
-
-#[wasm_bindgen]
-pub fn himom(string: &str) {
-    use web_sys::console;
-    console::log_1(&(format!("heheboi {}", string)).into());
-}
+// #[wasm_bindgen]
+// pub fn himom(string: &str) {
+//     use web_sys::console;
+//     console::log_1(&(format!("heheboi {}", string)).into());
+// }
 
 #[wasm_bindgen]
 pub fn add(a: i32, b: i32) -> i32 {
