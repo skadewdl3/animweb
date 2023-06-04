@@ -70,12 +70,6 @@ export default defineNuxtConfig({
       }),
       topLevelAwait(),
       wasmPlugin('./wasm'),
-      viteStaticCopy({
-        targets: [{
-          src: 'wasm/pkg/wasm_bg.wasm',
-          dest: 'public'
-        }],
-      })
     ],
     resolve: {
       extensions: ['.js', '.ts', '.css'],

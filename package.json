@@ -10,13 +10,24 @@
     "test": "node tests",
     "start": "npx serve .",
     "watch:wasm": "nodemon --watch wasm --ext rs --exec \"npm run wasm\"",
-    "wasm": "wasm-pack build wasm --target web --out-dir ../public"
+    "wasm": "wasm-pack build wasm --target web && npm run wasm:copy",
+    "wasm:copy": "copy-files-from-to"
   },
   "devDependencies": {
     "@types/node": "^18",
     "concurrently": "^8.1.0",
+    "copy-files-from-to": "^3.9.0",
     "nodemon": "^2.0.22",
     "nuxt": "^3.5.0"
+  },
+  "copyFiles": [
+    {
+      "from": "./wasm/pkg/wasm_bg.wasm",
+      "to": "./public/wasm_bg.wasm"
+    }
+  ],
+  "copyFilesSettings": {
+    "whenFileExists": "overwrite"
   },
   "dependencies": {
     "@ant-design/icons-vue": "^6.1.0",
