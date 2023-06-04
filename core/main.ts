@@ -77,6 +77,7 @@ let Morph3D: any
 
 let w = await useWASM()
 console.log(w.greet())
+w.himom('bruhhhh')
 import { watch } from '@mixins/Watcher.ts'
 
 let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0)

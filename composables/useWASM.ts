@@ -1,9 +1,12 @@
 // @ts-ignore
-import init, { greet } from 'wasm'
+import init, { greet, himom, add, sub } from './../wasm/pkg/wasm.js'
 
 export default async () => {
-  await init(await fetch('wasm_bg.wasm'))
+  await init('@/public/wasm_bg.wasm')
   return {
     greet,
+    himom,
+    add,
+    sub,
   }
 }
