@@ -3,6 +3,8 @@ import path from 'path'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
 // @ts-ignore
 import topLevelAwait from 'vite-plugin-top-level-await'
+// @ts-ignore
+import wasmPlugin from 'vite-plugin-wasm-pack'
 
 export default defineNuxtConfig({
   runtimeConfig: {
@@ -60,9 +62,13 @@ export default defineNuxtConfig({
     '/animate': { ssr: true },
   },
   vite: {
-    plugins: [nodePolyfills({
-      protocolImports: true
-    }), topLevelAwait()],
+    plugins: [
+      nodePolyfills({
+        protocolImports: true,
+      }),
+      topLevelAwait(),
+      wasmPlugin('./wasm'),
+    ],
     resolve: {
       extensions: ['.js', '.ts', '.css'],
       alias: [

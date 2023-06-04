@@ -52,6 +52,7 @@ import { AnimObject, Scene } from '@interfaces/core.ts'
 // Mixins
 import { createButton } from '@mixins/Button.ts'
 import { createSlider } from '@mixins/Slider.ts'
+import { createPrompt } from '@mixins/Prompt.ts'
 
 // Reactives
 import logger from '@reactives/logger.ts'
@@ -66,18 +67,15 @@ import FadeIn from '@transitions/FadeIn.ts'
 import FadeOut from '@transitions/FadeOut.ts'
 import Create from '@transitions/Create.ts'
 import Morph from '@transitions/Morph.ts'
-import { add } from '@helpers/loadWASM.ts'
-// import Create3D from '@transitions/Create3D.ts'
-// import FadeIn3D from '@transitions/FadeIn3D.ts'
-// import FadeOut3D from '@transitions/FadeOut3D.ts'
+
+// @ts-ignore
+
 let Create3D: any
 let FadeIn3D: any
 let FadeOut3D: any
 let Morph3D: any
 
-console.log(add(2, 3))
-
-import { createPrompt } from '@mixins/Prompt.ts'
+console.log(useWASM())
 import { watch } from '@mixins/Watcher.ts'
 
 let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0)
