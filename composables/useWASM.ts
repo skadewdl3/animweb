@@ -1,5 +1,5 @@
 // @ts-ignore
-import '@/wasm/pkg/wasm_bg.wasm'
+import '@/wasm/pkg/wasm_bg.wasm?init'
 import init, { greet } from 'wasm'
 
 
