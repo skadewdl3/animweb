@@ -5,6 +5,8 @@ import { nodePolyfills } from 'vite-plugin-node-polyfills'
 import topLevelAwait from 'vite-plugin-top-level-await'
 // @ts-ignore
 import wasmPlugin from 'vite-plugin-wasm-pack'
+// @ts-ignore
+import { viteStaticCopy } from 'vite-plugin-static-copy'
 
 export default defineNuxtConfig({
   runtimeConfig: {
@@ -68,6 +70,12 @@ export default defineNuxtConfig({
       }),
       topLevelAwait(),
       wasmPlugin('./wasm'),
+      viteStaticCopy({
+        targets: [{
+          src: 'wasm/pkg/wasm_bg.wasm',
+          dest: 'public'
+        }],
+      })
     ],
     resolve: {
       extensions: ['.js', '.ts', '.css'],
