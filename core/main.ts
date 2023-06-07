@@ -75,8 +75,10 @@ let FadeIn3D: any
 let FadeOut3D: any
 let Morph3D: any
 
-console.log((await useWASM()).add(1, 2))
+
+console.log((await useWASM()).test('sin(x)', 0, 100))
 import { watch } from '@mixins/Watcher.ts'
+import { parse } from 'mathjs'
 
 let scene2D = new Scene2D(Width.full, Height.full, Colors.gray0)
 let scene3D: any
