@@ -67,7 +67,9 @@ export default class Vector extends AnimObject {
     return quadrant
   }
 
-  transform(ltMatrix: Matrix, { duration }: LinearTransformProps) {
+  transform(ltMatrix: Matrix, config: LinearTransformProps = { duration: 1 }) {
+    let { duration } = config
+    duration *= 2
     let headMatrix = Matrix.fromColumns([this.head.x, this.head.y])
     let newHeadMatrix = ltMatrix.multiply(headMatrix).toArray()
 

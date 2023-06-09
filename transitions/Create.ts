@@ -144,11 +144,12 @@ const createLineTransitionNew = (
         line.color.setAlpha(1)
       },
       onProgress({ end }: TransitionProgressProps) {
-        // console.log('this ran')
         // @ts-ignore
         line[modify][1] += speed
       },
       onEnd() {
+        // @ts-ignore
+        line[modify] = [lowerBound, upperBound]
         onEndCallback()
       },
       endCondition() {
@@ -354,7 +355,6 @@ const Create = <Object extends AnimObject2D>(
               duration / object.lines.length,
               () => {
                 currentLine++
-                console.log('line ended')
               }
             )
           }

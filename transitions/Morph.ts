@@ -45,7 +45,8 @@ const Morph = <O1 extends AnimObject2D, O2 extends AnimObject2D>(
             `${(target.svgEl?.querySelector('svg') as SVGElement).getAttribute(
               'height'
             )}px`
-          )
+          );
+          (source.svgEl as SVGElement).style.opacity = '1'
           source.svgEl
             ?.querySelectorAll('path')
             .forEach((path: SVGPathElement) => {
@@ -63,6 +64,7 @@ const Morph = <O1 extends AnimObject2D, O2 extends AnimObject2D>(
           source.animating = false
         },
         onProgress() {
+          console.log('this rna')
           morphProgress += speed
           ;(source.svgEl?.querySelector('path') as SVGPathElement).setAttribute(
             'd',
