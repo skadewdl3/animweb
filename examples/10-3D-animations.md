@@ -3,7 +3,7 @@ By default, AnimWeb will start up in 2D mode. To switch to 3D, you will need to 
 
 Once you switch to 3D, the name of all AnimObjects remains mostly the same, except a few changes. These changes are listed below.
 
-#Final Code
+# Final Code
 ```
 var plane = Create(NumberPlane())
 

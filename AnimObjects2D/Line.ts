@@ -156,7 +156,8 @@ export default class Line extends AnimObject {
     }
   }
 
-  transform(ltMatrix: Matrix, { duration }: LinearTransformProps) {
+  transform(ltMatrix: Matrix, config: LinearTransformProps = { duration: 1 }) {
+    let { duration } = config
     let x1 = this.point1.x
     let y1 = this.point1.y
     let x2 = this.point2.x
