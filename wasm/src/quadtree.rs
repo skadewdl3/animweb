@@ -1,7 +1,7 @@
 mod quadtree_module {
 
   enum Quad {
-    Rant(Box<Quadrant>),
+    Rant(Quadrant),
     Tree(Box<QuadTree>)
   }
 
@@ -11,7 +11,7 @@ mod quadtree_module {
 
   pub struct Quadrant {
 
-    tree: &Box<QuadTree>,
+    tree: &QuadTree,
     direction: Directions,
     depth: i32,
     max_depth: i32
@@ -29,13 +29,13 @@ mod quadtree_module {
 
   }
 
-  fn build_quadrant (tree: &Box<QuadTree>, direction: Directions, depth: i32, max_depth: i32) -> Option<Quad> {
-    Some(Quad::Rant(Box::new(Quadrant {
+  fn build_quadrant (tree: &QuadTree, direction: Directions, depth: i32, max_depth: i32) -> Option<Quad> {
+    Some(Quad::Rant(Quadrant {
       depth,
       max_depth,
       direction,
       tree
-    })))
+    }))
   }
 
   pub fn build_quadtree (depth: i32, max_depth: i32) -> Box<QuadTree> {
@@ -48,23 +48,23 @@ mod quadtree_module {
       sw: None
     });
 
-      tree.ne = build_quadrant(&tree, Directions::NE, depth, max_depth);
-      tree.se = build_quadrant(&tree, Directions::SE, depth, max_depth);
-      tree.nw = build_quadrant(&tree, Directions::NW, depth, max_depth);
-      tree.sw = build_quadrant(&tree, Directions::SW, depth, max_depth);
+      tree.ne = build_quadrant(&*tree, Directions::NE, depth, max_depth);
+      tree.se = build_quadrant(&*tree, Directions::SE, depth, max_depth);
+      tree.nw = build_quadrant(&*tree, Directions::NW, depth, max_depth);
+      tree.sw = build_quadrant(&*tree, Directions::SW, depth, max_depth);
       
       return tree;
   }
 
-  fn build_subtree (depth: i32, max_depth: i32) -> Box<QuadTree> {
-    let mut tree = Box::new(QuadTree {
+  fn build_subtree (depth: i32, max_depth: i32) -> QuadTree {
+    let mut tree = QuadTree {
       depth,
       max_depth,
       ne: None,
       se: None,
       nw: None,
       sw: None
-    });
+    };
 
     tree.ne = build_quadrant(&tree, Directions::NE, depth, max_depth);
     tree.se = build_quadrant(&tree, Directions::SE, depth, max_depth);
