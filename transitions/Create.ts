@@ -123,6 +123,43 @@ const createLineTransition = (
   }
 }
 
+const createLineTransitionNew = (
+  line: Line,
+  duration: number = 1,
+  onEndCallback: Function = () => {}
+) => {
+  let lowerBound =
+    line.slope > 1 || line.slope < -1 ? line.range[0] : line.domain[0]
+  let upperBound =
+    line.slope > 1 || line.slope < -1 ? line.range[1] : line.domain[1]
+  let modify = line.slope > 1 || line.slope < -1 ? 'range' : 'domain'
+  let speed = rangePerFrame(upperBound - lowerBound, duration)
+
+  // @ts-ignore
+  line[modify][1] = lowerBound
+
+  return createTransition(
+    {
+      onStart() {
+        line.color.setAlpha(1)
+      },
+      onProgress({ end }: TransitionProgressProps) {
+        // console.log('this ran')
+        // @ts-ignore
+        line[modify][1] += speed
+      },
+      onEnd() {
+        onEndCallback()
+      },
+      endCondition() {
+        // @ts-ignore
+        return line[modify][1] >= upperBound
+      },
+    },
+    line
+  )
+}
+
 const createLineTransitions = (
   arr: Array<Line>,
   config: any,
@@ -275,7 +312,7 @@ const Create = <Object extends AnimObject2D>(
     hideObjects(object.points, true)
     hideObjects(object.curves, true)
 
-    object.curves.forEach((curve) => {
+    object.curves.forEach(curve => {
       if (curve instanceof Curve) hideObjects(curve.lines, true)
     })
 
@@ -288,7 +325,7 @@ const Create = <Object extends AnimObject2D>(
       createLineTransitions(object.yGrid, config, totalDuration / 4)
       wait((totalDuration / 6) * 1000).then(() => {
         createPointTransitions(object.points, config, totalDuration / 4)
-        object.curves.forEach((curve) => {
+        object.curves.forEach(curve => {
           if (curve instanceof Curve)
             createStaggeredLineTransitions(
               curve.lines,
@@ -303,52 +340,80 @@ const Create = <Object extends AnimObject2D>(
       ? config.duration
       : Constants.createLineDuration
     hideObjects(object.lines, true)
-    createStaggeredLineTransitions(object.lines, config, duration)
+    // createStaggeredLineTransitions(object.lines, config, duration)
+    let prevLine = -1
+    let currentLine = 0
+    object.transition = createTransition(
+      {
+        onProgress({ end }: TransitionProgressProps) {
+          if (currentLine != prevLine) {
+            prevLine = currentLine
+            let line = object.lines[currentLine]
+            line.transition = createLineTransitionNew(
+              line,
+              duration / object.lines.length,
+              () => {
+                currentLine++
+                console.log('line ended')
+              }
+            )
+          }
+        },
+        endCondition() {
+          if (currentLine >= object.lines.length) console.log('this ran')
+          return currentLine >= object.lines.length
+        },
+      },
+      object
+    )
   } else if (object instanceof ImplicitCurve) {
     let executeTransition = true
-    let tx = createTransition({
-      onStart() {
-        object.redraw = false
-        object.animating = true
-        anime({
-          targets: `#${object.id}`,
-          opacity: [0, 1]
-        })
-      },
-      onEnd() {
-        anime({
-          targets: `#${object.id}`,
-          opacity: [1, 0],
-        })
-        object.show = true
-        object.redraw = true
-        object.animating = false
-      },
-      onProgress: ({ end }: TransitionProgressProps) => {
-        if (object.svgEl && executeTransition) {
+    let tx = createTransition(
+      {
+        onStart() {
+          object.redraw = false
+          object.animating = true
           anime({
-            targets: `#${object.id} path`,
-            strokeDashoffset: [anime.setDashoffset, 0],
-            easing: 'easeInOutSine',
-            stroke: object.color.rgba,
-            duration: config.duration || 150,
-            direction: 'normal',
-            delay: function (el, i) {
-              return (
-                i * (((config.duration || 150) * 10) / object.contours.length)
-              )
-            },
-            loop: false,
-            complete() {
-              end()
-              object.show = true
-            },
+            targets: `#${object.id}`,
+            opacity: [0, 1],
           })
-          executeTransition = false
-        }
+        },
+        onEnd() {
+          anime({
+            targets: `#${object.id}`,
+            opacity: [1, 0],
+          })
+          object.show = true
+          object.redraw = true
+          object.animating = false
+        },
+        onProgress: ({ end }: TransitionProgressProps) => {
+          if (object.svgEl && executeTransition) {
+            anime({
+              targets: `#${object.id} path`,
+              strokeDashoffset: [anime.setDashoffset, 0],
+              easing: 'easeInOutSine',
+              stroke: object.color.rgba,
+              duration: config.duration || 150,
+              direction: 'normal',
+              delay: function (el, i) {
+                return (
+                  i * (((config.duration || 150) * 10) / object.contours.length)
+                )
+              },
+              loop: false,
+              complete() {
+                end()
+                object.show = true
+              },
+            })
+            executeTransition = false
+          }
+        },
+        endCondition: () => false,
       },
-      endCondition: () => false,
-    }, object)
+      object
+    )
     object.transition = tx
   } else if (object instanceof Text) {
     let executeTransition = true
@@ -413,36 +478,39 @@ const Create = <Object extends AnimObject2D>(
     object.transition = tx
   } else if (object instanceof LaTeX) {
     let executeTransition = true
-    let tx = createTransition({
-      onProgress: ({ end }: TransitionProgressProps) => {
-        if (object.svgEl && executeTransition) {
-          anime({
-            targets: `#${object.id} path`,
-            strokeDashoffset: [anime.setDashoffset, 0],
-            stroke: '#ff0000',
-            easing: 'easeInOutSine',
-            duration: (3 * config.duration) / 4 || 1500,
-            direction: 'alternate',
-            loop: false,
-            complete() {
-              anime({
-                targets: `#${object.id} path`,
-                fill: '#ff0000',
-                easing: 'easeInOutSine',
-                duration: config.duration / 4 || 1500,
-                direction: 'alternate',
-                loop: false,
-                complete() {
-                  end()
-                },
-              })
-            },
-          })
-          executeTransition = false
-        }
+    let tx = createTransition(
+      {
+        onProgress: ({ end }: TransitionProgressProps) => {
+          if (object.svgEl && executeTransition) {
+            anime({
+              targets: `#${object.id} path`,
+              strokeDashoffset: [anime.setDashoffset, 0],
+              stroke: '#ff0000',
+              easing: 'easeInOutSine',
+              duration: (3 * config.duration) / 4 || 1500,
+              direction: 'alternate',
+              loop: false,
+              complete() {
+                anime({
+                  targets: `#${object.id} path`,
+                  fill: '#ff0000',
+                  easing: 'easeInOutSine',
+                  duration: config.duration / 4 || 1500,
+                  direction: 'alternate',
+                  loop: false,
+                  complete() {
+                    end()
+                  },
+                })
+              },
+            })
+            executeTransition = false
+          }
+        },
+        endCondition: () => false,
       },
-      endCondition: () => false,
-    }, object)
+      object
+    )
     object.transition = tx
 
     // console.log(object)
