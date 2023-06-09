@@ -156,104 +156,104 @@ export default class Line extends AnimObject {
     }
   }
 
-  moveTo({ x, duration = 1 }: { x: number; duration: number }): Promise<void> {
-    return new Promise((resolve, reject) => {
-      let finalPoint = {
-        x: x * this.parentData.stepX,
-        y: -evaluate(this.definition, { x, y: 0 }) * this.parentData.stepY,
-      }
+  // moveTo({ x, duration = 1 }: { x: number; duration: number }): Promise<void> {
+  //   return new Promise((resolve, reject) => {
+  //     let finalPoint = {
+  //       x: x * this.parentData.stepX,
+  //       y: -evaluate(this.definition, { x, y: 0 }) * this.parentData.stepY,
+  //     }
 
-      let parts = this.definition.split('=')
-      let rhs = parts[parts.length - 1]
+  //     let parts = this.definition.split('=')
+  //     let rhs = parts[parts.length - 1]
 
-      let finalSlope = derivative(rhs, 'x').evaluate({ x, y: 0 })
-      this.transition = () => {
-        let pointSpeed = rangePerFrame(
-          Math.abs(this.x(1) - finalPoint.x),
-          duration
-        )
+  //     let finalSlope = derivative(rhs, 'x').evaluate({ x, y: 0 })
+  //     this.transition = () => {
+  //       let pointSpeed = rangePerFrame(
+  //         Math.abs(this.x(1) - finalPoint.x),
+  //         duration
+  //       )
 
-        if (roundOff(this.x(1), 0) < roundOff(finalPoint.x, 0)) {
-          let nextPoint = {
-            x: this.x(1) + pointSpeed,
-            y:
-              -evaluate(rhs, {
-                x: (this.x(1) + pointSpeed) / this.parentData.stepX,
-                y: 0,
-              }) * this.parentData.stepY,
-          }
-          if (roundOff(this.x(1) + pointSpeed, 0) < roundOff(finalPoint.x, 0)) {
-            this.slope = -derivative(rhs, 'x').evaluate({
-              x: nextPoint.x / this.parentData.stepX,
-              y: 0,
-            })
-            this.x = (y: number) => nextPoint.x
-            this.y = (x: number) => {
-              return this.slope * x + (nextPoint.y - this.slope * nextPoint.x)
-            }
-            let { range, domain } = this.getLimitsFromLength(
-              this.x(1),
-              this.y(this.x(1))
-            )
-            this.domain = domain
-            this.range = range
-          } else {
-            this.slope = -finalSlope
-            this.x = (y: number) => finalPoint.x
-            this.y = (x: number) => {
-              return this.slope * x + (finalPoint.y - this.slope * finalPoint.x)
-            }
-            let { range, domain } = this.getLimitsFromLength(
-              this.x(1),
-              this.y(this.x(1))
-            )
-            this.domain = domain
-            this.range = range
-            this.transition = null
-            resolve()
-          }
-        } else if (roundOff(this.x(1), 0) > roundOff(finalPoint.x, 0)) {
-          let nextPoint = {
-            x: this.x(1) - pointSpeed,
-            y:
-              -evaluate(rhs, {
-                x: (this.x(1) - pointSpeed) / this.parentData.stepX,
-              }) * this.parentData.stepY,
-          }
-          if (roundOff(this.x(1) - pointSpeed, 0) > roundOff(finalPoint.x, 0)) {
-            this.slope = -derivative(rhs, 'x').evaluate({
-              x: nextPoint.x / this.parentData.stepX,
-              y: 0,
-            })
-            this.x = (y: number) => nextPoint.x
-            this.y = (x: number) => {
-              return this.slope * x + (nextPoint.y - this.slope * nextPoint.x)
-            }
-            let { range, domain } = this.getLimitsFromLength(
-              this.x(1),
-              this.y(this.x(1))
-            )
-            this.domain = domain
-            this.range = range
-          } else {
-            this.slope = -finalSlope
-            this.x = (y: number) => finalPoint.x
-            this.y = (x: number) => {
-              return this.slope * x + (finalPoint.y - this.slope * finalPoint.x)
-            }
-            let { range, domain } = this.getLimitsFromLength(
-              this.x(1),
-              this.y(this.x(1))
-            )
-            this.domain = domain
-            this.range = range
-            this.transition = null
-            resolve()
-          }
-        }
-      }
-    })
-  }
+  //       if (roundOff(this.x(1), 0) < roundOff(finalPoint.x, 0)) {
+  //         let nextPoint = {
+  //           x: this.x(1) + pointSpeed,
+  //           y:
+  //             -evaluate(rhs, {
+  //               x: (this.x(1) + pointSpeed) / this.parentData.stepX,
+  //               y: 0,
+  //             }) * this.parentData.stepY,
+  //         }
+  //         if (roundOff(this.x(1) + pointSpeed, 0) < roundOff(finalPoint.x, 0)) {
+  //           this.slope = -derivative(rhs, 'x').evaluate({
+  //             x: nextPoint.x / this.parentData.stepX,
+  //             y: 0,
+  //           })
+  //           this.x = (y: number) => nextPoint.x
+  //           this.y = (x: number) => {
+  //             return this.slope * x + (nextPoint.y - this.slope * nextPoint.x)
+  //           }
+  //           let { range, domain } = this.getLimitsFromLength(
+  //             this.x(1),
+  //             this.y(this.x(1))
+  //           )
+  //           this.domain = domain
+  //           this.range = range
+  //         } else {
+  //           this.slope = -finalSlope
+  //           this.x = (y: number) => finalPoint.x
+  //           this.y = (x: number) => {
+  //             return this.slope * x + (finalPoint.y - this.slope * finalPoint.x)
+  //           }
+  //           let { range, domain } = this.getLimitsFromLength(
+  //             this.x(1),
+  //             this.y(this.x(1))
+  //           )
+  //           this.domain = domain
+  //           this.range = range
+  //           this.transition = null
+  //           resolve()
+  //         }
+  //       } else if (roundOff(this.x(1), 0) > roundOff(finalPoint.x, 0)) {
+  //         let nextPoint = {
+  //           x: this.x(1) - pointSpeed,
+  //           y:
+  //             -evaluate(rhs, {
+  //               x: (this.x(1) - pointSpeed) / this.parentData.stepX,
+  //             }) * this.parentData.stepY,
+  //         }
+  //         if (roundOff(this.x(1) - pointSpeed, 0) > roundOff(finalPoint.x, 0)) {
+  //           this.slope = -derivative(rhs, 'x').evaluate({
+  //             x: nextPoint.x / this.parentData.stepX,
+  //             y: 0,
+  //           })
+  //           this.x = (y: number) => nextPoint.x
+  //           this.y = (x: number) => {
+  //             return this.slope * x + (nextPoint.y - this.slope * nextPoint.x)
+  //           }
+  //           let { range, domain } = this.getLimitsFromLength(
+  //             this.x(1),
+  //             this.y(this.x(1))
+  //           )
+  //           this.domain = domain
+  //           this.range = range
+  //         } else {
+  //           this.slope = -finalSlope
+  //           this.x = (y: number) => finalPoint.x
+  //           this.y = (x: number) => {
+  //             return this.slope * x + (finalPoint.y - this.slope * finalPoint.x)
+  //           }
+  //           let { range, domain } = this.getLimitsFromLength(
+  //             this.x(1),
+  //             this.y(this.x(1))
+  //           )
+  //           this.domain = domain
+  //           this.range = range
+  //           this.transition = null
+  //           resolve()
+  //         }
+  //       }
+  //     }
+  //   })
+  // }
 
   transform(ltMatrix: Matrix, { duration }: LinearTransformProps) {
     let x1 = this.point1.x
@@ -308,7 +308,7 @@ export default class Line extends AnimObject {
     p.stroke(this.color.rgba)
     p.strokeWeight(this.thickness)
     p.translate(this.parentData.origin.x, this.parentData.origin.y)
-    if (this.slope == Constants.Infinity || this.slope == -Constants.Infinity) {
+    if (this.slope >= Constants.Infinity || this.slope <= -Constants.Infinity) {
       p.line(
         this.x(this.range[0]),
         -this.range[0],

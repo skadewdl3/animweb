@@ -17,7 +17,7 @@ import {
   CurveProps,
 } from '@interfaces/AnimObjects2D.ts'
 import { Lines } from '@enums/AnimObjects2D.ts'
-import { AnchorPoint } from '@mixins/miscellaneous.ts'
+import { AnchorPoint, Tangent } from '@mixins/miscellaneous.ts'
 
 export default class Curve extends AnimObject2D {
   y: string
@@ -141,6 +141,9 @@ export default class Curve extends AnimObject2D {
       }),
       config.transitionOptions ? config.transitionOptions : {}
     )
+    // @ts-ignore
+    line.currentX = x
+    applyMixins(line, [Tangent])
     this.anchorLines.push(line as Line)
     return line as Line
   }

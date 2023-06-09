@@ -355,7 +355,6 @@ const Create = <Object extends AnimObject2D>(
               duration / object.lines.length,
               () => {
                 currentLine++
-                console.log('line ended')
               }
             )
           }
