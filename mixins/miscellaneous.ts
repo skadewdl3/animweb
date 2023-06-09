@@ -28,7 +28,7 @@ export class Tangent {
 
     let finalSlope = derivative(rhs, 'x').evaluate({ x, y: 0 })
 
-    let xSpeed = rangePerFrame(x - this.currentX, 50)
+    let xSpeed = rangePerFrame(x - this.currentX, duration)
 
     this.transition = createTransition(
       {
