@@ -14,14 +14,7 @@ import LaTeX from '@AnimObjects2D/LaTeX.ts'
 import Vector from '@AnimObjects2D/Vector.ts'
 import ComplexPlane2D from '@AnimObjects2D/ComplexPlane2D.ts'
 
-// AnimObjects3D
-// import Point3D from '@AnimObjects3D/Point3D.ts'
-// import Line3D from '@AnimObjects3D/Line3D.ts'
-// import Surface from '@AnimObjects3D/Surface.ts'
-// import NumberPlane3D from '@AnimObjects3D/NumberPlane3D.ts'
-// import ComplexPlane3D from '@AnimObjects3D/ComplexPlane3D.ts'
-// import Text3D from '@AnimObjects3D/Text3D.ts'
-
+// Variables declared here to be used when switching to 3D
 let Point3D: any
 let Line3D: any
 let Surface: any

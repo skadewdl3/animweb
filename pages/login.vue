@@ -1,7 +1,13 @@
 <script setup lang="ts">
-import { v4 as uuid } from 'uuid';
-// @ts-ignore
-import {GoogleOutlined} from '@ant-design/icons-vue'
+
+import { GoogleOutlined } from '@ant-design/icons-vue'
+
+definePageMeta({
+  title: 'AnimWeb - Login',
+  description: 'Login to Animweb',
+  middleware: 'auth'
+})
+
 
 const email = ref('')
 const password = ref('')
@@ -11,8 +17,11 @@ const auth = useAuth()
 
 const mode = ref('login')
 const createOrLoginMode = ref('email')
-const userCreatedOrLoggedIn = ref(false)
 const functions = useServerFunctions()
+
+const goToDashboard = () => {
+  if (auth.isAuthenticated()) navigateTo('/dashboard')
+}
 
 const registerWithGoogle = async () => {
   createOrLoginMode.value = 'google'
@@ -42,9 +51,9 @@ const loginWithEmail = async () => {
 
 const loginWithGoogle = async () => {
   createOrLoginMode.value = 'google'
-  let user = await auth.loginWithGoogle()
-  if (user) {
-    console.log(user)
+  await auth.loginWithGoogle()
+  if (auth.isAuthenticated()) {
+    navigateTo('/dashboard')
   }
 }
 
@@ -52,12 +61,10 @@ const logout = async () => {
   await auth.logout() 
   // do post logout stuff
 }
+
 </script>
 
 <template>
-  <Head>
-    <Title>Animweb - Login</Title>
-  </Head>
 <span>
   <div class="auth-ui-wrapper">
     <div class="auth-ui">

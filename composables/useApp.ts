@@ -1,7 +1,10 @@
 import { initializeApp } from 'firebase/app'
+let app: any = undefined
 export default () => {
-  const runtimeConfig = useRuntimeConfig()
-  const firebaseConfig = runtimeConfig.public.firebaseCredentials
-  const app = initializeApp(firebaseConfig, 'client')
+  if (!app) {
+    const runtimeConfig = useRuntimeConfig()
+    const firebaseConfig = runtimeConfig.public.firebaseCredentials
+    app = initializeApp(firebaseConfig, 'client')
+  }
   return app
 }

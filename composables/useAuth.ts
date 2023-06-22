@@ -7,11 +7,13 @@ import {
   signOut as _signOut,
 } from 'firebase/auth'
 
-export default () => {
-  let user = undefined
+let user: any = undefined
 
+export default () => {
   const app = useApp()
   const auth = getAuth(app)
+
+  const isAuthenticated = () => user !== undefined
 
   const loginWithEmailAndPassword = async (email: string, password: string) => {
     let { user: temp } = await _signInWithEmailAndPassword(
@@ -86,5 +88,6 @@ export default () => {
     createUserWithGoogle,
     user,
     logout,
+    isAuthenticated,
   }
 }
