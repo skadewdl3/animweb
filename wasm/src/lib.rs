@@ -1,7 +1,7 @@
 mod utils;
-
+pub mod quadtree;
+use quadtree::build_quadtree;
 use wasm_bindgen::prelude::*;
-// mod quadtree;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
@@ -33,6 +33,8 @@ pub fn test (expression: &str, start: f64, end: f64) {
         let result = parsed.eval(&[i as f64 * step]).expect("Error in evaluation");
         arr.fill(result.to_string().parse::<f64>().unwrap(), i, i + 1);
     }
+
+    build_quadtree();
 
     console::log_1(&arr.into());
 }
