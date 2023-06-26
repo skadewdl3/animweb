@@ -1,7 +1,13 @@
-export default defineNuxtRouteMiddleware((to, from) => {
+export default defineNuxtRouteMiddleware(async (to, from) => {
   if (process.server) return
-  console.log(useAuth().isAuthenticated())
-  if (useAuth().isAuthenticated()) {
-    return navigateTo('/dashboard')
+  const auth = await useAuth()
+  if (to.path == '/login') {
+    if (auth.isAuthenticated()) {
+      return navigateTo('/dashboard')
+    }
+  } else if (to.path == '/dashboard') {
+    if (!auth.isAuthenticated()) {
+      return navigateTo('/login')
+    }
   }
 })

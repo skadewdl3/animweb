@@ -13,23 +13,21 @@ const email = ref('')
 const password = ref('')
 const username = ref('')
 
-const auth = useAuth()
+const auth = await useAuth()
 
 const mode = ref('login')
 const createOrLoginMode = ref('email')
 const functions = useServerFunctions()
 
-const goToDashboard = () => {
+watch(() => auth.isAuthenticated(), () => {
   if (auth.isAuthenticated()) navigateTo('/dashboard')
-}
+})
 
 const registerWithGoogle = async () => {
   createOrLoginMode.value = 'google'
   let user  = await auth.createUserWithGoogle()
-  console.log(user)
   if (user) {
-    let result = await functions.createUser(username.value, user)
-    console.log(result)
+    await functions.createUser(username.value, user)
   }
 }
 
@@ -37,24 +35,18 @@ const registerWithEmail = async () => {
   createOrLoginMode.value = 'email'
   let user = await auth.createUserWithEmailAndPassword('sohamk10@gmail.com', 'heheboi123')
   if (user) {
-    functions.createUser(username.value, user)
+    await functions.createUser(username.value, user)
   }
 }
 
 const loginWithEmail = async () => {
   createOrLoginMode.value = 'email'
-  let user = await auth.loginWithEmailAndPassword(email.value, password.value)
-  if (user) {
-
-  }
+  await auth.loginWithEmailAndPassword(email.value, password.value)
 }
 
 const loginWithGoogle = async () => {
   createOrLoginMode.value = 'google'
   await auth.loginWithGoogle()
-  if (auth.isAuthenticated()) {
-    navigateTo('/dashboard')
-  }
 }
 
 const logout = async () => {

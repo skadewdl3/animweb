@@ -1,19 +1,27 @@
 import { getAuth } from 'firebase/auth'
+import { ref } from 'vue'
 import {
   signInWithEmailAndPassword as _signInWithEmailAndPassword,
   GoogleAuthProvider,
   signInWithPopup,
   createUserWithEmailAndPassword as _createUserWithEmailAndPassword,
+  setPersistence,
+  browserSessionPersistence,
   signOut as _signOut,
 } from 'firebase/auth'
 
-let user: any = undefined
+const user: any = ref(null)
 
-export default () => {
+export default async () => {
   const app = useApp()
   const auth = getAuth(app)
+  if (!auth.currentUser) {
+    await setPersistence(auth, browserSessionPersistence)
+  } else {
+    user.value = auth.currentUser
+  }
 
-  const isAuthenticated = () => user !== undefined
+  const isAuthenticated = () => Boolean(user.value)
 
   const loginWithEmailAndPassword = async (email: string, password: string) => {
     let { user: temp } = await _signInWithEmailAndPassword(
@@ -24,7 +32,7 @@ export default () => {
       throw err
     })
     if (temp) {
-      user = temp
+      user.value = temp
       return user
     } else return undefined
   }
@@ -33,15 +41,15 @@ export default () => {
     email: string,
     password: string
   ) => {
-    let { user: temp } = (user = await _createUserWithEmailAndPassword(
+    let { user: temp } = await _createUserWithEmailAndPassword(
       auth,
       email,
       password
     ).catch(err => {
       throw err
-    }))
+    })
     if (temp) {
-      user = temp
+      user.value = temp
       return user
     } else return undefined
   }
@@ -54,7 +62,7 @@ export default () => {
       throw err
     })
     if (temp) {
-      user = temp
+      user.value = temp
       return user
     } else return undefined
   }
@@ -67,7 +75,7 @@ export default () => {
       throw err
     })
     if (temp) {
-      user = temp
+      user.value = temp
       return user
     } else return undefined
   }
@@ -77,7 +85,7 @@ export default () => {
       throw err
     })
 
-    user = temp
+    user.value = temp
     return user
   }
 

@@ -2,8 +2,16 @@
 import code from '@reactives/code.ts'
 import error from '@reactives/error.ts'
 import { editor } from '@reactives/editor.ts'
+import { LoadingOutlined } from '@ant-design/icons-vue'
 
 const props = defineProps(['disabled'])
+const saving = ref(false)
+const auth = await useAuth()
+
+const save = () => {
+  saving.value = !saving.value
+}
+
 </script>
 
 <template>
@@ -35,6 +43,10 @@ const props = defineProps(['disabled'])
           <span :disabled="props.disabled" :class="{ goup: code.mode == '3D' }"
             >Switch to 3D</span
           >
+        </button>
+        <button v-if="auth.isAuthenticated()" @click="save" class="code-button">
+          <span>Save</span>
+          <LoadingOutlined v-if="saving" />
         </button>
       </div>
     </div>
