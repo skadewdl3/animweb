@@ -8,8 +8,10 @@ const props = defineProps(['disabled'])
 const saving = ref(false)
 const auth = await useAuth()
 
-const save = () => {
-  saving.value = !saving.value
+const save = async () => {
+  saving.value = true
+  const { saveAnimation } = await useFirestore()
+  saveAnimation().then(() => (saving.value = false))
 }
 
 </script>

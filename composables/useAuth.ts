@@ -21,7 +21,7 @@ export default async () => {
     user.value = auth.currentUser
   }
 
-  const isAuthenticated = () => Boolean(user.value)
+  const isAuthenticated = () => Boolean(user.value || auth.currentUser)
 
   const loginWithEmailAndPassword = async (email: string, password: string) => {
     let { user: temp } = await _signInWithEmailAndPassword(
